@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The dbt AI Library</title>
+<title>dbt Wizard, explained</title>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
@@ -52,6 +52,8 @@
   header .lede em{font-style:normal;color:var(--ink);border-bottom:1px solid var(--shu-line)}
   header .lede.pivot{font-family:var(--serif);font-size:17px;font-style:italic;color:var(--ink);padding-top:18px;margin-top:20px;border-top:1px solid var(--line)}
   header .lede.pivot em{font-style:italic}
+  .bridge{font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.62;color:var(--ink);max-width:580px;margin:24px 0 0}
+  .bridge em{font-style:italic;border-bottom:1px solid var(--shu-line)}
 
   /* progression rail */
   .rail{display:flex;align-items:flex-start;justify-content:space-between;margin:0 0 2px}
@@ -159,6 +161,45 @@
   .reveal.in .demo-body .row:nth-child(6){transition-delay:1.4s}
   .reveal.in .demo-body .row:nth-child(7){transition-delay:1.65s}
 
+  /* payoff: picture-first (two problems + broken loop + closed loop) */
+  .probs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .prob{border:1px solid var(--line);border-radius:7px;background:var(--card);overflow:hidden}
+  .prob-h{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:11px 15px;border-bottom:1px solid var(--line);background:var(--paper-2);font-weight:700}
+  .prob-viz{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;padding:32px 16px;min-height:124px;text-align:center}
+  .prob-viz .big{font-family:var(--serif);font-size:34px;font-weight:500;color:var(--ink);letter-spacing:-.01em}
+  .prob-viz .q{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--warn)}
+  .prob-viz.start .q{color:var(--ink-2)}
+  .editor{display:flex;flex-direction:column;gap:7px;width:118px}
+  .editor .ln{height:6px;border-radius:3px;background:var(--line)}
+  .editor .ln.short{width:58%}
+  .editor .ln.cur{width:8px;background:var(--shu)}
+  .prob-cap{font-size:12.5px;line-height:1.55;color:var(--muted);padding:0 15px 16px;text-align:center}
+
+  /* broken-loop flow */
+  .flow{display:flex;align-items:stretch;flex-wrap:wrap;margin-top:4px}
+  .fbox{flex:1;min-width:118px;border:1px solid var(--line);border-radius:6px;background:var(--card);padding:14px 12px;font-family:var(--mono);font-size:12px;line-height:1.45;color:var(--ink);display:flex;flex-direction:column;justify-content:center;text-align:center;gap:7px}
+  .fbox.blind{border-color:var(--warn-line);background:var(--warn-soft);color:var(--warn)}
+  .fbox.blind .blind-tags{font-size:10px;letter-spacing:.01em;color:var(--warn);opacity:.9}
+  .fbox.warnbox{border-style:dashed}
+  .fbox.warnbox b{color:var(--warn)}
+  .farr{flex:none;display:flex;align-items:center;padding:0 9px;font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+
+  /* closed loop */
+  .loop-box{border:1.5px solid var(--shu-line);background:var(--shu-soft);border-radius:8px;padding:18px}
+  .loop-title{font-family:var(--mono);font-size:12.5px;letter-spacing:.03em;color:var(--ai-deep);font-weight:700;margin-bottom:14px;text-align:center}
+  .loop-tags{display:flex;flex-direction:column;gap:9px;max-width:330px;margin:0 auto}
+  .loop-tags span{font-family:var(--mono);font-size:12px;color:var(--ink)}
+  .solves{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+  .solve{display:flex;align-items:center;gap:11px;border:1px solid var(--ok);border-radius:7px;background:var(--ok-soft);padding:15px 16px;font-family:var(--serif);font-size:16px;color:var(--ink)}
+  .solve .chk{font-family:var(--sans);font-weight:700;color:var(--ok);font-size:18px;flex:none;line-height:1}
+
+  /* under-the-hood benefit tiles */
+  .bens{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
+  .ben{border:1px solid var(--line);border-radius:7px;background:var(--card);padding:16px 15px}
+  .ben .bi{width:22px;height:22px;color:var(--ai-deep);margin-bottom:11px;display:block}
+  .ben .bl{font-family:var(--serif);font-size:15.5px;font-weight:500;line-height:1.25;color:var(--ink);margin-bottom:5px}
+  .ben .bc{font-size:12px;line-height:1.5;color:var(--muted)}
+
   @media(max-width:620px){
     body{padding:36px 20px 100px}
     .lvl{margin-top:78px}
@@ -167,6 +208,9 @@
     .rsub{display:none}
     .demo-body{font-size:11px}
     .lvl-ico{width:38px;height:38px}
+    .probs,.solves{grid-template-columns:1fr}
+    .farr{width:100%;justify-content:center;padding:7px 0}
+    .bens{grid-template-columns:1fr 1fr}
   }
 </style>
 </head>
@@ -176,12 +220,37 @@
   <div class="topbar"><a class="back" href="../">← all explainers</a></div>
 
   <header>
-    <div class="kicker"><span class="rule"></span><span>dbt's AI roadmap</span></div>
-    <h1>The dbt AI Library</h1>
-    <p class="lede">For a decade, dbt has been how data teams make analytics trustworthy: every transformation tested, documented, and governed. The hard part was never running the SQL. It was being able to <span class="hl-ai">trust the number</span> at the end.</p>
-    <p class="lede">AI changes who reads that number. The consumer is no longer just a dashboard, it is an agent that reasons and acts on your data. Agents are fast but unpredictable, and they need exactly what analysts always needed: a foundation they can trust. That is where dbt is headed, to be the open, trusted foundation that agents are built on, owned by you rather than rented from whoever sells the compute. The model is not the differentiator. The foundation is.</p>
-    <p class="lede pivot">The rest of this page is about understanding how that foundation comes together, one layer at a time. To keep it concrete, I will walk through it as <em>a library</em>.</p>
+    <div class="kicker"><span class="rule"></span><span>dbt's AI agent</span></div>
+    <h1>dbt Wizard, explained</h1>
+    <p class="lede">For a decade, dbt has been how data teams make analytics trustworthy: every transformation tested, documented, and governed. The hard part was never running the SQL.</p>
   </header>
+
+  <!-- THE PROBLEM -->
+  <section class="lvl reveal">
+    <div class="eyebrow">THE PROBLEM</div>
+    <div class="lvl-head">
+      <div class="lvl-titles"><div class="lvl-name">Two things were always hard</div><div class="lvl-sum">Trusting the number, and getting started.</div></div>
+    </div>
+    <div class="probs">
+      <div class="prob">
+        <div class="prob-h">01 · trusting the number</div>
+        <div class="prob-viz trust">
+          <span class="big">$11.4M</span>
+          <span class="q">&#9888; is this right?</span>
+        </div>
+        <div class="prob-cap">AI made this scarier, not safer. A confident, wrong number still reaches the stakeholder.</div>
+      </div>
+      <div class="prob">
+        <div class="prob-h">02 · getting started</div>
+        <div class="prob-viz start">
+          <div class="editor"><span class="ln"></span><span class="ln short"></span><span class="ln cur"></span></div>
+          <span class="q">where do I even begin?</span>
+        </div>
+        <div class="prob-cap">Powerful once it runs, hard to get going. AI can help, if it actually knows your project.</div>
+      </div>
+    </div>
+    <p class="bridge">dbt Wizard is built for both: an AI agent that knows your project natively, the way a senior teammate would, and checks its own work. To see how, here is the whole idea as <em>a library</em>.</p>
+  </section>
 
   <!-- 00 · BOOKS -->
   <section class="lvl reveal">
@@ -216,10 +285,10 @@
     <div class="rail" data-level="1"></div>
     <div class="lvl-head">
       <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4" width="17" height="16" rx="1.4"/><line x1="3.5" y1="9.3" x2="20.5" y2="9.3"/><line x1="3.5" y1="14.6" x2="20.5" y2="14.6"/><circle cx="12" cy="6.6" r=".7" fill="currentColor"/><circle cx="12" cy="11.9" r=".7" fill="currentColor"/><circle cx="12" cy="17.2" r=".7" fill="currentColor"/></svg>
-      <div class="lvl-titles"><div class="lvl-name">dbt Index</div><div class="lvl-sum">Now it can find anything.</div></div>
+      <div class="lvl-titles"><div class="lvl-name">The index</div><div class="lvl-sum">Now it can find anything.</div></div>
     </div>
     <div class="demo" data-tone="ai">
-      <div class="demo-head"><span class="dot"></span><span>agent · querying dbt Index</span></div>
+      <div class="demo-head"><span class="dot"></span><span>agent · querying the index</span></div>
       <div class="demo-body chat">
         <div class="row q">What was revenue by region last quarter?</div>
         <div class="row a">
@@ -287,10 +356,96 @@
     <blockquote class="anchor">Your personal dbt agent, wherever you work.</blockquote>
   </section>
 
+  <!-- THE OLD WORKAROUND -->
+  <section class="lvl reveal">
+    <div class="eyebrow">THE OLD AI WORKAROUND</div>
+    <div class="lvl-head">
+      <div class="lvl-titles"><div class="lvl-name">Copy, paste, and hope</div><div class="lvl-sum">Your project's context never makes the trip.</div></div>
+    </div>
+    <div class="flow">
+      <div class="fbox">your dbt<br>project</div>
+      <div class="farr">copy &#9656;</div>
+      <div class="fbox blind">generic LLM<span class="blind-tags">&#10007; lineage&nbsp;&nbsp;&#10007; tests&nbsp;&nbsp;&#10007; metrics</span></div>
+      <div class="farr">&#9666; paste</div>
+      <div class="fbox warnbox">looks plausible?<br><b>you verify by hand</b></div>
+    </div>
+    <p class="cap">The moment your code leaves the project, the context is gone. You get something that looks right, and the checking lands back on you.</p>
+  </section>
+
+  <!-- WIZARD CLOSES THE LOOP -->
+  <section class="lvl reveal">
+    <div class="eyebrow">WHAT DBT WIZARD DOES</div>
+    <div class="lvl-head">
+      <div class="lvl-titles"><div class="lvl-name">The agent lives in your project</div><div class="lvl-sum">Your personal dbt agent, wherever you work.</div></div>
+    </div>
+    <div class="loop-box">
+      <div class="loop-title">&#8635; your dbt project + dbt Wizard</div>
+      <div class="loop-tags">
+        <span>&#10003; reads your lineage, tests, and metrics</span>
+        <span>&#10003; makes the change across every file</span>
+        <span>&#10003; validates before you ever see it</span>
+      </div>
+    </div>
+    <div class="solves">
+      <div class="solve"><span class="chk">&#10003;</span> Trust the number</div>
+      <div class="solve"><span class="chk">&#10003;</span> No copy-paste, full context</div>
+    </div>
+  </section>
+
+  <!-- THE DIFFERENCE IN DETAIL -->
+  <section class="lvl reveal">
+    <div class="eyebrow">UNDER THE HOOD</div>
+    <div class="lvl-head">
+      <div class="lvl-titles"><div class="lvl-name">What a generic agent can't do</div><div class="lvl-sum">Quietly, every time you ask.</div></div>
+    </div>
+    <div class="bens">
+      <div class="ben">
+        <svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+        <div class="bl">No destructive surprises</div>
+        <div class="bc">It never drops or overwrites a table without your approval.</div>
+      </div>
+      <div class="ben">
+        <svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>
+        <div class="bl">Checks the real data</div>
+        <div class="bc">Validates its assumptions against your warehouse, not guesses.</div>
+      </div>
+      <div class="ben">
+        <svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.3"/><circle cx="12" cy="12" r="6" opacity=".55"/><circle cx="12" cy="12" r="9.6" opacity=".28"/></svg>
+        <div class="bl">Knows the blast radius</div>
+        <div class="bc">Maps exactly what a change breaks before you merge it.</div>
+      </div>
+      <div class="ben">
+        <svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 1.9"/></svg>
+        <div class="bl">Remembers your project</div>
+        <div class="bc">Context carries across sessions instead of starting cold.</div>
+      </div>
+      <div class="ben">
+        <svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        <div class="bl">Can't be hijacked</div>
+        <div class="bc">Untrusted files and query results can't take the agent over.</div>
+      </div>
+      <div class="ben">
+        <svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l3.4 3.4L13 9.4"/><path d="M11.2 16.2l1.4 1.4L21 9.2"/></svg>
+        <div class="bl">Double-checks its work</div>
+        <div class="bc">Specialized passes verify the change before you ever see it.</div>
+      </div>
+      <div class="ben">
+        <svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3.3"/><path d="M10.4 10.4l7 7M15.4 15.4l1.9-1.9M13.5 13.5l1.9-1.9"/></svg>
+        <div class="bl">Bring your own key</div>
+        <div class="bc">Plug in your own model and provider. The flexibility stays yours.</div>
+      </div>
+      <div class="ben">
+        <svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5l9 4-9 4-9-4z"/><path d="M6.5 10.5V15c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-4.5"/><path d="M21 9v4.5"/></svg>
+        <div class="bl">dbt know-how built in</div>
+        <div class="bc">Agent skills and project context that encode how dbt is done well.</div>
+      </div>
+    </div>
+  </section>
+
   <!-- closing -->
   <div class="close reveal">
     <div class="seq"><span>Context</span><span class="arr">→</span><span>Trust</span><span class="arr">→</span><span>Experience</span></div>
-    <p>Same library, four ways to walk in. The books hold the knowledge, the catalog makes it findable, the desk makes it trustworthy, and the librarian makes it <span class="hl-ult">effortless</span>. Each layer stands on its own, and each one makes the next more powerful. The foundation dbt built for the BI era, extended for the age of agents.</p>
+    <p>Same library, four ways to walk in. The books hold the knowledge, the catalog makes it findable, the desk makes it trustworthy, and the librarian makes it <span class="hl-ult">effortless</span>. Each layer stands on its own, and each one makes the next more powerful. dbt Wizard is the whole library working on your behalf: the foundation dbt built for the BI era, extended for the age of agents.</p>
   </div>
 
   <div class="foot">
@@ -304,7 +459,7 @@
 </div>
 
 <script>
-  var NODES = [['Books','your project'],['Catalog','dbt Index'],['Desk','trust layer'],['Librarian','dbt Wizard']];
+  var NODES = [['Books','your project'],['Catalog','the index'],['Desk','trust layer'],['Librarian','dbt Wizard']];
   document.querySelectorAll('.rail').forEach(function(el){
     var lvl = parseInt(el.getAttribute('data-level'),10), h='';
     for(var i=0;i<NODES.length;i++){

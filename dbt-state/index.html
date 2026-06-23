@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dbt State, explained</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  :root{
+    --paper:#f4f1ed;
+    --paper-2:#ebe6dd;
+    --card:#faf8f3;
+    --ink:#1a1a1a;
+    --ink-2:#555;
+    --muted:#888;
+    --faint:#b3ada1;
+    --line:#e4ded2;
+    /* savings accent: green / teal */
+    --accent:#15803d;
+    --accent-soft:rgba(21,128,61,.09);
+    --accent-line:rgba(21,128,61,.32);
+    --accent-deep:#166534;
+    --teal:#0d9488;
+    /* new / fresh data: pink */
+    --fresh:#db2777;
+    --fresh-soft:rgba(219,39,119,.10);
+    --fresh-line:rgba(219,39,119,.48);
+    /* unchanged / stale, reused as-is: muted */
+    --stale:#6b665c;
+    --stale-soft:rgba(120,113,104,.12);
+    --stale-line:#9c9488;
+    /* wasteful spend emphasis (prose only) */
+    --cost:#b4530a;
+    --cost-soft:rgba(180,83,10,.10);
+    /* freshness SLA policy: blue */
+    --sla:#2563eb;
+    --sla-line:rgba(37,99,235,.55);
+    --serif:'Spectral',Georgia,serif;
+    --mono:'Space Mono',monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65;padding:48px 28px 140px}
+  .wrap{max-width:660px;margin:0 auto}
+
+  .topbar{margin-bottom:64px}
+  .back{font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--faint);text-decoration:none;transition:color .2s}
+  .back:hover{color:var(--ink-2)}
+
+  header{margin-bottom:30px}
+  .kicker{display:flex;align-items:center;gap:14px;margin-bottom:24px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--muted)}
+  .kicker .rule{flex:none;width:42px;height:2px;border-radius:1px;background:linear-gradient(90deg,var(--accent),var(--teal))}
+  header h1{font-family:var(--serif);font-weight:500;font-size:clamp(32px,6vw,54px);line-height:1.1;letter-spacing:-.01em;margin-bottom:20px}
+  header .lede{font-size:16px;line-height:1.78;color:var(--ink-2);max-width:580px;margin-bottom:16px}
+  header .lede:last-of-type{margin-bottom:0}
+  header .lede em{font-style:normal;color:var(--ink);border-bottom:1px solid var(--accent-line)}
+  header .lede.pivot{font-family:var(--serif);font-size:17px;font-style:italic;color:var(--ink);padding-top:18px;margin-top:20px;border-top:1px solid var(--line)}
+  header .lede.pivot em{font-style:italic}
+  .hl-save{background:var(--accent-soft);color:var(--accent-deep);padding:1px 6px;border-radius:3px;font-weight:600}
+  .hl-cost{background:var(--cost-soft);color:var(--cost);padding:1px 6px;border-radius:3px;font-weight:600}
+
+  /* level sections */
+  .lvl{margin-top:104px}
+  .lvl:first-of-type{margin-top:34px}
+  .eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--accent);margin-bottom:26px}
+  .lvl-head{display:flex;align-items:center;gap:18px;margin:26px 0 22px}
+  .lvl-ico{flex:none;width:44px;height:44px;color:var(--ink)}
+  .lvl-titles{flex:1;min-width:0}
+  .lvl-name{font-family:var(--serif);font-weight:500;font-size:clamp(23px,3.6vw,30px);line-height:1.15}
+  .lvl-sum{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--accent);margin-top:5px}
+
+  .body-p{font-size:15.5px;line-height:1.78;color:var(--ink-2);max-width:580px;margin:0 0 18px}
+  .body-p:last-child{margin-bottom:0}
+  .body-p b{color:var(--ink);font-weight:600}
+
+  /* ticket strip (the hook) */
+  .days{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:6px 0 16px}
+  .day{border:1px solid var(--line);border-radius:6px;background:var(--card);padding:11px 9px;text-align:center}
+  .day .dow{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:7px}
+  .day .glyph{font-size:17px;line-height:1;margin-bottom:6px}
+  .day .st{font-family:var(--mono);font-size:8.5px;letter-spacing:.02em;line-height:1.3}
+  .day.skip{border-color:var(--stale-line);background:var(--stale-soft);opacity:.9}
+  .day.skip .glyph{color:var(--stale)}
+  .day.skip .st{color:var(--stale)}
+  .day.build{border-color:var(--fresh-line);background:var(--fresh-soft)}
+  .day.build .glyph{color:var(--fresh)}
+  .day.build .st{color:var(--fresh)}
+
+  /* lineage diagram */
+  .diagram{border:1px solid var(--line);border-radius:7px;background:var(--card);padding:18px 16px 14px;overflow-x:auto;box-shadow:0 1px 3px rgba(0,0,0,.03)}
+  .diagram svg{width:100%;min-width:560px;height:auto;display:block}
+  .nl{font-family:var(--mono);font-size:10.5px;fill:var(--ink)}
+  .nd-built rect{fill:var(--fresh-soft);stroke:var(--fresh);stroke-width:1.6}
+  .nd-built .nl{fill:#9d174d}
+  .nd-skip{opacity:.9}
+  .nd-skip rect{fill:var(--stale-soft);stroke:var(--stale-line);stroke-width:1.4;stroke-dasharray:4 3}
+  .nd-skip .nl{fill:var(--stale)}
+  .nd-sla rect{fill:var(--stale-soft);stroke:var(--sla);stroke-width:2}
+  .nd-sla .nl{fill:#3b5573}
+  .ed{stroke:var(--stale-line);stroke-width:1.4;fill:none;stroke-dasharray:4 3}
+  .ed-run{stroke:var(--fresh);stroke-width:2.2;fill:none}
+  .badge rect{fill:var(--fresh);stroke:none}
+  .badge text{font-family:var(--mono);font-size:9px;letter-spacing:.04em;fill:#fff;font-weight:700}
+
+  .legend{display:flex;flex-wrap:wrap;gap:16px 22px;margin-top:16px;font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:var(--ink-2)}
+  .legend .it{display:flex;align-items:center;gap:8px}
+  .legend .sw{width:16px;height:12px;border-radius:3px;flex:none}
+  .legend .sw.build{background:var(--fresh-soft);border:1.4px solid var(--fresh)}
+  .legend .sw.skip{background:var(--stale-soft);border:1.4px solid var(--stale-line)}
+  .legend .sw.sla{background:var(--stale-soft);border:1.4px solid var(--sla)}
+  .legend .sw.dot{width:11px;height:11px;border-radius:50%;background:var(--fresh)}
+
+  .cap{font-size:14px;line-height:1.7;color:var(--muted);margin-top:16px;max-width:560px}
+  .cap b{color:var(--ink-2);font-weight:600}
+
+  .anchor{font-family:var(--serif);font-size:20px;font-style:italic;line-height:1.55;color:var(--ink);margin:26px 0 0;padding-left:20px;border-left:2px solid var(--accent)}
+
+  /* outcomes list */
+  .outs{list-style:none;display:flex;flex-direction:column;gap:13px;max-width:600px;margin-top:4px}
+  .outs li{position:relative;padding-left:78px;font-size:14.5px;line-height:1.6;color:var(--ink-2);min-height:24px}
+  .outs li b{color:var(--ink);font-weight:600}
+  .outs .tag{position:absolute;left:0;top:1px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:4px}
+  .outs .tag.skip{color:var(--stale);background:var(--stale-soft);border:1px solid var(--stale-line)}
+  .outs .tag.build{color:var(--fresh);background:var(--fresh-soft);border:1px solid var(--fresh-line)}
+  .diffs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:2px 0}
+  .diff{border:1px solid var(--line);border-radius:7px;background:var(--card);padding:15px 16px}
+  .diff.sla{border-color:var(--sla-line)}
+  .diff .dt{font-family:var(--serif);font-size:15.5px;font-weight:500;color:var(--ink);margin-bottom:4px}
+  .diff .dd{font-size:12.5px;line-height:1.5;color:var(--muted)}
+
+  /* closing + contact */
+  .close{margin-top:120px;padding-top:50px;border-top:1px solid var(--line)}
+  .close .seq{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:26px;font-family:var(--serif);font-size:clamp(22px,4vw,32px);font-weight:500}
+  .close .seq .arr{color:var(--accent);font-size:.7em}
+  .close p{font-size:15.5px;line-height:1.8;color:var(--ink-2);max-width:580px;margin-bottom:16px}
+  .close p:last-child{margin-bottom:0}
+  .close p em{font-style:normal;color:var(--ink)}
+  .close a{color:var(--accent-deep);text-decoration:none;border-bottom:1px solid var(--accent-line)}
+  .close a:hover{border-bottom-color:var(--accent)}
+  .contact{margin-top:30px;padding:18px 20px;background:var(--card);border:1px solid var(--line);border-radius:7px;font-size:14.5px;line-height:1.7;color:var(--ink-2)}
+  .contact b{color:var(--ink);font-weight:600}
+  .contact a{font-family:var(--mono);font-size:13px}
+
+  .foot{margin-top:84px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .foot a{color:var(--faint);text-decoration:none;display:inline-flex;align-items:center;gap:7px;transition:color .2s}
+  .foot a:hover{color:var(--ink-2)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(max-width:620px){
+    body{padding:36px 20px 100px}
+    .lvl{margin-top:78px}
+    .lvl-ico{width:38px;height:38px}
+    .days{grid-template-columns:repeat(3,1fr)}
+    .diffs{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar"><a class="back" href="../">← all explainers</a></div>
+
+  <header>
+    <div class="kicker"><span class="rule"></span><span>state-aware orchestration, rebranded</span></div>
+    <h1>dbt State, explained</h1>
+    <p class="lede">You would not buy a ticket to watch the same movie again, the one you have already seen, where nothing has changed. <span style="color:var(--muted)">(Sure, you might re-watch one you are emotionally attached to. But nobody rebuilds a data model out of sentimentality.)</span> You go back to the theater when there is a <em>new release</em>.</p>
+    <p class="lede">By default, dbt does not work that way. Every time it runs, it rebuilds every model, whether or not anything upstream actually changed. At scale, with jobs running many times a day to keep dashboards fresh, that is a lot of <span class="hl-cost">tickets bought for movies you have already seen</span>.</p>
+    <p class="lede pivot"><em>dbt State</em> fixes that. Its whole idea fits in six words: <em>build what's changed, skip what hasn't</em>.</p>
+  </header>
+
+  <!-- 01 · THE WASTE -->
+  <section class="lvl reveal" style="margin-top:48px">
+    <div class="eyebrow">THE WASTE</div>
+    <div class="lvl-head">
+      <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5h18M3 8.5l1.6-3.2a1 1 0 0 1 .9-.55h13a1 1 0 0 1 .9.55L21 8.5M4 8.5V19a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8.5"/><path d="M9.5 12.5l5 3-5 3z"/></svg>
+      <div class="lvl-titles"><div class="lvl-name">You already paid to see this one</div><div class="lvl-sum">Most runs rebuild things that did not change.</div></div>
+    </div>
+    <p class="body-p">Picture a week of scheduled runs. The pipeline fires on a timer, but new data only lands now and then. On the days when nothing upstream changed, rebuilding the models produces the exact same tables you already have. You paid the compute anyway.</p>
+    <div class="days">
+      <div class="day skip"><div class="dow">Mon</div><div class="glyph">⤳</div><div class="st">nothing new<br>skip</div></div>
+      <div class="day build"><div class="dow">Tue</div><div class="glyph">●</div><div class="st">new data<br>build</div></div>
+      <div class="day skip"><div class="dow">Wed</div><div class="glyph">⤳</div><div class="st">nothing new<br>skip</div></div>
+      <div class="day skip"><div class="dow">Thu</div><div class="glyph">⤳</div><div class="st">nothing new<br>skip</div></div>
+      <div class="day build"><div class="dow">Fri</div><div class="glyph">●</div><div class="st">new data<br>build</div></div>
+      <div class="day skip"><div class="dow">Sat</div><div class="glyph">⤳</div><div class="st">nothing new<br>skip</div></div>
+    </div>
+    <p class="cap"><b>dbt State pays compute only on the days something actually changed.</b> The rest are skipped, because the answer is already sitting in your warehouse.</p>
+  </section>
+
+  <!-- 02 · WHAT IT IS -->
+  <section class="lvl reveal">
+    <div class="eyebrow">INSIDE A SINGLE RUN</div>
+    <div class="lvl-head">
+      <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="6" r="2"/><circle cx="5.5" cy="18" r="2"/><circle cx="18.5" cy="12" r="2"/><path d="M7.4 6.7l9.3 4.4M7.4 17.3l9.3-4.4"/></svg>
+      <div class="lvl-titles"><div class="lvl-name">New data flows downstream</div><div class="lvl-sum">Build what's changed, skip what hasn't.</div></div>
+    </div>
+    <p class="body-p">Zoom into one run. dbt State looks at every model and asks a simple question: has anything that feeds this changed since last time? A new release ripples forward. Everything in its path needs a fresh build. Everything else can be left exactly as it is.</p>
+    <div class="diagram">
+      <svg viewBox="0 0 760 330" role="img" aria-label="Lineage graph showing changed models rebuilt and unchanged models skipped">
+        <!-- edges -->
+        <line class="ed-run" x1="148" y1="57"  x2="212" y2="57"/>
+        <line class="ed-run" x1="344" y1="57"  x2="408" y2="57"/>
+        <line class="ed" x1="540" y1="57"  x2="604" y2="57"/>
+        <line class="ed"     x1="148" y1="169" x2="212" y2="169"/>
+        <line class="ed"     x1="344" y1="169" x2="408" y2="169"/>
+        <line class="ed"     x1="148" y1="281" x2="212" y2="281"/>
+        <line class="ed"     x1="344" y1="281" x2="408" y2="281"/>
+        <path class="ed"     d="M344 169 C 378 169 378 57 408 57"/>
+
+        <!-- new-data badge -->
+        <g class="badge"><rect x="40" y="10" width="84" height="18" rx="9"/><text x="82" y="22.5" text-anchor="middle">NEW DATA</text></g>
+
+        <!-- nodes -->
+        <g class="nd-built"><rect x="16"  y="36"  width="132" height="42" rx="7"/><text class="nl" x="82"  y="61"  text-anchor="middle">src_orders</text></g>
+        <g class="nd-built"><rect x="212" y="36"  width="132" height="42" rx="7"/><text class="nl" x="278" y="61"  text-anchor="middle">stg_orders</text></g>
+        <g class="nd-built"><rect x="408" y="36"  width="132" height="42" rx="7"/><text class="nl" x="474" y="61"  text-anchor="middle">fct_orders</text></g>
+        <g class="nd-sla"><rect x="604" y="36"  width="132" height="42" rx="7"/><text class="nl" x="670" y="61"  text-anchor="middle">mart_revenue</text></g>
+
+        <g class="nd-skip"><rect x="16"  y="148" width="132" height="42" rx="7"/><text class="nl" x="82"  y="173" text-anchor="middle">src_customers</text></g>
+        <g class="nd-skip"><rect x="212" y="148" width="132" height="42" rx="7"/><text class="nl" x="278" y="173" text-anchor="middle">stg_customers</text></g>
+        <g class="nd-skip"><rect x="408" y="148" width="132" height="42" rx="7"/><text class="nl" x="474" y="173" text-anchor="middle">dim_customers</text></g>
+
+        <g class="nd-skip"><rect x="16"  y="260" width="132" height="42" rx="7"/><text class="nl" x="82"  y="285" text-anchor="middle">src_events</text></g>
+        <g class="nd-skip"><rect x="212" y="260" width="132" height="42" rx="7"/><text class="nl" x="278" y="285" text-anchor="middle">stg_events</text></g>
+        <g class="nd-skip"><rect x="408" y="260" width="132" height="42" rx="7"/><text class="nl" x="474" y="285" text-anchor="middle">agg_sessions</text></g>
+      </svg>
+    </div>
+    <div class="legend">
+      <div class="it"><span class="sw dot"></span>new data landed</div>
+      <div class="it"><span class="sw build"></span>fresh, so rebuilt</div>
+      <div class="it"><span class="sw skip"></span>unchanged, reused as-is</div>
+      <div class="it"><span class="sw sla"></span>skipped &middot; 48-hour SLA</div>
+    </div>
+    <p class="cap">New orders land, so <b>stg_orders</b> and <b>fct_orders</b> rebuild down the chain. <b>mart_revenue</b> would refresh next, but it carries a <b>48-hour freshness SLA</b>, so dbt State leaves it until the data has to be that fresh. The customer and events branches never changed, so they are reused as-is. One run, almost no extra compute.</p>
+  </section>
+
+  <!-- 03 · HOW IT DECIDES -->
+  <section class="lvl reveal">
+    <div class="eyebrow">HOW IT DECIDES</div>
+    <div class="lvl-head">
+      <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 1.9"/></svg>
+      <div class="lvl-titles"><div class="lvl-name">Three outcomes, decided per model</div><div class="lvl-sum">No manifest scripts, no sub-selectors, no babysitting.</div></div>
+    </div>
+    <p class="body-p">On every run, dbt State compares each model's logic and its upstream data against what it built before. Based on that, it picks the cheapest correct path automatically. You turn it on and it just runs.</p>
+    <ul class="outs">
+      <li><span class="tag skip">skip</span><b>Nothing changed.</b> The model's logic and its fresh-enough upstream data match the last build, so dbt leaves the existing table alone.</li>
+      <li><span class="tag skip">clone</span><b>It exists elsewhere.</b> A matching, fresh copy already lives in another environment, so dbt clones it instead of recomputing it.</li>
+      <li><span class="tag build">build</span><b>Something is new.</b> Logic or upstream data changed, so dbt rebuilds this model and everything downstream that depends on it.</li>
+    </ul>
+    <p class="cap">It even ignores changes that do not matter, like a new comment or reformatted whitespace, since the compiled logic is identical. A new movie triggers a trip to the theater. A new poster for the same film does not.</p>
+  </section>
+
+  <!-- 04 · WHY IT ADDS UP -->
+  <section class="lvl reveal">
+    <div class="eyebrow">WHY IT ADDS UP</div>
+    <div class="lvl-head">
+      <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 19v-5M12 19v-9M16 19v-7M20 19V8"/></svg>
+      <div class="lvl-titles"><div class="lvl-name">The more you run, the more you save</div><div class="lvl-sum">Run as often as the business needs, not as often as the bill allows.</div></div>
+    </div>
+    <p class="body-p">Once you stop paying to redo work that has not changed, frequency stops being the enemy. Teams usually ration runs to control compute. With dbt State, the redundant rebuilds are the part that gets skipped, so running more often mostly adds skips, not cost. <b>You get fresher data and iterate faster, without the bill climbing in lockstep.</b></p>
+    <div class="diffs">
+      <div class="diff"><div class="dt">Runs anywhere, by default</div><div class="dd">The dbt platform, dbt Core, self-hosted or managed, across Snowflake, BigQuery, Databricks, and Redshift. No Fusion required.</div></div>
+      <div class="diff sla"><div class="dt">Freshness SLAs per model</div><div class="dd">Tell each model how fresh it needs to be. It rebuilds only when it has to, and skips when the data is fresh enough.</div></div>
+    </div>
+    <blockquote class="anchor">Stop paying to rebuild answers you already have.</blockquote>
+  </section>
+
+  <!-- closing -->
+  <div class="close reveal">
+    <div class="seq"><span>Compare</span><span class="arr">→</span><span>Reuse</span><span class="arr">→</span><span>Save</span></div>
+    <p>That is the whole idea: <em>build what's changed, skip what hasn't</em>. New data flows downstream and triggers a rebuild along its path. Everything else is reused. The more often you run, the more redundant work there is to skip, and the more it pays off.</p>
+    <p>If you want the relatable version: it is a bit like my <a href="https://drafthouse.com/" target="_blank" rel="noopener noreferrer">Alamo Drafthouse</a> movie pass. The value is not in any single trip, it is in how the savings compound the more you actually use it. Past a certain point of activity, it more than pays for itself, and you stop thinking about cost per visit at all.</p>
+    <div class="contact">
+      Curious whether the math works out that way for your team, or how this maps to your warehouse spend? <b>Happy to walk through it.</b><br>
+      Reach out: <a href="mailto:cedric.turner@dbtlabs.com">cedric.turner@dbtlabs.com</a>
+    </div>
+  </div>
+
+  <div class="foot">
+    <a href="../">← all explainers</a>
+    <a href="https://github.com/cedricturner/dbt-artifacts" target="_blank" rel="noopener noreferrer">
+      <svg height="13" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      source
+    </a>
+  </div>
+
+</div>
+
+<script>
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:.08});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+</script>
+</body>
+</html>
