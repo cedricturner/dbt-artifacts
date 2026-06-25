@@ -31,7 +31,7 @@ If you'd rather learn by doing, I keep a set of interactive walkthroughs on the 
 - [dbt vs Python Scripts](https://cedricturner.github.io/dbt-artifacts/dbt-vs-scripts/): see what changes when computation moves into the warehouse
 - [dbt Connection Modes](https://cedricturner.github.io/dbt-artifacts/dbt-connection-modes/): how dbt connects to your warehouse, and what each option actually means
 - [dbt + AI / Conversational Analytics](https://cedricturner.github.io/dbt-artifacts/dbt-ai-llm/): how the Semantic Layer becomes the contract between governed metrics and AI agents
-- [The dbt AI Library](https://cedricturner.github.io/dbt-artifacts/dbt-ai-library/): dbt's AI story as a library with three floors (the catalog, the reference desk, and the librarian)
+- [dbt Wizard, explained](https://cedricturner.github.io/dbt-artifacts/dbt-wizard/): why a dbt-native agent beats a generic AI tool, told as a library (the index, the reference desk, and the librarian)
 
 ---
 
