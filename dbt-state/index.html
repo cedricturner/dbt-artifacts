@@ -61,6 +61,10 @@
   header.phead .lede em{font-style:normal;color:var(--ink);border-bottom:1px solid var(--dbt-line)}
   header.phead .lede.pivot{font-family:var(--serif);font-size:17px;font-style:italic;color:var(--ink);padding-top:16px;margin-top:18px;border-top:1px solid var(--line)}
   header.phead .lede.pivot em{font-style:italic}
+  .tldr{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--dbt);border-radius:8px;padding:15px 18px;margin-bottom:20px}
+  .tldr .tag{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dbt);margin-bottom:8px}
+  .tldr p{font-size:15px;line-height:1.7;color:var(--ink-2)}
+  .tldr p b{color:var(--ink);font-weight:700}
 
   /* level sections */
   .lvl{margin-top:64px}
@@ -119,7 +123,7 @@
   .legend .it{display:flex;align-items:center;gap:8px}
   .legend .sw{width:15px;height:11px;border-radius:3px;flex:none}
 
-  /* ticket week strip (state) */
+  /* week strip (state) */
   .days{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:6px 0 14px}
   .day{border:1px solid var(--line);border-radius:6px;background:var(--card);padding:11px 9px;text-align:center}
   .day .dow{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:7px}
@@ -391,16 +395,20 @@
     <header class="phead">
       <div class="kicker"><span class="rule"></span><span>state-aware orchestration, and what it saves</span></div>
       <h1>dbt <span class="kc">State</span>, explained</h1>
-      <p class="lede">You would not buy a ticket to watch the same movie again, the one you have already seen, where nothing has changed. You go back to the theater when there is a <em>new release</em>.</p>
-      <p class="lede">By default, dbt does not work that way. Every time it runs, it rebuilds every model, whether or not anything upstream actually changed. At scale, with jobs running many times a day to keep dashboards fresh, that is a lot of tickets bought for movies you have already seen.</p>
+      <div class="tldr">
+        <div class="tag">TL;DR</div>
+        <p><b>By default, dbt rebuilds every model on every run</b>, even the ones whose data did not change. dbt State rebuilds only what changed and skips the rest, so you get the same correct tables for a fraction of the compute. <b>The more often you run, the more you save.</b></p>
+      </div>
+      <p class="lede">You would not pay to reprint a 400-page report that has not changed one word, just because someone reopened the file. You print again when the pages have <em>actually changed</em>.</p>
+      <p class="lede">By default, dbt does not work that way. Every time it runs, it rebuilds every model, whether or not anything upstream actually changed. At scale, with jobs running many times a day to keep dashboards fresh, that is a lot of <span class="hl">money spent reprinting pages that never changed</span>.</p>
       <p class="lede pivot"><em>dbt State</em> fixes that. Its whole idea fits in six words: <em>build what's changed, skip what hasn't</em>.</p>
     </header>
 
     <section class="lvl reveal">
       <div class="eyebrow">THE WASTE</div>
       <div class="lvl-head">
-        <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5h18M3 8.5l1.6-3.2a1 1 0 0 1 .9-.55h13a1 1 0 0 1 .9.55L21 8.5M4 8.5V19a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8.5"/><path d="M9.5 12.5l5 3-5 3z"/></svg>
-        <div class="lvl-titles"><div class="lvl-name">You already paid to see this one</div><div class="lvl-sum">Most runs rebuild things that did not change.</div></div>
+        <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3.5h12V9"/><path d="M6 17H4.5A1.5 1.5 0 0 1 3 15.5v-4A1.5 1.5 0 0 1 4.5 10h15a1.5 1.5 0 0 1 1.5 1.5v4a1.5 1.5 0 0 1-1.5 1.5H18"/><rect x="6" y="14.5" width="12" height="6" rx="1"/><path d="M16.5 12.5h1.5"/></svg>
+        <div class="lvl-titles"><div class="lvl-name">You already printed this one</div><div class="lvl-sum">Most runs rebuild things that did not change.</div></div>
       </div>
       <p class="body-p">Picture a week of scheduled runs. The pipeline fires on a timer, but new data only lands now and then. On the days when nothing upstream changed, rebuilding the models produces the exact same tables you already have. You paid the compute anyway.</p>
       <div class="days">
@@ -461,7 +469,7 @@
         <li><span class="tag clone">clone</span><b>It exists elsewhere.</b> A matching, fresh copy already lives in another environment, so dbt clones it instead of recomputing it.</li>
         <li><span class="tag build">build</span><b>Something is new.</b> Logic or upstream data changed, so dbt rebuilds this model and everything downstream that depends on it.</li>
       </ul>
-      <p class="cap">It even ignores changes that do not matter, like a new comment or reformatted whitespace, since the compiled logic is identical. A new movie triggers a trip to the theater. A new poster for the same film does not.</p>
+      <p class="cap">It even ignores changes that do not matter, like a new comment or reformatted whitespace, since the compiled logic is identical. Changed words send the page back to the printer. Reformatting the margins on the same words does not.</p>
     </section>
 
     <section class="lvl reveal">
