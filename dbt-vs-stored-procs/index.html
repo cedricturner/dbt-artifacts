@@ -180,8 +180,8 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
   <button class="nav-step active" onclick="go(0)"><span class="step-num">1</span><span class="step-lbl">Before &amp; after</span></button>
   <button class="nav-step" onclick="go(1)"><span class="step-num">2</span><span class="step-lbl">The full proc</span></button>
   <button class="nav-step" onclick="go(2)"><span class="step-num">3</span><span class="step-lbl">Breaking it apart</span></button>
-  <button class="nav-step" onclick="go(3)"><span class="step-num">4</span><span class="step-lbl">Sources &amp; tests</span></button>
-  <button class="nav-step" onclick="go(4)"><span class="step-num">5</span><span class="step-lbl">Where data comes from</span></button>
+  <button class="nav-step" onclick="go(3)"><span class="step-num">4</span><span class="step-lbl">Where data comes from</span></button>
+  <button class="nav-step" onclick="go(4)"><span class="step-num">5</span><span class="step-lbl">Sources &amp; tests</span></button>
   <button class="nav-step" onclick="go(5)"><span class="step-num">6</span><span class="step-lbl">What runs &amp; when</span></button>
   <button class="nav-step" onclick="go(6)"><span class="step-num">7</span><span class="step-lbl">When things break</span></button>
 </div>
@@ -480,71 +480,8 @@ $$ <span style="color:#ff7b72">LANGUAGE</span> plpgsql;</pre>
   </div>
 </div>
 
-<!-- TAB 3: SOURCES & TESTS -->
+<!-- WHERE DATA COMES FROM -->
 <div class="panel" id="p3">
-  <div class="hint">
-    <span class="hint-icon">📓</span>
-    <div>One setup step makes <code>source()</code>, lineage, and testing work. You tell dbt where your raw data lives, once, in a small YAML file, and you attach <strong>tests</strong> right there. After this, the tables you saw the proc read from become declared, tested entry points.</div>
-  </div>
-
-  <div class="code-wrap src">
-    <div class="code-head" style="background:rgba(88,166,255,.06)">
-      <span class="lbl" style="color:#58a6ff">models/staging/_sources.yml</span>
-      <span class="badge" style="background:rgba(88,166,255,.14);color:#58a6ff">define raw data once</span>
-    </div>
-    <div class="code-body"><pre><span style="color:#8b949e"># Declare your raw data, and test it.</span>
-<span style="color:#ff7b72">version</span>: 2
-
-<span style="color:#ff7b72">sources</span>:
-  - <span style="color:#ff7b72">name</span>: raw                 <span style="color:#8b949e"># now usable as source('raw', ...)</span>
-    <span style="color:#ff7b72">schema</span>: raw
-    <span style="color:#ff7b72">tables</span>:
-      - <span style="color:#ff7b72">name</span>: orders
-        <span style="color:#ff7b72">description</span>: Raw orders, loaded by your EL tool.
-        <span style="color:#ff7b72">freshness</span>:               <span style="color:#8b949e"># warn if the feed goes stale</span>
-          <span style="color:#ff7b72">warn_after</span>: {count: 24, period: hour}
-        <span style="color:#ff7b72">columns</span>:
-          - <span style="color:#ff7b72">name</span>: order_id
-            <span style="color:#ff7b72">tests</span>:
-              - <span style="color:#3fb950">unique</span>
-              - <span style="color:#3fb950">not_null</span>
-          - <span style="color:#ff7b72">name</span>: status
-            <span style="color:#ff7b72">tests</span>:
-              - <span style="color:#3fb950">accepted_values</span>:
-                  <span style="color:#ff7b72">values</span>: [placed, shipped, cancelled]
-      - <span style="color:#ff7b72">name</span>: customers
-        <span style="color:#ff7b72">columns</span>:
-          - <span style="color:#ff7b72">name</span>: customer_id
-            <span style="color:#ff7b72">tests</span>: [<span style="color:#3fb950">unique</span>, <span style="color:#3fb950">not_null</span>]
-      - <span style="color:#ff7b72">name</span>: payments</pre></div>
-  </div>
-
-  <div class="cmp">
-    <div class="cmp-col cool">
-      <h4>What this one file gives you</h4>
-      <ul>
-        <li><b>Reference by name:</b> write <code>source('raw','orders')</code> instead of hardcoding <code>raw.orders</code>.</li>
-        <li><b>Tests that run every build:</b> <code>unique</code>, <code>not_null</code>, <code>accepted_values</code>, failing fast before bad data spreads.</li>
-        <li><b>Docs and freshness:</b> the description and freshness rule feed documentation and lineage automatically.</li>
-      </ul>
-    </div>
-    <div class="cmp-col neutral">
-      <h4>Same idea, on your models</h4>
-      <ul>
-        <li>Models get their own <code>schema.yml</code> with the same kind of tests.</li>
-        <li>So tests sit on <b>sources and models</b>, right next to the SQL.</li>
-        <li>It is all code, so it is reviewed and version-controlled in git like everything else.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="ann ok">
-    <strong>Now <code>raw</code> is a defined, tested source.</strong> The next tab shows how <code>source()</code> and <code>ref()</code> turn the models into a lineage graph, with these tests and the documentation generated from this code automatically.
-  </div>
-</div>
-
-<!-- TAB 3: WHERE DATA COMES FROM -->
-<div class="panel" id="p4">
   <div class="hint">
     <span class="hint-icon">📂</span>
     <div>Before the lineage graph makes sense, it helps to understand what the prefixes mean and how dbt tracks where data enters and flows through the pipeline.</div>
@@ -648,6 +585,69 @@ $$ <span style="color:#ff7b72">LANGUAGE</span> plpgsql;</pre>
 
   <div class="ann">
     <strong>This graph is the stored proc made visible.</strong> The stored procedure had this same structure, it just wasn't visible. You had to read 60 lines of SQL to understand that step 4 depended on steps 2 and 3. dbt makes it explicit, queryable, and documented automatically.
+  </div>
+</div>
+
+<!-- SOURCES & TESTS -->
+<div class="panel" id="p4">
+  <div class="hint">
+    <span class="hint-icon">📓</span>
+    <div>One setup step makes <code>source()</code>, lineage, and testing work. You tell dbt where your raw data lives, once, in a small YAML file, and you attach <strong>tests</strong> right there. After this, the tables you saw the proc read from become declared, tested entry points.</div>
+  </div>
+
+  <div class="code-wrap src">
+    <div class="code-head" style="background:rgba(88,166,255,.06)">
+      <span class="lbl" style="color:#58a6ff">models/staging/_sources.yml</span>
+      <span class="badge" style="background:rgba(88,166,255,.14);color:#58a6ff">define raw data once</span>
+    </div>
+    <div class="code-body"><pre><span style="color:#8b949e"># Declare your raw data, and test it.</span>
+<span style="color:#ff7b72">version</span>: 2
+
+<span style="color:#ff7b72">sources</span>:
+  - <span style="color:#ff7b72">name</span>: raw                 <span style="color:#8b949e"># now usable as source('raw', ...)</span>
+    <span style="color:#ff7b72">schema</span>: raw
+    <span style="color:#ff7b72">tables</span>:
+      - <span style="color:#ff7b72">name</span>: orders
+        <span style="color:#ff7b72">description</span>: Raw orders, loaded by your EL tool.
+        <span style="color:#ff7b72">freshness</span>:               <span style="color:#8b949e"># warn if the feed goes stale</span>
+          <span style="color:#ff7b72">warn_after</span>: {count: 24, period: hour}
+        <span style="color:#ff7b72">columns</span>:
+          - <span style="color:#ff7b72">name</span>: order_id
+            <span style="color:#ff7b72">tests</span>:
+              - <span style="color:#3fb950">unique</span>
+              - <span style="color:#3fb950">not_null</span>
+          - <span style="color:#ff7b72">name</span>: status
+            <span style="color:#ff7b72">tests</span>:
+              - <span style="color:#3fb950">accepted_values</span>:
+                  <span style="color:#ff7b72">values</span>: [placed, shipped, cancelled]
+      - <span style="color:#ff7b72">name</span>: customers
+        <span style="color:#ff7b72">columns</span>:
+          - <span style="color:#ff7b72">name</span>: customer_id
+            <span style="color:#ff7b72">tests</span>: [<span style="color:#3fb950">unique</span>, <span style="color:#3fb950">not_null</span>]
+      - <span style="color:#ff7b72">name</span>: payments</pre></div>
+  </div>
+
+  <div class="cmp">
+    <div class="cmp-col cool">
+      <h4>What this one file gives you</h4>
+      <ul>
+        <li><b>Reference by name:</b> write <code>source('raw','orders')</code> instead of hardcoding <code>raw.orders</code>.</li>
+        <li><b>Tests that run every build:</b> <code>unique</code>, <code>not_null</code>, <code>accepted_values</code>, failing fast before bad data spreads.</li>
+        <li><b>Docs and freshness:</b> the description and freshness rule feed documentation and lineage automatically.</li>
+      </ul>
+    </div>
+    <div class="cmp-col neutral">
+      <h4>Same idea, on your models</h4>
+      <ul>
+        <li>Models get their own <code>schema.yml</code> with the same kind of tests.</li>
+        <li>So tests sit on <b>sources and models</b>, right next to the SQL.</li>
+        <li>It is all code, so it is reviewed and version-controlled in git like everything else.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="ann ok">
+    <strong>Now <code>raw</code> is a defined, tested source.</strong> The next tab shows what actually runs when you build, and how dbt uses these <code>ref()</code> dependencies to run independent models in parallel.
   </div>
 </div>
 
