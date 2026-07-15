@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>dbt vs Python Scripts — Interactive Walkthrough</title>
+<title>dbt vs Notebooks: Interactive Walkthrough</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -139,34 +139,35 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
 <div style="margin-bottom:24px"><a href="../" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'">← all explainers</a></div>
 <div class="hdr">
   <div class="hdr-tag">dbt 101</div>
-  <h1>From Python scripts to dbt</h1>
-  <p>An interactive walkthrough. Follow the steps — each one builds on the last so you can see exactly what changes and why.</p>
+  <h1>From notebooks to dbt</h1>
+  <p>An interactive walkthrough. Follow the steps; each one builds on the last so you can see exactly what changes and why.</p>
 </div>
 
 <div class="nav">
-  <button class="nav-step active" onclick="go(0)"><span class="step-num">1</span><span class="step-lbl">The script</span></button>
+  <button class="nav-step active" onclick="go(0)"><span class="step-num">1</span><span class="step-lbl">The notebook</span></button>
   <button class="nav-step" onclick="go(1)"><span class="step-num">2</span><span class="step-lbl">Breaking it apart</span></button>
   <button class="nav-step" onclick="go(2)"><span class="step-num">3</span><span class="step-lbl">Where data comes from</span></button>
   <button class="nav-step" onclick="go(3)"><span class="step-num">4</span><span class="step-lbl">What runs &amp; when</span></button>
   <button class="nav-step" onclick="go(4)"><span class="step-num">5</span><span class="step-lbl">When things break</span></button>
 </div>
 
-<!-- TAB 1: THE FULL SCRIPT -->
+<!-- TAB 1: THE FULL NOTEBOOK -->
 <div class="panel active" id="p0">
   <div class="hint">
     <span class="hint-icon">💡</span>
-    <div>This is a complete Python pipeline — the kind you'd inherit today. It builds a customer order summary using pandas. <strong>Highlighted lines</strong> are the things that create problems at scale. Read the inline labels, then move to the next tab to see how dbt solves each one.</div>
+    <div>This is a complete pipeline in a Jupyter notebook, the kind you'd inherit today. Five cells build a customer order summary using pandas. <strong>Highlighted lines</strong> are the things that create problems at scale, and the <strong style="color:#e6edf3">In [ ]:</strong> counts are out of order because nothing forces you to run cells top to bottom. Read the inline labels, then move to the next tab to see how dbt solves each one.</div>
   </div>
 
   <div class="code-wrap" style="border-color:#f85149">
     <div class="code-head" style="background:rgba(248,81,73,.05)">
-      <span class="lbl" style="color:#f85149">build_customer_summary.py — full pipeline script</span>
-      <span class="badge" style="background:rgba(248,81,73,.14);color:#f85149">1 file · ~45 lines</span>
+      <span class="lbl" style="color:#f85149">build_customer_summary.ipynb — full pipeline notebook</span>
+      <span class="badge" style="background:rgba(248,81,73,.14);color:#f85149">1 notebook · 5 cells</span>
     </div>
-    <div class="code-body"><pre><span style="color:#ff7b72">import</span> pandas <span style="color:#ff7b72">as</span> pd
+    <div class="code-body"><pre><span style="color:#d2a8ff">In [4]:</span>
+<span style="color:#ff7b72">import</span> pandas <span style="color:#ff7b72">as</span> pd
 <span style="color:#ff7b72">import</span> sqlalchemy <span style="color:#ff7b72">as</span> sa
 
-<span class="il">engine = sa.create_engine(<span style="color:#a5d6ff">"postgresql://prod-warehouse:5432/db"</span>)  <span class="in">⚠ hardcoded connection — no dev/prod separation</span></span>
+<span class="il">engine = sa.create_engine(<span style="color:#a5d6ff">"postgresql://prod-warehouse:5432/db"</span>)  <span class="in">⚠ hardcoded connection, no dev/prod separation</span></span>
 
 <span style="color:#8b949e"># Step 1: clean customers</span>
 <span class="il">tmp_customers = pd.read_sql(<span style="color:#a5d6ff">"SELECT * FROM raw.customers"</span>, engine)  <span class="in">⚠ hardcoded schema — rename breaks silently</span></span>
@@ -175,19 +176,22 @@ tmp_customers[<span style="color:#a5d6ff">'first_name'</span>] = tmp_customers[<
 tmp_customers[<span style="color:#a5d6ff">'last_name'</span>] = tmp_customers[<span style="color:#a5d6ff">'last_name'</span>].fillna(<span style="color:#a5d6ff">'Unknown'</span>)
 tmp_customers[<span style="color:#a5d6ff">'region'</span>] = tmp_customers[<span style="color:#a5d6ff">'region'</span>].fillna(<span style="color:#a5d6ff">'Unassigned'</span>).str.upper()
 
+<span style="color:#d2a8ff">In [7]:</span>
 <span style="color:#8b949e"># Step 2: clean orders</span>
 <span class="il">tmp_orders = pd.read_sql(<span style="color:#a5d6ff">"SELECT * FROM raw.orders"</span>, engine)  <span class="in">⚠ hardcoded schema</span></span>
 tmp_orders = tmp_orders[
     tmp_orders[<span style="color:#a5d6ff">'order_id'</span>].notna() &amp; (tmp_orders[<span style="color:#a5d6ff">'status'</span>] != <span style="color:#a5d6ff">'cancelled'</span>)
 ][[<span style="color:#a5d6ff">'order_id'</span>, <span style="color:#a5d6ff">'customer_id'</span>, <span style="color:#a5d6ff">'order_date'</span>, <span style="color:#a5d6ff">'status'</span>, <span style="color:#a5d6ff">'total_amount'</span>]]
 
+<span style="color:#d2a8ff">In [5]:</span>
 <span style="color:#8b949e"># Step 3: clean payments</span>
 <span class="il">tmp_payments = pd.read_sql(<span style="color:#a5d6ff">"SELECT * FROM raw.payments"</span>, engine)  <span class="in">⚠ hardcoded schema</span></span>
 tmp_payments = tmp_payments[
     tmp_payments[<span style="color:#a5d6ff">'payment_id'</span>].notna() &amp; (tmp_payments[<span style="color:#a5d6ff">'amount'</span>] &gt; <span style="color:#79c0ff">0</span>)
 ].rename(columns={<span style="color:#a5d6ff">'amount'</span>: <span style="color:#a5d6ff">'payment_amount'</span>, <span style="color:#a5d6ff">'created_at'</span>: <span style="color:#a5d6ff">'payment_date'</span>})
 
-<span class="wl"><span style="color:#8b949e"># Step 4: join orders + payments  <span class="wn">⚡ must wait for steps 2 &amp; 3 — no parallelism possible</span></span></span>
+<span style="color:#d2a8ff">In [8]:</span>
+<span class="wl"><span style="color:#8b949e"># Step 4: join orders + payments  <span class="wn">⚡ must run cells 2 &amp; 3 first, and hope they were run in that order</span></span></span>
 agg = tmp_payments.groupby(<span style="color:#a5d6ff">'order_id'</span>).agg(
     total_paid=(<span style="color:#a5d6ff">'payment_amount'</span>, <span style="color:#a5d6ff">'sum'</span>),
     payment_count=(<span style="color:#a5d6ff">'payment_id'</span>, <span style="color:#a5d6ff">'count'</span>)
@@ -198,6 +202,7 @@ tmp_orders_with_payments[<span style="color:#a5d6ff">'outstanding_balance'</span
     - tmp_orders_with_payments[<span style="color:#a5d6ff">'total_paid'</span>].fillna(<span style="color:#79c0ff">0</span>)
 )
 
+<span style="color:#d2a8ff">In [11]:</span>
 <span style="color:#8b949e"># Step 5: final summary</span>
 summary = tmp_customers.merge(
     tmp_orders_with_payments, on=<span style="color:#a5d6ff">'customer_id'</span>, how=<span style="color:#a5d6ff">'left'</span>
@@ -211,16 +216,16 @@ result = summary.groupby(
     most_recent_order_date=(<span style="color:#a5d6ff">'order_date'</span>, <span style="color:#a5d6ff">'max'</span>)
 ).reset_index()
 
-<span class="il">result.to_sql(<span style="color:#a5d6ff">'fct_customer_order_summary'</span>, engine,  <span class="in">⚠ full overwrite every run — no incremental option</span></span>
+<span class="il">result.to_sql(<span style="color:#a5d6ff">'fct_customer_order_summary'</span>, engine,  <span class="in">⚠ full overwrite every run, no incremental option</span></span>
 <span class="il">             schema=<span style="color:#a5d6ff">'analytics'</span>, if_exists=<span style="color:#a5d6ff">'replace'</span>, index=<span style="color:#ff7b72">False</span>)</span>
 
-<span class="il"><span style="color:#8b949e"># Script ends. All 5 DataFrames dropped from memory.
-# If step 4 failed: nothing survives to inspect.  <span class="in">⚠ debug from scratch</span></span></span></pre>
+<span class="il"><span style="color:#8b949e"># While the kernel lives, all 5 DataFrames linger, stale and untrustworthy.
+# Restart the kernel and they vanish: re-run every cell to inspect anything.  <span class="in">⚠ debug from scratch</span></span></span></pre>
     </div>
   </div>
 
   <div class="ann danger">
-    <strong>What you're looking at:</strong> One file, 5 logical steps, all data loaded into Python memory, hardcoded connection strings and schema names, full table overwrite on every run, and zero intermediate state when something fails. It works — until it doesn't. The next tab shows what dbt does differently.
+    <strong>What you're looking at:</strong> One notebook, 5 cells, all data loaded into the kernel, cells that can run in any order, hardcoded connection strings and schema names, full table overwrite on every run, and no trustworthy intermediate state when something fails. It works, until it doesn't. The next tab shows what dbt does differently.
   </div>
 </div>
 
@@ -228,11 +233,11 @@ result = summary.groupby(
 <div class="panel" id="p1">
   <div class="hint">
     <span class="hint-icon">🧩</span>
-    <div>The Python script is one file. dbt breaks it into 5 files — one per logical step. <strong>Click each block</strong> to see how that step translates into dbt, and exactly what changes.</div>
+    <div>The notebook is one file, five cells sharing one kernel. dbt breaks it into 5 files, one per logical step. <strong>Click each block</strong> to see how that step translates into dbt, and exactly what changes.</div>
   </div>
 
   <div class="code-wrap tmp-block" id="tmp1" onclick="toggleTmp('tmp1','dbt1')">
-    <div class="code-head" style="background:rgba(248,81,73,.05)"><span class="lbl" style="color:#f85149">tmp_customers = pd.read_sql(...)</span><span class="badge" style="background:rgba(248,81,73,.14);color:#f85149">DataFrame in memory</span></div>
+    <div class="code-head" style="background:rgba(248,81,73,.05)"><span class="lbl" style="color:#f85149">tmp_customers = pd.read_sql(...)</span><span class="badge" style="background:rgba(248,81,73,.14);color:#f85149">DataFrame in kernel</span></div>
     <div class="code-body"><pre><span class="il">tmp_customers = pd.read_sql(<span style="color:#a5d6ff">"SELECT * FROM raw.customers"</span>, engine)  <span class="in">⚠ hardcoded schema name</span></span>
 tmp_customers[<span style="color:#a5d6ff">'email'</span>] = tmp_customers[<span style="color:#a5d6ff">'email'</span>].str.lower().str.strip()
 tmp_customers[<span style="color:#a5d6ff">'first_name'</span>] = tmp_customers[<span style="color:#a5d6ff">'first_name'</span>].fillna(<span style="color:#a5d6ff">'Unknown'</span>)
@@ -250,13 +255,13 @@ tmp_customers[<span style="color:#a5d6ff">'region'</span>] = tmp_customers[<span
     <span style="color:#ff7b72">CASE WHEN</span> region <span style="color:#ff7b72">IS NULL THEN</span> <span style="color:#a5d6ff">'Unassigned'</span> <span style="color:#ff7b72">ELSE</span> <span style="color:#79c0ff">UPPER</span>(region) <span style="color:#ff7b72">END</span> <span style="color:#ff7b72">AS</span> region,
     created_at
 <span style="color:#ff7b72">FROM</span> {{ <span style="color:#d2a8ff">source</span>(<span style="color:#a5d6ff">'raw'</span>, <span style="color:#a5d6ff">'customers'</span>) }}</pre>
-        <div class="what-changed"><strong>What changed:</strong> The transformation logic is identical — just SQL now. No Python runtime, no memory limits, no network transfer of raw data. <code>pd.read_sql("... FROM raw.customers")</code> becomes <code>source('raw','customers')</code> — dbt registers this as an official data entry point it can test, monitor for freshness, and alert on. The result is a real, persistent, queryable table in your warehouse, not a variable that lives and dies with one script run.</div>
+        <div class="what-changed"><strong>What changed:</strong> The transformation logic is identical, just SQL now. No Python runtime, no kernel memory limits, no network transfer of raw data. <code>pd.read_sql("... FROM raw.customers")</code> becomes <code>source('raw','customers')</code>, and dbt registers this as an official data entry point it can test, monitor for freshness, and alert on. The result is a real, persistent, queryable table in your warehouse, not a variable that lives and dies with one kernel session.</div>
       </div>
     </div>
   </div>
 
   <div class="code-wrap tmp-block" id="tmp2" onclick="toggleTmp('tmp2','dbt2')">
-    <div class="code-head" style="background:rgba(248,81,73,.05)"><span class="lbl" style="color:#f85149">tmp_orders = pd.read_sql(...)</span><span class="badge" style="background:rgba(248,81,73,.14);color:#f85149">DataFrame in memory</span></div>
+    <div class="code-head" style="background:rgba(248,81,73,.05)"><span class="lbl" style="color:#f85149">tmp_orders = pd.read_sql(...)</span><span class="badge" style="background:rgba(248,81,73,.14);color:#f85149">DataFrame in kernel</span></div>
     <div class="code-body"><pre><span class="il">tmp_orders = pd.read_sql(<span style="color:#a5d6ff">"SELECT * FROM raw.orders"</span>, engine)  <span class="in">⚠ hardcoded schema name</span></span>
 tmp_orders = tmp_orders[
     tmp_orders[<span style="color:#a5d6ff">'order_id'</span>].notna() &amp; (tmp_orders[<span style="color:#a5d6ff">'status'</span>] != <span style="color:#a5d6ff">'cancelled'</span>)
@@ -267,13 +272,13 @@ tmp_orders = tmp_orders[
         <pre><span style="color:#ff7b72">SELECT</span> order_id, customer_id, order_date, status, total_amount
 <span style="color:#ff7b72">FROM</span> {{ <span style="color:#d2a8ff">source</span>(<span style="color:#a5d6ff">'raw'</span>, <span style="color:#a5d6ff">'orders'</span>) }}
 <span style="color:#ff7b72">WHERE</span> order_id <span style="color:#ff7b72">IS NOT NULL</span> <span style="color:#ff7b72">AND</span> status != <span style="color:#a5d6ff">'cancelled'</span></pre>
-        <div class="what-changed"><strong>What changed:</strong> Same filter logic, now a standalone file. When another team builds a revenue pipeline and needs clean orders, they reference <code>ref('stg_orders')</code> instead of copy-pasting the filter logic into their own script. In the Python world, "what is a valid order" ends up defined in five different scripts — and they drift.</div>
+        <div class="what-changed"><strong>What changed:</strong> Same filter logic, now a standalone file. When another team builds a revenue pipeline and needs clean orders, they reference <code>ref('stg_orders')</code> instead of copy-pasting the filter logic into their own notebook. Across notebooks, "what is a valid order" ends up defined in five different files, and they drift.</div>
       </div>
     </div>
   </div>
 
   <div class="code-wrap tmp-block" id="tmp3" onclick="toggleTmp('tmp3','dbt3')">
-    <div class="code-head" style="background:rgba(248,81,73,.05)"><span class="lbl" style="color:#f85149">tmp_payments = pd.read_sql(...)</span><span class="badge" style="background:rgba(248,81,73,.14);color:#f85149">DataFrame in memory</span></div>
+    <div class="code-head" style="background:rgba(248,81,73,.05)"><span class="lbl" style="color:#f85149">tmp_payments = pd.read_sql(...)</span><span class="badge" style="background:rgba(248,81,73,.14);color:#f85149">DataFrame in kernel</span></div>
     <div class="code-body"><pre><span class="il">tmp_payments = pd.read_sql(<span style="color:#a5d6ff">"SELECT * FROM raw.payments"</span>, engine)  <span class="in">⚠ hardcoded schema name</span></span>
 tmp_payments = tmp_payments[
     tmp_payments[<span style="color:#a5d6ff">'payment_id'</span>].notna() &amp; (tmp_payments[<span style="color:#a5d6ff">'amount'</span>] &gt; <span style="color:#79c0ff">0</span>)
@@ -287,14 +292,14 @@ tmp_payments = tmp_payments[
     created_at <span style="color:#ff7b72">AS</span> payment_date
 <span style="color:#ff7b72">FROM</span> {{ <span style="color:#d2a8ff">source</span>(<span style="color:#a5d6ff">'raw'</span>, <span style="color:#a5d6ff">'payments'</span>) }}
 <span style="color:#ff7b72">WHERE</span> payment_id <span style="color:#ff7b72">IS NOT NULL</span> <span style="color:#ff7b72">AND</span> amount &gt; <span style="color:#79c0ff">0</span></pre>
-        <div class="what-changed"><strong>What changed:</strong> Same transformation. Now steps 1, 2, and 3 are three independent files with no dependency on each other — dbt can run all three in parallel. The Python script was forced to run them serially simply because that's how a single-threaded script works.</div>
+        <div class="what-changed"><strong>What changed:</strong> Same transformation. Now steps 1, 2, and 3 are three independent files with no dependency on each other — dbt can run all three in parallel. The notebook runs them one cell at a time, in whatever order you happened to click.</div>
       </div>
     </div>
   </div>
 
   <div class="code-wrap tmp-block" id="tmp4" onclick="toggleTmp('tmp4','dbt4')">
     <div class="code-head" style="background:rgba(210,153,34,.05)"><span class="lbl" style="color:#d29922">tmp_orders_with_payments = tmp_orders.merge(...)</span><span class="badge" style="background:rgba(210,153,34,.14);color:#d29922">Join step</span></div>
-    <div class="code-body"><pre><span class="wl">agg = tmp_payments.groupby(<span style="color:#a5d6ff">'order_id'</span>).agg(  <span class="wn">⚡ must wait for steps 2 &amp; 3 — enforced by you, not the system</span></span>
+    <div class="code-body"><pre><span class="wl">agg = tmp_payments.groupby(<span style="color:#a5d6ff">'order_id'</span>).agg(  <span class="wn">⚡ needs cells 2 &amp; 3 run first, in that order, on you not the system</span></span>
     total_paid=(<span style="color:#a5d6ff">'payment_amount'</span>, <span style="color:#a5d6ff">'sum'</span>),
     payment_count=(<span style="color:#a5d6ff">'payment_id'</span>, <span style="color:#a5d6ff">'count'</span>)
 ).reset_index()
@@ -314,7 +319,7 @@ tmp_orders_with_payments[<span style="color:#a5d6ff">'outstanding_balance'</span
 <span style="color:#ff7b72">FROM</span> {{ <span style="color:#d2a8ff">ref</span>(<span style="color:#a5d6ff">'stg_orders'</span>) }} o
 <span style="color:#ff7b72">LEFT JOIN</span> {{ <span style="color:#d2a8ff">ref</span>(<span style="color:#a5d6ff">'stg_payments'</span>) }} p <span style="color:#ff7b72">ON</span> o.order_id = p.order_id
 <span style="color:#ff7b72">GROUP BY</span> o.order_id, o.customer_id, o.order_date, o.total_amount</pre>
-        <div class="what-changed"><strong>What changed:</strong> <code>tmp_orders</code> and <code>tmp_payments</code> (Python variables that exist only during this script run) become <code>ref('stg_orders')</code> and <code>ref('stg_payments')</code> — persistent, queryable warehouse tables. Those <code>ref()</code> calls also declare the dependency: dbt knows to finish both staging models before running this one. You didn't write any orchestration logic — the <code>ref()</code> calls are the orchestration.</div>
+        <div class="what-changed"><strong>What changed:</strong> <code>tmp_orders</code> and <code>tmp_payments</code> (cell variables that exist only while the kernel is alive) become <code>ref('stg_orders')</code> and <code>ref('stg_payments')</code> — persistent, queryable warehouse tables. Those <code>ref()</code> calls also declare the dependency: dbt knows to finish both staging models before running this one. You didn't write any orchestration logic — the <code>ref()</code> calls are the orchestration.</div>
       </div>
     </div>
   </div>
@@ -332,7 +337,7 @@ result = summary.groupby(
 ).reset_index()
 <span class="il">result.to_sql(<span style="color:#a5d6ff">'fct_customer_order_summary'</span>, engine, schema=<span style="color:#a5d6ff">'analytics'</span>,  <span class="in">⚠ full overwrite every run</span></span>
 <span class="il">             if_exists=<span style="color:#a5d6ff">'replace'</span>, index=<span style="color:#ff7b72">False</span>)</span>
-<span class="il"><span style="color:#8b949e"># Script ends. All 5 DataFrames dropped. Nothing to inspect on failure.  <span class="in">⚠ debug from scratch</span></span></span></pre></div>
+<span class="il"><span style="color:#8b949e"># Kernel state is all you have; restart it and nothing survives to inspect.  <span class="in">⚠ debug from scratch</span></span></span></pre></div>
     <div class="transform-reveal" id="dbt5">
       <div class="t-arrow"><span class="arr">↓</span><span>becomes → <strong style="color:#3fb950">models/marts/fct_customer_order_summary.sql</strong></span></div>
       <div class="dbt-reveal">
@@ -348,13 +353,13 @@ result = summary.groupby(
 <span style="color:#ff7b72">LEFT JOIN</span> {{ <span style="color:#d2a8ff">ref</span>(<span style="color:#a5d6ff">'int_orders_with_payments'</span>) }} op
     <span style="color:#ff7b72">ON</span> c.customer_id = op.customer_id
 <span style="color:#ff7b72">GROUP BY</span> c.customer_id, c.email, full_name, c.region</pre>
-        <div class="what-changed"><strong>You've now seen all 5 steps.</strong> The transformation logic didn't change. What changed: (1) transformations run in the warehouse, not in Python memory — no memory ceilings, no data transfer overhead; (2) each step is a real, persistent, queryable table — not a variable that vanishes; (3) <code>if_exists='replace'</code> is gone — materialization is a one-line config, not code you have to maintain.</div>
+        <div class="what-changed"><strong>You've now seen all 5 steps.</strong> The transformation logic didn't change. What changed: (1) transformations run in the warehouse, not in the notebook kernel, so no memory ceilings and no data transfer overhead; (2) each step is a real, persistent, queryable table — not a variable that vanishes; (3) <code>if_exists='replace'</code> is gone — materialization is a one-line config, not code you have to maintain.</div>
       </div>
     </div>
   </div>
 
   <div class="ann danger">
-    <strong>The pattern:</strong> Same transformation logic throughout. What dbt changes is the execution environment and the wrapper — transformations move from Python memory into the warehouse, <code>pd.read_sql("... FROM raw.x")</code> becomes <code>source()</code>, <code>tmp_x</code> variable references become <code>ref()</code>. Those three substitutions unlock everything else.
+    <strong>The pattern:</strong> Same transformation logic throughout. What dbt changes is the execution environment and the wrapper: transformations move from the notebook kernel into the warehouse, <code>pd.read_sql("... FROM raw.x")</code> becomes <code>source()</code>, <code>tmp_x</code> variable references become <code>ref()</code>. Those three substitutions unlock everything else.
   </div>
 </div>
 
@@ -385,15 +390,15 @@ result = summary.groupby(
     <div class="src-row"><span class="raw-s">pd.read_sql("... FROM raw.customers", engine)</span><span class="arr-s">→</span><span class="fn-s">{{ source('raw', 'customers') }}</span></div>
     <div class="src-row"><span class="raw-s">pd.read_sql("... FROM raw.orders", engine)</span><span class="arr-s">→</span><span class="fn-s">{{ source('raw', 'orders') }}</span></div>
     <div class="src-row"><span class="raw-s">pd.read_sql("... FROM raw.payments", engine)</span><span class="arr-s">→</span><span class="fn-s">{{ source('raw', 'payments') }}</span></div>
-    <div style="margin-top:10px;font-size:12px;color:#8b949e;line-height:1.6">The Python script hardcoded schema names and a connection string. If a schema renames, the script throws an error — or worse, silently returns stale data. <code style="font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px">source()</code> registers these as official entry points — dbt can test them, check freshness, and alert you before a bad data day becomes a bad dashboard day. It also resolves the correct schema per environment automatically, so dev and prod never share the same hardcoded string.</div>
+    <div style="margin-top:10px;font-size:12px;color:#8b949e;line-height:1.6">The notebook hardcoded schema names and a connection string. If a schema renames, the cell throws an error, or worse, silently returns stale data. <code style="font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px">source()</code> registers these as official entry points — dbt can test them, check freshness, and alert you before a bad data day becomes a bad dashboard day. It also resolves the correct schema per environment automatically, so dev and prod never share the same hardcoded string.</div>
   </div>
 
   <div class="src-box">
     <h4>ref() — how models depend on each other</h4>
-    <div class="src-row"><span class="raw-s">tmp_orders (Python variable)</span><span class="arr-s">→</span><span class="ref-s">{{ ref('stg_orders') }}</span></div>
-    <div class="src-row"><span class="raw-s">tmp_payments (Python variable)</span><span class="arr-s">→</span><span class="ref-s">{{ ref('stg_payments') }}</span></div>
+    <div class="src-row"><span class="raw-s">tmp_orders (cell variable)</span><span class="arr-s">→</span><span class="ref-s">{{ ref('stg_orders') }}</span></div>
+    <div class="src-row"><span class="raw-s">tmp_payments (cell variable)</span><span class="arr-s">→</span><span class="ref-s">{{ ref('stg_payments') }}</span></div>
     <div class="src-row"><span class="raw-s">tmp_customers, tmp_orders_with_payments</span><span class="arr-s">→</span><span class="ref-s">ref('stg_customers'), ref('int_orders_with_payments')</span></div>
-    <div style="margin-top:10px;font-size:12px;color:#8b949e;line-height:1.6">Every <code>ref()</code> is a declared dependency. dbt reads them all and builds the execution order automatically. You don't write orchestration code — the <code>ref()</code> calls <em>are</em> the orchestration. In the Python script, the order was enforced by line numbers and comments; here it's enforced by the system.</div>
+    <div style="margin-top:10px;font-size:12px;color:#8b949e;line-height:1.6">Every <code>ref()</code> is a declared dependency. dbt reads them all and builds the execution order automatically. You don't write orchestration code; the <code>ref()</code> calls <em>are</em> the orchestration. In the notebook, the order was enforced by cell position and hope, and running cells out of order quietly broke it; here it's enforced by the system.</div>
   </div>
 
   <div class="dag-wrap">
@@ -445,7 +450,7 @@ result = summary.groupby(
   </div>
 
   <div class="ann">
-    <strong>This graph is the Python script made visible.</strong> The script had this same structure — it just wasn't visible. You had to read 45 lines of Python to understand that step 4 depended on steps 2 and 3. dbt makes it explicit, queryable, and documented automatically.
+    <strong>This graph is the notebook made visible.</strong> The notebook had this same structure, it just wasn't visible. You had to read through five cells (in whatever order they were last run) to understand that step 4 depended on steps 2 and 3. dbt makes it explicit, queryable, and documented automatically.
   </div>
 </div>
 
@@ -453,12 +458,12 @@ result = summary.groupby(
 <div class="panel" id="p3">
   <div class="hint">
     <span class="hint-icon">⚡</span>
-    <div>The Python script runs all 5 steps in sequence — that's the only option in a single-threaded script. dbt reads the dependency graph and runs independent models simultaneously across threads.</div>
+    <div>The notebook runs cell by cell, top to bottom, when you remember to run them in order. That's the only option a kernel gives you. dbt reads the dependency graph and runs independent models simultaneously across threads.</div>
   </div>
 
   <div class="par-wrap">
     <div class="par-block">
-      <h4>❌ python script — serial only</h4>
+      <h4>❌ notebook — serial, cell by cell</h4>
       <div class="bar-row"><span class="bar-lbl">step 1</span><div class="bar-track"><div class="bar-fill" style="width:20%;background:#58a6ff;left:0%">stg_cust</div></div></div>
       <div class="bar-row"><span class="bar-lbl">step 2</span><div class="bar-track"><div class="bar-fill" style="width:20%;background:#3fb950;left:20%">stg_orders</div></div></div>
       <div class="bar-row"><span class="bar-lbl">step 3</span><div class="bar-track"><div class="bar-fill" style="width:20%;background:#d29922;left:40%">stg_pay</div></div></div>
@@ -483,8 +488,8 @@ result = summary.groupby(
   </div>
 
   <div style="background:#161b22;border:1px solid #2d333b;border-radius:9px;padding:14px 16px;margin-bottom:16px;font-size:12px;color:#8b949e;line-height:1.6">
-    <strong style="color:#e6edf3;display:block;margin-bottom:5px">What about using Python with an orchestrator like Airflow?</strong>
-    You can parallelize Python scripts with Airflow or Prefect — but now you're maintaining two systems: the transformation logic in Python, and the DAG definition in the orchestrator. In dbt, the <code>ref()</code> calls inside your SQL files <em>are</em> the DAG. There's no separate orchestration file to keep in sync.
+    <strong style="color:#e6edf3;display:block;margin-bottom:5px">What about scheduling notebooks with papermill or Airflow?</strong>
+    You can productionize notebooks with papermill, nbconvert, or an Airflow DAG, but now you're maintaining two systems: the transformation logic in cells, and the schedule and dependency wiring outside the notebook. And a notebook run is still one kernel executing cells in sequence. In dbt, the <code>ref()</code> calls inside your SQL files <em>are</em> the DAG. There's no separate orchestration file to keep in sync.
   </div>
 
   <div class="ann">
@@ -496,17 +501,17 @@ result = summary.groupby(
 <div class="panel" id="p4">
   <div class="hint">
     <span class="hint-icon">🔬</span>
-    <div>The Python script works until it doesn't. When it breaks, the debugging experience is fundamentally different. <strong>Click each scenario</strong> to compare.</div>
+    <div>The notebook works until it doesn't. When it breaks, the debugging experience is fundamentally different. <strong>Click each scenario</strong> to compare.</div>
   </div>
 
   <div class="debug-scenario">
     <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname">Pipeline fails at the join step (step 4)</span><span class="chevron">▼</span></div>
     <div class="debug-body">
       <div class="debug-split">
-        <div class="dc"><div class="ch">python script</div><p>Step 4 failed. The DataFrames from steps 1–3 were in memory — they're gone when the process died. Re-run the entire script from the top to reproduce the failure. Every debug cycle = full re-run, including all the expensive <code>pd.read_sql()</code> calls.</p></div>
+        <div class="dc"><div class="ch">notebook</div><p>Cell 4 failed. If the kernel is still alive, the DataFrames from cells 1–3 linger, but can you trust them? Were they run in this order, against this version of the code? If you restart the kernel to be sure, they're gone and you re-run every cell from the top. Every debug cycle risks another full re-run, including the expensive <code>pd.read_sql()</code> calls.</p></div>
         <div class="dc"><div class="ch">dbt</div><p>Step 4 failed. <code>stg_orders</code> and <code>stg_payments</code> are still in the warehouse as real tables. Run <code>dbt run -s int_orders_with_payments</code> to re-execute only that model. Upstream work stays intact.</p></div>
       </div>
-      <div class="debug-note">The difference comes from one thing: dbt models are real, persistent tables in your warehouse. Python DataFrames live in memory and die with the process. That's the whole game.</div>
+      <div class="debug-note">The difference comes from one thing: dbt models are real, persistent tables in your warehouse. Notebook DataFrames live in a kernel and die when it restarts. That's the whole game.</div>
     </div>
   </div>
 
@@ -514,7 +519,7 @@ result = summary.groupby(
     <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname">Wrong row count in the final output</span><span class="chevron">▼</span></div>
     <div class="debug-body">
       <div class="debug-split">
-        <div class="dc"><div class="ch">python script</div><p>Fan-out in the merge? Bad filter in step 2? You add <code>print(df.shape)</code> calls throughout, re-run the whole script, and stare at numbers. Or you temporarily write intermediate CSVs to disk. Multiple full re-run cycles to isolate the problem.</p></div>
+        <div class="dc"><div class="ch">notebook</div><p>Fan-out in the merge? Bad filter in cell 2? You scatter <code>df.shape</code> into extra cells, re-run them, and hope you ran them in the right order against current state. Or you temporarily write intermediate CSVs to disk. Multiple re-run cycles to isolate the problem.</p></div>
         <div class="dc"><div class="ch">dbt</div><p>Query <code>stg_orders</code> — how many rows? Query <code>int_orders_with_payments</code> — how many? The difference shows exactly where the fan-out happened. No re-run needed. The intermediate tables are just sitting there in the warehouse.</p></div>
       </div>
       <div class="debug-note">Because every intermediate model is a real table, you can bisect a row count problem the same way you'd bisect a bug in code — without re-running anything.</div>
@@ -525,8 +530,8 @@ result = summary.groupby(
     <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname">Upstream schema change — a column got renamed</span><span class="chevron">▼</span></div>
     <div class="debug-body">
       <div class="debug-split">
-        <div class="dc"><div class="ch">python script</div><p>The rename hits mid-script: <code>KeyError: 'amount'</code>. Steps 1 and 2 already ran and loaded data into memory. Now you're not sure what state anything is in. Find all the places in all scripts where <code>'amount'</code> is referenced — there's no central list.</p></div>
-        <div class="dc"><div class="ch">dbt</div><p><code>stg_payments</code> is the only model that touches <code>raw.payments</code>. Fix the column reference there. Every downstream model gets the fix automatically on the next run. One change point, not five scripts to grep through.</p></div>
+        <div class="dc"><div class="ch">notebook</div><p>The rename surfaces when you re-run cell 3: <code>KeyError: 'amount'</code>. Cells 1 and 2 already ran and their DataFrames still sit in the kernel, so the notebook is now in a half-updated state. Find every notebook and cell where <code>'amount'</code> is referenced; there's no central list.</p></div>
+        <div class="dc"><div class="ch">dbt</div><p><code>stg_payments</code> is the only model that touches <code>raw.payments</code>. Fix the column reference there. Every downstream model gets the fix automatically on the next run. One change point, not five notebooks to grep through.</p></div>
       </div>
       <div class="debug-note">The <code>stg_</code> layer acts as an isolation boundary. Raw schema changes only affect one file — the staging model for that source.</div>
     </div>
@@ -536,7 +541,7 @@ result = summary.groupby(
     <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname">3am on-call alert fires</span><span class="chevron">▼</span></div>
     <div class="debug-body">
       <div class="debug-split">
-        <div class="dc"><div class="ch">python script</div><p>Script failed. No DataFrames anywhere — they were in memory. Re-run the full script to reproduce. Add <code>print()</code> statements, re-run again. Check if any temp CSVs were written. Multiple cycles before you even start fixing. All the expensive source queries run again each time.</p></div>
+        <div class="dc"><div class="ch">notebook</div><p>The scheduled run failed. It ran in a fresh, headless kernel (papermill), which then exited, so no DataFrames anywhere. Open the notebook, run every cell to reproduce, add cells, run again. Multiple cycles before you even start fixing, and all the expensive source queries run again each time.</p></div>
         <div class="dc"><div class="ch">dbt</div><p>dbt run logs show the exact model that failed and the exact SQL error. Intermediate models are still in the warehouse. Fix the model, run <code>dbt run -s failed_model+</code> to re-run it and only its dependents.</p></div>
       </div>
       <div class="debug-note">This is where the value becomes visceral. The engineer on-call at 3am cares a lot about whether the intermediate state survived the failure.</div>
@@ -547,15 +552,26 @@ result = summary.groupby(
     <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname">What else depends on payments data?</span><span class="chevron">▼</span></div>
     <div class="debug-body">
       <div class="debug-split">
-        <div class="dc"><div class="ch">python script</div><p>Grep the scripts folder for <code>raw.payments</code> and hope every script uses the same connection string format. Hope nobody copied the logic into a Jupyter notebook. No system-of-record for what reads what.</p></div>
+        <div class="dc"><div class="ch">notebook</div><p>Grep every notebook for <code>raw.payments</code>, across <code>.ipynb</code> files where the code is buried in JSON cell arrays and hard to search, and hope everyone uses the same connection string format. Hope nobody copied the logic into yet another notebook. No system-of-record for what reads what.</p></div>
         <div class="dc"><div class="ch">dbt</div><p>The lineage graph shows every downstream model that references <code>stg_payments</code>. Click on it in the dbt DAG and see the full impact of any change instantly. A new engineer can answer "what depends on this?" in 5 seconds.</p></div>
       </div>
       <div class="debug-note">A grep of the codebase finds what you know to look for. The dbt DAG shows you what you didn't know existed.</div>
     </div>
   </div>
 
+  <div class="debug-scenario">
+    <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname">Reviewing a teammate's change in a pull request</span><span class="chevron">▼</span></div>
+    <div class="debug-body">
+      <div class="debug-split">
+        <div class="dc"><div class="ch">notebook</div><p>A one-line logic change shows up in the PR as a wall of JSON: shifted <code>execution_count</code> values, regenerated <code>outputs</code>, and base64 image blobs from re-run charts. The actual change is buried in a <code>"source"</code> array. Reviewers can't read it, so they rubber-stamp it or skip review entirely.</p></div>
+        <div class="dc"><div class="ch">dbt</div><p>Models are plain <code>.sql</code> files. The same change is a two-line SQL diff in the PR: readable, reviewable, commentable line by line. Version control works the way it does for the rest of your code.</p></div>
+      </div>
+      <div class="debug-note">A notebook is JSON with code inside it; a dbt model is code. That's why one reviews cleanly in git and the other doesn't.</div>
+    </div>
+  </div>
+
   <div class="ann ok">
-    <strong>The root cause of every dbt debugging advantage:</strong> Intermediate models are real, persistent, queryable tables. Python DataFrames live in memory and disappear when the process ends. Every other difference flows from that one fact.
+    <strong>The root cause of every dbt debugging advantage:</strong> Intermediate models are real, persistent, queryable tables. Notebook DataFrames live in a kernel and disappear when it restarts. Every other difference flows from that one fact.
   </div>
 </div>
 

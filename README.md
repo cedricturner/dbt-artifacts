@@ -28,7 +28,7 @@ The language doesn't matter. Where the computation runs does.
 If you'd rather learn by doing, I keep a set of interactive walkthroughs on the same ideas:
 
 - [dbt vs Stored Procedures](https://cedricturner.github.io/dbt-artifacts/dbt-vs-stored-procs/): step through a real migration
-- [dbt vs Python Scripts](https://cedricturner.github.io/dbt-artifacts/dbt-vs-scripts/): see what changes when computation moves into the warehouse
+- [dbt vs Notebooks](https://cedricturner.github.io/dbt-artifacts/dbt-vs-notebooks/): see what changes when computation moves into the warehouse
 - [dbt Connection Modes](https://cedricturner.github.io/dbt-artifacts/dbt-connection-modes/): how dbt connects to your warehouse, and what each option actually means
 - [dbt + AI / Conversational Analytics](https://cedricturner.github.io/dbt-artifacts/dbt-ai-llm/): how the Semantic Layer becomes the contract between governed metrics and AI agents
 - [dbt Wizard, explained](https://cedricturner.github.io/dbt-artifacts/dbt-wizard/): why a dbt-native agent beats a generic AI tool, told as a library (the index, the reference desk, and the librarian)
