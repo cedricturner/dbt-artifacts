@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dbt Core vs. the platform, explained</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-height:100vh;overflow-x:hidden}
+.app{max-width:900px;margin:0 auto;padding:40px 20px 80px}
+
+/* topbar / lang toggle (shared house pattern) */
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
+.back{font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none}
+.back:hover{color:#8b949e}
+.lang-toggle{display:inline-flex;background:#161b22;border:1px solid #2d333b;border-radius:99px;padding:3px;gap:2px;flex-shrink:0}
+.lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#8b949e;background:transparent;border:none;border-radius:99px;padding:5px 12px;cursor:pointer;transition:all .2s;line-height:1}
+.lang-btn:hover{color:#e6edf3}
+.lang-btn.active{background:#2dd4bf;color:#00332e}
+
+/* header */
+.hdr{text-align:center;margin-bottom:34px}
+.hdr-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#2dd4bf;background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.28);padding:4px 13px;border-radius:99px;margin-bottom:14px}
+.hdr h1{font-size:clamp(24px,4.4vw,38px);font-weight:600;line-height:1.22;margin-bottom:12px;color:#fff}
+.hdr p{color:#8b949e;font-size:14.5px;max-width:600px;margin:0 auto;line-height:1.65}
+
+/* jump nav */
+.jump{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:34px}
+.jump a{font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b949e;background:#161b22;border:1px solid #2d333b;border-radius:99px;padding:6px 13px;text-decoration:none;transition:all .15s}
+.jump a:hover{border-color:#2dd4bf;color:#2dd4bf}
+
+/* thesis panel */
+.thesis{background:linear-gradient(180deg,rgba(45,212,191,.08),rgba(45,212,191,.02));border:1px solid rgba(45,212,191,.28);border-radius:12px;padding:22px 24px;margin-bottom:22px}
+.thesis .tl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#2dd4bf;margin-bottom:11px;font-weight:600}
+.thesis p{font-size:14.5px;line-height:1.75;color:#c9d1d9}
+.thesis p b{color:#fff;font-weight:600}
+.thesis code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(255,255,255,.07);padding:1px 5px;border-radius:3px;color:#e6edf3}
+
+/* flags: inline + block, deliberately loud so they're easy to spot */
+.flag{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#d29922;background:rgba(210,153,34,.12);border:1px solid rgba(210,153,34,.4);border-radius:5px;padding:2px 8px;white-space:normal}
+.flagbox{border:1px solid rgba(210,153,34,.4);background:rgba(210,153,34,.06);border-radius:10px;padding:16px 18px;margin-bottom:22px}
+.flagbox .fb-lbl{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#d29922;margin-bottom:9px}
+.flagbox p{font-size:13.5px;line-height:1.7;color:#c9d1d9}
+.flagbox p b{color:#e6edf3}
+
+/* sections */
+.section{margin:44px 0}
+.sec-h{font-size:clamp(19px,3vw,25px);font-weight:600;color:#fff;margin-bottom:9px}
+.sec-intro{font-size:14px;line-height:1.7;color:#8b949e;max-width:640px;margin-bottom:20px}
+
+/* right-call checklist */
+.rightcard{background:#161b22;border:1px solid #2d333b;border-radius:10px;padding:22px 24px}
+.rightlist{list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:16px}
+.rightlist li{position:relative;padding-left:26px;font-size:13.5px;line-height:1.6;color:#c9d1d9}
+.rightlist li::before{content:'✓';position:absolute;left:0;top:0;color:#3fb950;font-weight:700;font-size:13px}
+.sec-close{font-size:13px;line-height:1.65;color:#8b949e;padding-top:14px;border-top:1px dashed #2d333b}
+
+/* alt path card (snowflake native dbt) */
+.altpath{margin-top:18px;border-top:1px solid #2d333b;padding-top:18px}
+.altpath-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:#58a6ff;margin-bottom:9px;font-weight:700}
+.altpath p{font-size:13px;line-height:1.65;color:#c9d1d9;margin-bottom:9px}
+.altpath p:last-child{margin-bottom:0}
+
+/* tipping point cards */
+.tip{background:#161b22;border:1px solid #2d333b;border-radius:11px;overflow:hidden;margin-bottom:18px}
+.tip-head{padding:16px 20px 4px}
+.tip-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:#2dd4bf;font-weight:700;display:block;margin-bottom:6px}
+.tip-title{font-size:16.5px;font-weight:600;color:#fff}
+.tip-moment{font-size:14px;font-style:italic;line-height:1.55;color:#e6edf3;border-left:3px solid #2dd4bf;margin:10px 20px 0;padding:2px 0 2px 14px}
+
+/* visual comparison block: svg or box-grid + short caption strip */
+.viz{border:1px solid #2d333b;border-radius:9px;background:#0d1117;padding:14px 16px 4px;margin:14px 20px 18px}
+.viz svg{width:100%;min-width:520px;height:auto;display:block}
+.viz-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.viz-panel{background:#161b22;border:1px solid #2d333b;border-radius:8px;padding:12px 14px}
+.viz-panel.core{border-color:#30363d}
+.viz-panel.plat{border-color:rgba(45,212,191,.35)}
+.viz-panel .vp-title{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;margin-bottom:10px}
+.viz-panel.core .vp-title{color:#8b949e}
+.viz-panel.plat .vp-title{color:#2dd4bf}
+.viz-cap{display:flex;gap:0;margin:12px -16px 0;border-top:1px solid #2d333b;padding-top:10px;padding-bottom:2px}
+.viz-cap>div{flex:1;font-size:11.5px;line-height:1.55;color:#8b949e;padding:0 16px}
+.viz-cap>div:first-child{border-right:1px dashed #2d333b}
+.viz-cap b{color:#e6edf3}
+.viz-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border-radius:4px;padding:1px 6px;margin-right:6px}
+.viz-tag.core{background:rgba(139,148,158,.15);color:#8b949e}
+.viz-tag.plat{background:rgba(45,212,191,.15);color:#2dd4bf}
+
+/* run-history strip (tipping point 1) */
+.runstrip{display:flex;gap:6px;margin-bottom:9px}
+.runcell{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;flex-shrink:0}
+.runcell.unknown{background:#21262d;color:#8b949e;border:1px dashed #444c56}
+.runcell.ok{background:rgba(63,185,80,.14);color:#3fb950;border:1px solid rgba(63,185,80,.4)}
+.runcell.bad{background:rgba(248,81,73,.18);color:#f85149;border:1px solid #f85149}
+.viz-note{font-size:11px;color:#8b949e;line-height:1.5}
+.viz-note.warn{color:#f85149}
+
+/* requirement rows (tipping point 2) */
+.reqrow{font-size:12px;color:#c9d1d9;padding:3px 0;display:flex;gap:7px;align-items:baseline}
+.reqrow .rm{font-family:'JetBrains Mono',monospace;font-size:10px;flex-shrink:0}
+.reqrow.friction .rm{color:#f85149}
+.reqrow.relief .rm{color:#3fb950}
+.reach-lbl{font-size:10.5px;color:#8b949e;margin-top:9px;padding-top:8px;border-top:1px dashed #2d333b}
+.reach-lbl b{color:#e6edf3}
+
+/* audit log comparison (tipping point 3) */
+.logbox{border:1px dashed #444c56;border-radius:6px;padding:16px 10px;text-align:center;color:#8b949e;font-size:11px;min-height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.logbox .big{font-size:22px;color:#444c56;font-family:'JetBrains Mono',monospace;font-weight:700}
+.logtable{display:flex;flex-direction:column;gap:5px}
+.logrow{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#c9d1d9;background:#0d1117;border:1px solid #2d333b;border-radius:4px;padding:5px 8px}
+.logrow b{color:#2dd4bf}
+
+/* reach chips (tipping point 7) */
+.chiprow{display:flex;flex-wrap:wrap;gap:6px}
+.rchip{font-family:'JetBrains Mono',monospace;font-size:10.5px;border-radius:99px;padding:4px 10px;border:1px solid}
+.rchip.in{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.4);color:#5eead4}
+.rchip.hasnt{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.4);color:#5eead4}
+.rchip.no{background:transparent;border-color:#30363d;color:#484f58;text-decoration:line-through}
+
+/* mesh example toggle block */
+.mesh-ex{margin:0 20px 18px;border-radius:8px;overflow:hidden;border:1px solid #2d333b;cursor:pointer}
+.mesh-ex .mh{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:#0d1117;border-bottom:1px solid #2d333b}
+.mesh-ex .mh .lbl{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;color:#58a6ff}
+.mesh-ex .mh .hint{font-family:'DM Sans',sans-serif;font-size:10px;color:#58a6ff;opacity:.65}
+.mesh-ex.open .mh .hint{opacity:.4}
+.mesh-body{display:none;background:#0d1117}
+.mesh-body.show{display:block}
+.mesh-body pre{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:#e6edf3;white-space:pre;overflow-x:auto;padding:13px 15px;margin:0}
+.mesh-file{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#8b949e;padding:9px 15px 0}
+.mesh-note{font-size:12px;line-height:1.6;color:#8b949e;padding:4px 15px 13px}
+.mesh-note code{font-family:'JetBrains Mono',monospace;font-size:10.5px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px;color:#e6edf3}
+
+/* engine note (core v2 light touch + fusion flagged) */
+.core-v2-note{font-size:12.5px;font-style:italic;line-height:1.65;color:#8b949e;max-width:680px;margin:0 auto 16px;text-align:center}
+
+/* gut check */
+.gut{display:flex;flex-direction:column;gap:2px;margin-bottom:20px}
+.gq{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#161b22;border:1px solid #2d333b;border-radius:9px;padding:14px 16px;flex-wrap:wrap}
+.gq-textwrap{flex:1;min-width:220px;display:flex;flex-direction:column;gap:5px}
+.gq-text{font-size:13px;line-height:1.55;color:#e6edf3}
+.hardtag{display:inline-block;align-self:flex-start;font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#f85149;background:rgba(248,81,73,.12);border:1px solid rgba(248,81,73,.35);border-radius:4px;padding:2px 7px}
+.yn-btns{display:flex;gap:7px;flex-shrink:0}
+.yn-btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:7px 14px;border-radius:6px;border:1px solid #2d333b;background:#0d1117;color:#8b949e;cursor:pointer;transition:all .15s}
+.yn-btn:hover{border-color:#444c56;color:#e6edf3}
+.yn-btn.yes.active{background:#2dd4bf;border-color:#2dd4bf;color:#00332e}
+.yn-btn.no.active{background:#21262d;border-color:#444c56;color:#e6edf3}
+
+.gut-result{background:#161b22;border:1px solid #2d333b;border-radius:11px;padding:22px 24px;text-align:center;transition:border-color .2s}
+.gut-result.core{border-color:#30363d}
+.gut-result.platform{border-color:rgba(45,212,191,.45)}
+.gut-badge-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#8b949e;margin-bottom:8px}
+.gut-badge{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;letter-spacing:.5px;margin-bottom:10px;transition:color .2s}
+.gut-result.core .gut-badge{color:#8b949e}
+.gut-result.platform .gut-badge{color:#2dd4bf}
+.gut-verdict{font-size:14.5px;line-height:1.6;color:#e6edf3;max-width:520px;margin:0 auto}
+.gut-caps{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:14px}
+.gut-caps-label{width:100%;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:#8b949e;margin-bottom:2px}
+.gcap{font-family:'JetBrains Mono',monospace;font-size:10.5px;background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.35);color:#5eead4;border-radius:99px;padding:4px 11px}
+.gcap.hard{background:rgba(248,81,73,.12);border-color:rgba(248,81,73,.35);color:#ff8f88}
+
+/* closing */
+.closing{margin-top:44px;padding-top:24px;border-top:1px solid #2d333b}
+.closing p{font-size:13.5px;line-height:1.7;color:#8b949e;max-width:680px}
+.closing p b{color:#e6edf3;font-weight:600}
+
+@media(max-width:640px){
+  .viz-grid{grid-template-columns:1fr}
+  .viz-cap{flex-direction:column;gap:10px}
+  .viz-cap>div:first-child{border-right:none;border-bottom:1px dashed #2d333b;padding-bottom:10px}
+  .gq{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="topbar">
+  <a class="back" href="../" data-i18n="back_all">← all explainers</a>
+  <div class="lang-toggle" role="group" aria-label="Language / 日本語">
+    <button type="button" class="lang-btn active" data-lang="en" onclick="CvPSetLang('en')">EN</button>
+    <button type="button" class="lang-btn" data-lang="ja" onclick="CvPSetLang('ja')">日本語</button>
+  </div>
+</div>
+
+<div class="hdr">
+  <div class="hdr-tag" data-i18n="tag_kicker">core vs. platform</div>
+  <h1 data-i18n-html="h1">dbt Core vs. the platform: where the line actually is</h1>
+  <p data-i18n-html="hdr_sub">A practitioner's guide to the moment dbt Core alone stops being enough, and what you actually get when you start paying for the dbt platform.</p>
+</div>
+
+<div class="jump">
+  <a href="#right-call" data-i18n="jump1">where core is still right</a>
+  <a href="#tipping-points" data-i18n="jump2">the tipping points</a>
+  <a href="#gutcheck" data-i18n="jump3">gut-check</a>
+</div>
+
+<div class="thesis">
+  <div class="tl" data-i18n="thesis_lbl">the short version</div>
+  <p data-i18n-html="thesis_p">dbt Core is the real transformation engine, not a limited trial: models, tests, docs, <code>ref()</code>, <code>source()</code>, free and open source (Apache 2.0) forever, maintained by <b>Fivetran + dbt Labs</b>. The platform doesn't add more dbt. It adds the operational layer around it: scheduling, access control, discoverability, cross-project sharing. For a solo analyst or a small all-engineer team, Core alone can be genuinely enough. Below: the specific moments where that stops being true.</p>
+</div>
+
+<section class="section" id="right-call">
+  <h2 class="sec-h" data-i18n="rc_h">Where dbt Core alone is still the right call</h2>
+  <p class="sec-intro" data-i18n="rc_intro">Before any pitch, the honest version. None of this is dbt Core "settling for less."</p>
+  <div class="rightcard">
+    <ul class="rightlist">
+      <li data-i18n="rc1">A solo analyst or a single analytics engineer running their own project against their own warehouse.</li>
+      <li data-i18n="rc2">A small, all-engineer team that's comfortable owning its own scheduler, cron, Airflow, GitHub Actions, whatever it is.</li>
+      <li data-i18n="rc3">No governance or audit requirement forcing a formal, provable record of who changed what and when.</li>
+      <li data-i18n="rc4">One dbt project. Nobody else's project needs to depend on your models, and you don't need anyone else's.</li>
+      <li data-i18n="rc5">Everyone who touches the project is comfortable installing dbt locally and holding warehouse credentials.</li>
+    </ul>
+    <p class="sec-close" data-i18n="rc_close">If that's your team, nothing below means you're doing it wrong. It's a map of when one of those stops holding.</p>
+
+    <div class="altpath">
+      <div class="altpath-label" data-i18n="alt_lbl">another path worth knowing about</div>
+      <p data-i18n-html="alt_p1">Paying for the platform isn't the only way to run dbt off your laptop. Snowflake now runs dbt projects natively on its own compute. <span class="flag" data-i18n="alt_flag">⚠ verify before publish, exact feature scope not independently confirmed</span></p>
+      <p data-i18n="alt_p2">Other warehouses may offer similar native paths, worth checking before assuming the platform is the only door out.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="tipping-points">
+  <h2 class="sec-h" data-i18n="tp_h">Where the line starts moving</h2>
+  <p class="sec-intro" data-i18n="tp_intro">Each one starts as a specific, ordinary moment, not a missing feature. The picture is the argument, the words underneath just label it.</p>
+
+  <!-- TP1: scheduling / alerting / CI -->
+  <div class="tip" id="tip-1">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e1">tipping point 1 of 8</span>
+      <div class="tip-title" data-i18n="t1">Something has to run this on a schedule</div>
+    </div>
+    <p class="tip-moment" data-i18n="m1">It's 2am. Did last night's run even happen?</p>
+    <div class="viz">
+      <div class="viz-grid">
+        <div class="viz-panel core">
+          <div class="vp-title" data-i18n="v1_core_h">cron on someone's laptop</div>
+          <div class="runstrip">
+            <div class="runcell unknown">?</div><div class="runcell unknown">?</div><div class="runcell unknown">?</div><div class="runcell unknown">?</div><div class="runcell unknown">?</div>
+          </div>
+          <div class="viz-note" data-i18n="v1_core_n">five nights, no visibility, no alert either way</div>
+        </div>
+        <div class="viz-panel plat">
+          <div class="vp-title" data-i18n="v1_plat_h">scheduled &amp; monitored</div>
+          <div class="runstrip">
+            <div class="runcell ok">✓</div><div class="runcell ok">✓</div><div class="runcell ok">✓</div><div class="runcell bad">✗</div><div class="runcell ok">✓</div>
+          </div>
+          <div class="viz-note warn" data-i18n="v1_plat_n">run 4 failed → on-call paged automatically</div>
+        </div>
+      </div>
+      <div class="viz-cap">
+        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c1">you own the glue code, the credentials, and the silence when it breaks</span></div>
+        <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f1">hosted scheduling, run history, alerting, and CI, run for you</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TP2: studio ide / non-engineer contributors -->
+  <div class="tip" id="tip-2">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e2">tipping point 2 of 8</span>
+      <div class="tip-title" data-i18n="t2">More than engineers need to touch it</div>
+    </div>
+    <p class="tip-moment" data-i18n="m2">The person who knows what "a valid order" means keeps sending you SQL over Slack.</p>
+    <div class="viz">
+      <div class="viz-grid">
+        <div class="viz-panel core">
+          <div class="vp-title" data-i18n="v2_core_h">local CLI</div>
+          <div class="reqrow friction"><span class="rm">▸</span><span data-i18n="v2_core_r1">install dbt</span></div>
+          <div class="reqrow friction"><span class="rm">▸</span><span data-i18n="v2_core_r2">warehouse credentials on their laptop</span></div>
+          <div class="reqrow friction"><span class="rm">▸</span><span data-i18n="v2_core_r3">git + terminal comfort</span></div>
+          <div class="reach-lbl" data-i18n-html="v2_core_lbl">→ <b>engineers only</b></div>
+        </div>
+        <div class="viz-panel plat">
+          <div class="vp-title" data-i18n="v2_plat_h">Studio IDE</div>
+          <div class="reqrow relief"><span class="rm">✓</span><span data-i18n="v2_plat_r1">opens in a browser</span></div>
+          <div class="reqrow relief"><span class="rm">✓</span><span data-i18n="v2_plat_r2">no local install</span></div>
+          <div class="reqrow relief"><span class="rm">✓</span><span data-i18n="v2_plat_r3">no personal warehouse creds to manage</span></div>
+          <div class="reach-lbl" data-i18n-html="v2_plat_lbl">→ <b>anyone with project access</b></div>
+        </div>
+      </div>
+      <div class="viz-cap">
+        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c2">domain knowledge stays outside the project, relayed secondhand</span></div>
+        <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f2">a browser is the barrier to entry, not a laptop setup</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TP3: rbac / sso / audit -->
+  <div class="tip" id="tip-3">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e3">tipping point 3 of 8</span>
+      <div class="tip-title" data-i18n="t3">Who can change what, and who touched this</div>
+    </div>
+    <p class="tip-moment" data-i18n="m3">Compliance asks who can change the model behind the board deck, and how you'd prove it.</p>
+    <div class="viz">
+      <div class="viz-grid">
+        <div class="viz-panel core">
+          <div class="vp-title" data-i18n="v3_core_h">"who touched this?"</div>
+          <div class="logbox">
+            <div class="big">?</div>
+            <div data-i18n="v3_core_n">no audit log kept</div>
+          </div>
+        </div>
+        <div class="viz-panel plat">
+          <div class="vp-title" data-i18n="v3_plat_h">"who touched this?"</div>
+          <div class="logtable">
+            <div class="logrow"><b data-i18n="v3_u1">j.chen</b><span data-i18n="v3_a1"> · edited fct_orders · 2h ago</span></div>
+            <div class="logrow"><b data-i18n="v3_u2">a.patel</b><span data-i18n="v3_a2"> · deployed to prod · yesterday</span></div>
+            <div class="logrow"><b data-i18n="v3_u3">s.wong</b><span data-i18n="v3_a3"> · viewed model · 3d ago</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="viz-cap">
+        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c3">environments are hand-maintained <code>targets</code>, "who touched this" is just <code>git blame</code></span></div>
+        <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f3">RBAC, SSO, and audit logs on Enterprise-tier plans, plus managed dev/staging/prod</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TP4: catalog / lineage -->
+  <div class="tip" id="tip-4">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e4">tipping point 4 of 8</span>
+      <div class="tip-title" data-i18n="t4">The lineage graph exists, nobody fully trusts it</div>
+    </div>
+    <p class="tip-moment" data-i18n="m4">The graph is real. It's also three weeks stale, one project deep, and model-level only.</p>
+    <div class="viz">
+      <svg viewBox="0 0 760 195" xmlns="http://www.w3.org/2000/svg">
+        <text x="10" y="14" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9" font-weight="700" letter-spacing=".6" data-i18n="v4_lbl_core">STALE &middot; MODEL-LEVEL &middot; ONE PROJECT</text>
+        <text x="402" y="14" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="9" font-weight="700" letter-spacing=".6" data-i18n="v4_lbl_plat">LIVE &middot; COLUMN-LEVEL &middot; CROSS-PROJECT</text>
+        <line x1="380" y1="8" x2="380" y2="188" stroke="#2d333b" stroke-width="1" stroke-dasharray="3,5"/>
+
+        <rect x="15" y="26" width="345" height="112" rx="6" fill="none" stroke="#444c56" stroke-width="1.3" stroke-dasharray="4,3"/>
+        <text x="25" y="40" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8.5" data-i18n="v4_proj_left">project: sales</text>
+
+        <defs><marker id="arr4m" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="7" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 3.5 L 0 7 z" fill="#8b949e"/></marker></defs>
+        <rect x="30" y="64" width="58" height="28" rx="5" fill="#161b22" stroke="#8b949e" stroke-width="1.3"/>
+        <text x="59" y="82" fill="#c9d1d9" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">raw</text>
+        <line x1="88" y1="78" x2="102" y2="78" stroke="#8b949e" stroke-width="1.4" marker-end="url(#arr4m)"/>
+        <rect x="104" y="64" width="76" height="28" rx="5" fill="#161b22" stroke="#8b949e" stroke-width="1.3"/>
+        <text x="142" y="82" fill="#c9d1d9" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">stg_orders</text>
+        <line x1="180" y1="78" x2="194" y2="78" stroke="#8b949e" stroke-width="1.4" marker-end="url(#arr4m)"/>
+        <rect x="196" y="64" width="74" height="28" rx="5" fill="#161b22" stroke="#8b949e" stroke-width="1.3"/>
+        <text x="233" y="82" fill="#c9d1d9" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">int_orders</text>
+        <line x1="270" y1="78" x2="284" y2="78" stroke="#8b949e" stroke-width="1.4" marker-end="url(#arr4m)"/>
+        <rect x="286" y="60" width="60" height="36" rx="5" fill="#1c2129" stroke="#8b949e" stroke-width="1.5"/>
+        <text x="316" y="82" fill="#c9d1d9" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">fct_rev</text>
+        <rect x="292" y="100" width="46" height="14" rx="4" fill="none" stroke="#444c56" stroke-width="1" stroke-dasharray="2,2"/>
+        <text x="315" y="110" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="6.5" text-anchor="middle" data-i18n="v4_no_cols">no cols</text>
+        <text x="187" y="128" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v4_stamp_left">generated 3 weeks ago</text>
+        <text x="187" y="164" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v4_note_left">model-level lineage only, self-hosted</text>
+
+        <rect x="405" y="26" width="345" height="112" rx="6" fill="rgba(45,212,191,.03)" stroke="#2dd4bf" stroke-width="1.4"/>
+        <text x="415" y="40" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" data-i18n="v4_proj_right">project: sales</text>
+
+        <defs><marker id="arr4" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="7" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 3.5 L 0 7 z" fill="#2dd4bf"/></marker></defs>
+        <rect x="420" y="64" width="58" height="28" rx="5" fill="rgba(45,212,191,.06)" stroke="#2dd4bf" stroke-width="1.4"/>
+        <text x="449" y="82" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">raw</text>
+        <line x1="478" y1="78" x2="492" y2="78" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr4)"/>
+        <rect x="494" y="64" width="76" height="28" rx="5" fill="rgba(45,212,191,.06)" stroke="#2dd4bf" stroke-width="1.4"/>
+        <text x="532" y="82" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">stg_orders</text>
+        <line x1="570" y1="78" x2="584" y2="78" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr4)"/>
+        <rect x="586" y="64" width="74" height="28" rx="5" fill="rgba(45,212,191,.06)" stroke="#2dd4bf" stroke-width="1.4"/>
+        <text x="623" y="82" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">int_orders</text>
+        <line x1="660" y1="78" x2="674" y2="78" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr4)"/>
+        <rect x="676" y="58" width="64" height="40" rx="5" fill="rgba(45,212,191,.16)" stroke="#2dd4bf" stroke-width="1.8"/>
+        <text x="708" y="81" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">fct_rev</text>
+        <circle cx="686" cy="64" r="3.5" fill="#3fb950"/>
+        <rect x="682" y="100" width="36" height="14" rx="4" fill="rgba(45,212,191,.15)" stroke="#2dd4bf" stroke-width="1"/>
+        <text x="700" y="110" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="6.5" text-anchor="middle" data-i18n="v4_cols">cols</text>
+        <text x="577" y="128" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v4_stamp_right">live &middot; owner: finance-team</text>
+        <text x="577" y="164" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v4_note_right">column-level + cross-project, always current</text>
+      </svg>
+      <div class="viz-cap">
+        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n-html="c4"><code>dbt docs generate</code> gives a real, model-level DAG, current only as of the last manual regenerate, scoped to one project</span></div>
+        <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f4">dbt Catalog (formerly Explorer) adds column-level lineage, cross-project visibility, and ownership/health signals, always current</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TP5: mesh / cross-project ref -->
+  <div class="tip" id="tip-5">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e5">tipping point 5 of 8</span>
+      <div class="tip-title" data-i18n="t5">One repo, many teams</div>
+    </div>
+    <p class="tip-moment" data-i18n="m5">Another team's project needs one of your models. Right now that means "copy my SQL."</p>
+    <div class="viz">
+      <svg viewBox="0 0 760 150" xmlns="http://www.w3.org/2000/svg">
+        <text x="10" y="14" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v5_lbl_core">MANUAL, NO CONTRACT</text>        <text x="402" y="14" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v5_lbl_plat">SHARED VIA ref()</text>        <line x1="380" y1="8" x2="380" y2="142" stroke="#2d333b" stroke-width="1" stroke-dasharray="3,5"/>
+
+        <rect x="25" y="52" width="140" height="48" rx="6" fill="#161b22" stroke="#444c56" stroke-width="1.4"/>
+        <text x="95" y="80" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="10.5" text-anchor="middle">project: sales</text>
+        <rect x="225" y="52" width="140" height="48" rx="6" fill="#161b22" stroke="#444c56" stroke-width="1.4"/>
+        <text x="295" y="80" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="10.5" text-anchor="middle">project: finance</text>
+        <line x1="167" y1="76" x2="223" y2="76" stroke="#f85149" stroke-width="1.6" stroke-dasharray="5,4"/>
+        <text x="195" y="70" fill="#f85149" font-family="JetBrains Mono,monospace" font-size="13" font-weight="700" text-anchor="middle">✗</text>
+        <text x="195" y="118" fill="#f85149" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle" data-i18n="v5_cap_manual">manual copy-paste SQL</text>
+        <defs><marker id="arr5" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="8" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 3.5 L 0 7 z" fill="#2dd4bf"/></marker></defs>
+        <rect x="405" y="52" width="130" height="48" rx="6" fill="rgba(45,212,191,.08)" stroke="#2dd4bf" stroke-width="1.6"/>
+        <text x="470" y="74" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="10.5" text-anchor="middle">project: sales</text>
+        <text x="470" y="90" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">access: public</text>
+        <line x1="537" y1="76" x2="603" y2="76" stroke="#2dd4bf" stroke-width="1.8" marker-end="url(#arr5)"/>
+        <text x="570" y="66" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">ref()</text>
+        <rect x="605" y="52" width="130" height="48" rx="6" fill="rgba(45,212,191,.08)" stroke="#2dd4bf" stroke-width="1.6"/>
+        <text x="670" y="80" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="10.5" text-anchor="middle">project: finance</text>
+      </svg>
+      <div class="viz-cap">
+        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c5"><code>ref()</code> only resolves inside one project, sharing means duplicating logic</span></div>
+        <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n-html="f5">dbt Mesh: <code>access: public</code> plus a cross-project <code>ref()</code>, resolved against a Production environment</span></div>
+      </div>
+    </div>
+    <div class="mesh-ex" id="meshEx" onclick="CvPToggleMesh()">
+      <div class="mh"><span class="lbl" data-i18n="mesh_lbl">see the mesh config →</span><span class="hint" data-i18n="mesh_hint">click to expand</span></div>
+      <div class="mesh-body" id="meshBody">
+        <div class="mesh-file" data-i18n="mesh_file1">upstream project · models/schema.yml</div>
+        <pre>models:
+  - name: fct_orders
+    config:
+      access: public</pre>
+        <div class="mesh-file" data-i18n="mesh_file2">downstream project · models/finance_summary.sql</div>
+        <pre>select ...
+from {{ ref('finance_project', 'fct_orders') }}</pre>
+        <div class="mesh-note" data-i18n-html="mesh_note"><code>access: public</code> isn't a suggestion, it's the switch that lets another project's <code>ref()</code> resolve to this model at all.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TP6: concurrency / hosted dev -->
+  <div class="tip" id="tip-6">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e6">tipping point 6 of 8</span>
+      <div class="tip-title" data-i18n="t6">How many people can actually work in this at once</div>
+    </div>
+    <p class="tip-moment" data-i18n="m6">You hire a third analytics engineer. The "set up your laptop" doc outgrows the model they're shipping.</p>
+    <div class="viz">
+      <svg viewBox="0 0 760 160" xmlns="http://www.w3.org/2000/svg">
+        <text x="10" y="14" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v6_lbl_core">MANY PEOPLE, ONE ENV</text>        <text x="402" y="14" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v6_lbl_plat">ONE ISOLATED ENV EACH</text>        <line x1="380" y1="8" x2="380" y2="152" stroke="#2d333b" stroke-width="1" stroke-dasharray="3,5"/>
+
+        <circle cx="45" cy="30" r="13" fill="#161b22" stroke="#8b949e" stroke-width="1.4"/><text x="45" y="34" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">E1</text>
+        <circle cx="45" cy="76" r="13" fill="#161b22" stroke="#8b949e" stroke-width="1.4"/><text x="45" y="80" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">E2</text>
+        <circle cx="45" cy="122" r="13" fill="#161b22" stroke="#8b949e" stroke-width="1.4"/><text x="45" y="126" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">E3</text>
+        <line x1="58" y1="32" x2="178" y2="60" stroke="#8b949e" stroke-width="1.3" opacity=".6"/>
+        <line x1="58" y1="76" x2="178" y2="76" stroke="#8b949e" stroke-width="1.3" opacity=".6"/>
+        <line x1="58" y1="120" x2="178" y2="92" stroke="#8b949e" stroke-width="1.3" opacity=".6"/>
+        <rect x="180" y="50" width="170" height="52" rx="6" fill="#161b22" stroke="#f85149" stroke-width="1.4"/>
+        <text x="265" y="72" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="10" text-anchor="middle" data-i18n="v6_core_box">1 local env</text>        <text x="265" y="88" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v6_core_sub">shared warehouse creds</text>        <text x="265" y="118" fill="#f85149" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle" data-i18n="v6_core_warn">⚠ merge &amp; data conflicts</text>
+        <defs><marker id="arr6" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="7" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 3.5 L 0 7 z" fill="#2dd4bf"/></marker></defs>
+        <circle cx="420" cy="25" r="12" fill="#161b22" stroke="#2dd4bf" stroke-width="1.4"/><text x="420" y="29" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">E1</text>
+        <line x1="432" y1="25" x2="466" y2="25" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr6)"/>
+        <rect x="468" y="12" width="140" height="26" rx="5" fill="rgba(45,212,191,.08)" stroke="#2dd4bf" stroke-width="1.3"/>
+        <text x="538" y="29" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v6_plat_box1">hosted env #1</text>
+        <circle cx="420" cy="76" r="12" fill="#161b22" stroke="#2dd4bf" stroke-width="1.4"/><text x="420" y="80" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">E2</text>
+        <line x1="432" y1="76" x2="466" y2="76" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr6)"/>
+        <rect x="468" y="63" width="140" height="26" rx="5" fill="rgba(45,212,191,.08)" stroke="#2dd4bf" stroke-width="1.3"/>
+        <text x="538" y="80" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v6_plat_box2">hosted env #2</text>
+        <circle cx="420" cy="127" r="12" fill="#161b22" stroke="#2dd4bf" stroke-width="1.4"/><text x="420" y="131" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">E3</text>
+        <line x1="432" y1="127" x2="466" y2="127" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr6)"/>
+        <rect x="468" y="114" width="140" height="26" rx="5" fill="rgba(45,212,191,.08)" stroke="#2dd4bf" stroke-width="1.3"/>
+        <text x="538" y="131" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v6_plat_box3">hosted env #3</text>      </svg>
+      <div class="viz-cap">
+        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c6">development is local-only, headcount scales with setup pain per person</span></div>
+        <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f6">Studio IDE gives every contributor a ready-to-go hosted dev environment</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TP7: reach of the OSS project -->
+  <div class="tip" id="tip-7">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e7">tipping point 7 of 8</span>
+      <div class="tip-title" data-i18n="t7">How many people does the open-source project actually serve</div>
+    </div>
+    <p class="tip-moment" data-i18n="m7">A stakeholder asks to just look at the model himself instead of filing another ticket. He can't, not on his own.</p>
+    <div class="viz">
+      <div class="viz-grid">
+        <div class="viz-panel core">
+          <div class="vp-title" data-i18n="v7_core_h">who can self-serve today</div>
+          <div class="chiprow">
+            <span class="rchip in" data-i18n="v7_chip_eng">engineer</span>
+            <span class="rchip no" data-i18n="v7_chip_ana">analyst</span>
+            <span class="rchip no" data-i18n="v7_chip_stk">stakeholder</span>
+          </div>
+          <div class="reach-lbl" data-i18n="v7_core_lbl">reach: whoever runs the CLI</div>
+        </div>
+        <div class="viz-panel plat">
+          <div class="vp-title" data-i18n="v7_plat_h">who can self-serve on the platform</div>
+          <div class="chiprow">
+            <span class="rchip in" data-i18n="v7_chip_eng">engineer</span>
+            <span class="rchip in" data-i18n="v7_chip_ana">analyst</span>
+            <span class="rchip in" data-i18n="v7_chip_stk">stakeholder</span>
+          </div>
+          <div class="reach-lbl" data-i18n="v7_plat_lbl">reach: the whole org, self-serve</div>
+        </div>
+      </div>
+      <div class="viz-cap">
+        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c7">non-engineers see it only via a static site someone remembered to redeploy</span></div>
+        <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f7">dbt Catalog again: hosted, governed, always current for anyone with access</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TP8: semantic layer -->
+  <div class="tip" id="tip-8">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e8">tipping point 8 of 8</span>
+      <div class="tip-title" data-i18n="t8">A metric means three things in three tools</div>
+    </div>
+    <p class="tip-moment" data-i18n="m8">Finance says revenue is 4.2 million. The BI tool says 4.4. Both people are confident.</p>
+    <div class="viz">
+      <svg viewBox="0 0 760 182" xmlns="http://www.w3.org/2000/svg">
+        <text x="10" y="14" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v8_lbl_core">THREE TOOLS, THREE ANSWERS</text>        <text x="402" y="14" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v8_lbl_plat">ONE DEFINITION, EVERYWHERE</text>        <line x1="380" y1="8" x2="380" y2="176" stroke="#2d333b" stroke-width="1" stroke-dasharray="3,5"/>
+
+        <rect x="15" y="80" width="66" height="28" rx="5" fill="#161b22" stroke="#444c56" stroke-width="1.3"/>
+        <text x="48" y="98" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v8_raw">raw tables</text>
+        <line x1="83" y1="88" x2="118" y2="35" stroke="#8b949e" stroke-width="1.2" opacity=".55"/>
+        <rect x="120" y="20" width="150" height="36" rx="5" fill="#161b22" stroke="#444c56" stroke-width="1.3"/>
+        <text x="195" y="35" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle" data-i18n="v8_bi">BI tool</text>        <text x="195" y="50" fill="#f85149" font-family="JetBrains Mono,monospace" font-size="10.5" font-weight="700" text-anchor="middle">$4.2M</text>
+
+        <line x1="83" y1="94" x2="118" y2="94" stroke="#8b949e" stroke-width="1.2" opacity=".55"/>
+        <rect x="120" y="76" width="150" height="36" rx="5" fill="#161b22" stroke="#444c56" stroke-width="1.3"/>
+        <text x="195" y="91" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle" data-i18n="v8_spread">spreadsheet</text>        <text x="195" y="106" fill="#f85149" font-family="JetBrains Mono,monospace" font-size="10.5" font-weight="700" text-anchor="middle">$4.4M</text>
+
+        <line x1="83" y1="100" x2="118" y2="153" stroke="#8b949e" stroke-width="1.2" opacity=".55"/>
+        <rect x="120" y="136" width="150" height="36" rx="5" fill="#161b22" stroke="#444c56" stroke-width="1.3"/>
+        <text x="195" y="151" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle" data-i18n="v8_ai">AI agent</text>        <text x="195" y="166" fill="#f85149" font-family="JetBrains Mono,monospace" font-size="10.5" font-weight="700" text-anchor="middle">$4.1M</text>
+
+        <defs><marker id="arr8" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="7" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 3.5 L 0 7 z" fill="#2dd4bf"/></marker></defs>
+        <rect x="425" y="72" width="140" height="38" rx="6" fill="rgba(45,212,191,.12)" stroke="#2dd4bf" stroke-width="1.6"/>
+        <text x="495" y="96" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="9.5" text-anchor="middle" data-i18n="v8_sem">Semantic Layer</text>
+        <line x1="567" y1="82" x2="600" y2="38" stroke="#2dd4bf" stroke-width="1.4" marker-end="url(#arr8)"/>
+        <rect x="602" y="20" width="150" height="36" rx="5" fill="rgba(45,212,191,.06)" stroke="#2dd4bf" stroke-width="1.3"/>
+        <text x="677" y="35" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle" data-i18n="v8_bi">BI tool</text>        <text x="677" y="50" fill="#3fb950" font-family="JetBrains Mono,monospace" font-size="10.5" font-weight="700" text-anchor="middle">$4.2M</text>
+
+        <line x1="567" y1="91" x2="600" y2="94" stroke="#2dd4bf" stroke-width="1.4" marker-end="url(#arr8)"/>
+        <rect x="602" y="76" width="150" height="36" rx="5" fill="rgba(45,212,191,.06)" stroke="#2dd4bf" stroke-width="1.3"/>
+        <text x="677" y="91" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle" data-i18n="v8_spread">spreadsheet</text>        <text x="677" y="106" fill="#3fb950" font-family="JetBrains Mono,monospace" font-size="10.5" font-weight="700" text-anchor="middle">$4.2M</text>
+
+        <line x1="567" y1="100" x2="600" y2="150" stroke="#2dd4bf" stroke-width="1.4" marker-end="url(#arr8)"/>
+        <rect x="602" y="136" width="150" height="36" rx="5" fill="rgba(45,212,191,.06)" stroke="#2dd4bf" stroke-width="1.3"/>
+        <text x="677" y="151" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle" data-i18n="v8_ai">AI agent</text>        <text x="677" y="166" fill="#3fb950" font-family="JetBrains Mono,monospace" font-size="10.5" font-weight="700" text-anchor="middle">$4.2M</text>
+      </svg>
+      <div class="viz-cap">
+        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c8">MetricFlow definitions work in the CLI, but nothing outside it can query them</span></div>
+        <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f8">the Semantic Layer serves one metric definition to every consuming tool</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<p class="core-v2-note" data-i18n="corev2">One more thing, lightly: dbt Labs has said a next generation of dbt Core, dbt Core v2, is coming. Specifics are still emerging, so this page describes the dbt Core you can install today.</p>
+
+<div class="flagbox">
+  <div class="fb-lbl" data-i18n="fusion_lbl">⚠ verify before publish</div>
+  <p data-i18n="fusion_p">dbt is also rolling out a next-generation engine called Fusion. How it fits the Core versus platform line, licensing, architecture, and its relationship to dbt Core v2 above, is still settling. Two of dbt's own docs pages currently disagree on parts of this. Check current docs before letting Fusion inform a decision here.</p>
+</div>
+
+<section class="section" id="gutcheck">
+  <h2 class="sec-h" data-i18n="gc_h">A quick gut-check</h2>
+  <p class="sec-intro" data-i18n="gc_intro">Seven yes/no questions. Answering "no" to all of them is a perfectly good outcome.</p>
+
+  <div class="gut">
+    <div class="gq">
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q1">Are you babysitting a scheduler, cron, Airflow, GitHub Actions, whatever it is, just to make sure dbt actually runs?</span></span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q1',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q1',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+    <div class="gq">
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q2">Do people who aren't engineers need to build or review models, not just look at a finished dashboard?</span></span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q2',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q2',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+    <div class="gq">
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q3">Would you struggle to prove who ran what against production if someone asked you to, right now?</span><span class="hardtag" data-i18n="hard_tag">hard requirement</span></span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q3',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q3',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+    <div class="gq">
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q4">Do people outside the immediate dbt team need to find or trust a model without filing a ticket to your team first?</span></span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q4',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q4',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+    <div class="gq">
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q5">Do you have more than one dbt project that needs to reference another project's models?</span><span class="hardtag" data-i18n="hard_tag">hard requirement</span></span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q5',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q5',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+    <div class="gq">
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q6">Are more than two or three people trying to actively develop in the same dbt project at the same time?</span></span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q6',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q6',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+    <div class="gq">
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q7">Does more than one tool, BI, a spreadsheet, an AI agent, need to query the same metric and land on the same number?</span><span class="hardtag" data-i18n="hard_tag">hard requirement</span></span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q7',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q7',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+  </div>
+
+  <div class="gut-result core" id="gutResult">
+    <div class="gut-badge-lbl" data-i18n="gut_badge_lbl">recommendation</div>
+    <div class="gut-badge" id="gutBadge">Core</div>
+    <div class="gut-verdict" id="gutVerdict">Core is the default here. Nothing has pushed you off it yet.</div>
+    <div class="gut-caps" id="gutCaps"></div>
+  </div>
+</section>
+
+<div class="closing">
+  <p data-i18n-html="closing_p">dbt Core is good, it's why any of this works at all. The real question: <b>are you already paying the operational cost of running dbt yourself</b>, in time and risk, instead of in a subscription? Sometimes that trade is right. This page just makes it a conscious one.</p>
+</div>
+
+<div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #21262d"><a href="https://github.com/cedricturner/dbt-artifacts" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'"><svg height="13" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span data-i18n-html="gh_src">view source on github</span></a></div>
+
+</div>
+<script>
+/* ---- mesh example toggle ---- */
+function CvPToggleMesh(){
+  var b=document.getElementById('meshEx'),r=document.getElementById('meshBody');
+  var open=r.classList.contains('show');
+  r.classList.toggle('show',!open);
+  b.classList.toggle('open',!open);
+}
+
+/* ---- gut-check verdict logic ----
+   hard disqualifiers: Core has literally no mechanism for these, any single
+   "yes" flips the recommendation to Platform regardless of anything else.
+   soft signals: Core can technically still do these (DIY, with friction),
+   they only flip the call once enough of them stack up. */
+var CvPHard=['q3','q5','q7'];
+var CvPSoft=['q1','q2','q4','q6'];
+var CvPSoftThreshold=2;
+var CvPAnswers={};
+var CvPCapMap={
+  q1:'orchestration, alerting & CI',
+  q2:'Studio IDE',
+  q3:'RBAC, SSO & audit logs',
+  q4:'dbt Catalog',
+  q5:'dbt Mesh',
+  q6:'hosted development environment',
+  q7:'Semantic Layer'
+};
+
+function CvPAnswer(q,val,el){
+  CvPAnswers[q]=val;
+  var row=el.parentElement;
+  row.querySelectorAll('.yn-btn').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+  CvPUpdateGut();
+}
+
+function CvPUpdateGut(){
+  var hardHits=CvPHard.filter(function(q){return CvPAnswers[q]===true;});
+  var softHits=CvPSoft.filter(function(q){return CvPAnswers[q]===true;});
+  var allHits=hardHits.concat(softHits);
+
+  var badgeEl=document.getElementById('gutBadge');
+  var verdictEl=document.getElementById('gutVerdict');
+  var capsEl=document.getElementById('gutCaps');
+  var resultEl=document.getElementById('gutResult');
+
+  var isPlatform=hardHits.length>0||softHits.length>=CvPSoftThreshold;
+  resultEl.classList.remove('core','platform');
+
+  if(isPlatform){
+    badgeEl.textContent='Platform';
+    resultEl.classList.add('platform');
+    if(hardHits.length>0){
+      var hardLabels=hardHits.map(function(q){return CvPCapMap[q];}).join(', ');
+      verdictEl.textContent='Hard requirement: '+hardLabels+'. Core has no built-in way to do this at all.';
+    }else{
+      verdictEl.textContent=softHits.length+' soft signals stacking up. No single one is a hard blocker, but together they are a real, ongoing tax.';
+    }
+  }else{
+    badgeEl.textContent='Core';
+    resultEl.classList.add('core');
+    if(softHits.length===0){
+      verdictEl.textContent='Core is the default here. Nothing has pushed you off it yet.';
+    }else{
+      verdictEl.textContent=softHits.length+' soft signal'+(softHits.length===1?'':'s')+' so far, not enough yet to flip the recommendation.';
+    }
+  }
+
+  if(allHits.length>0){
+    var chips=allHits.map(function(q){
+      var isHard=CvPHard.indexOf(q)!==-1;
+      return '<span class="gcap'+(isHard?' hard':'')+'">'+CvPCapMap[q]+(isHard?' (hard)':'')+'</span>';
+    }).join('');
+    capsEl.innerHTML='<div class="gut-caps-label">what\'s pulling on you</div>'+chips;
+  }else{
+    capsEl.innerHTML='';
+  }
+}
+CvPUpdateGut();
+
+/* ---- i18n: language toggle (EN / 日本語) ---- */
+/* ja: Japanese translations for every data-i18n / data-i18n-html key on the page */
+var CvPCurLang='en';
+var CvPTranslations={"ja": {"back_all": "← すべての解説へ", "tag_kicker": "コア vs. プラットフォーム", "h1": "dbt Core とプラットフォーム、境界線は実際どこにあるのか", "hdr_sub": "dbt Core だけでは足りなくなる瞬間と、dbt プラットフォームに料金を払い始めたときに実際に手に入るものを、実務者向けにまとめました。", "jump1": "core で十分な場合", "jump2": "分岐点", "jump3": "セルフチェック", "thesis_lbl": "要点", "thesis_p": "dbt Core は機能制限されたお試し版ではなく、本物のトランスフォーメーションエンジンです。モデル、テスト、ドキュメント、<code>ref()</code>、<code>source()</code>、そのすべてが揃っていて、Apache 2.0 ライセンスのオープンソースとして永久に無料です。開発は <b>Fivetran + dbt Labs</b> が担っています。プラットフォームが追加するのは dbt そのものではなく、その周りの運用レイヤーです。スケジューリング、アクセス制御、発見可能性、プロジェクト横断の共有などです。ソロのアナリストや、全員がエンジニアの小さなチームなら、Core だけで本当に十分なこともあります。以下では、それが崩れる具体的な瞬間を見ていきます。", "rc_h": "dbt Core だけで十分な場合", "rc_intro": "売り込みの前に、正直な話をします。以下はどれも dbt Core が「妥協している」という意味ではありません。", "rc1": "自分のウェアハウスに対して自分のプロジェクトを動かす、ソロのアナリストや一人のアナリティクスエンジニア。", "rc2": "cron でも Airflow でも GitHub Actions でも、自前のスケジューラーを運用することに抵抗がない、全員エンジニアの小さなチーム。", "rc3": "誰が何をいつ変更したかを正式に証明できる記録を求められる、ガバナンスや監査の要件がない。", "rc4": "dbt プロジェクトが1つだけ。他のプロジェクトが自分のモデルに依存する必要もなく、自分も他人のモデルを必要としない。", "rc5": "プロジェクトに関わる全員が、dbt をローカルにインストールしてウェアハウスの認証情報を持つことに抵抗がない。", "rc_close": "これが自分たちのチームに当てはまるなら、この先の内容はやり方が間違っているという意味ではありません。これらの条件のどれかが崩れ始めるタイミングを示した地図です。", "alt_lbl": "知っておく価値のある、もう一つの道", "alt_p1": "プラットフォームに料金を払うことだけが、dbt をノートパソコンの外で動かす方法ではありません。Snowflake は今や、自身のコンピュートで dbt プロジェクトをネイティブに実行できます。<span class=\"flag\" data-i18n=\"alt_flag\">⚠ 公開前に要確認、対応範囲を独自に検証できていません</span>", "alt_flag": "⚠ 公開前に要確認、対応範囲を独自に検証できていません", "alt_p2": "他のウェアハウスにも同様のネイティブな手段がある可能性があります。プラットフォームだけが唯一の道だと決めつける前に確認する価値があります。", "tp_h": "境界線が動き始めるところ", "tp_intro": "どれも「機能が足りない」ではなく、具体的でありふれた瞬間から始まります。図がすべてを語り、下の文章はただのラベルです。", "e1": "分岐点 1/8", "t1": "誰かがこれをスケジュール実行しなければならない", "m1": "午前2時。昨夜のジョブは本当に実行されたのか。", "v1_core_h": "誰かのノートPC上の cron", "v1_core_n": "5日分、可視性ゼロ、成功しても失敗してもアラートなし", "v1_plat_h": "スケジュール実行 ＆ 監視あり", "v1_plat_n": "4日目が失敗 → オンコールに自動で通知", "vtag_core": "core のみ", "c1": "つなぎ込みのコードも、認証情報も、壊れたときの沈黙も、すべて自分の責任", "vtag_plat": "プラットフォーム", "f1": "ホスト型のスケジューリング、実行履歴、アラート、CI をすべて代わりに運用", "e2": "分岐点 2/8", "t2": "エンジニア以外も触る必要がある", "m2": "「有効な注文」の定義を知っている人が、いつも Slack で SQL を送ってくる。", "v2_core_h": "ローカル CLI", "v2_core_r1": "dbt をインストール", "v2_core_r2": "本人のノートPCにウェアハウスの認証情報", "v2_core_r3": "git とターミナルに慣れていること", "v2_core_lbl": "→ <b>エンジニアだけ</b>", "v2_plat_h": "Studio IDE", "v2_plat_r1": "ブラウザで開く", "v2_plat_r2": "ローカルインストール不要", "v2_plat_r3": "個人のウェアハウス認証情報を管理不要", "v2_plat_lbl": "→ <b>プロジェクトへのアクセス権があれば誰でも</b>", "c2": "ドメイン知識がプロジェクトの外に留まり、又聞きで伝わる", "f2": "参入障壁はノートPCのセットアップではなく、ブラウザひとつ", "e3": "分岐点 3/8", "t3": "誰が何を変更できるか、そして誰が触ったか", "m3": "コンプライアンス担当が、役員会資料の裏にあるモデルを誰が変更できるのか、そしてそれをどう証明するのかを聞いてくる。", "v3_core_h": "「誰が触った？」", "v3_core_n": "監査ログは残っていない", "v3_plat_h": "「誰が触った？」", "v3_u1": "j.chen", "v3_a1": " ・ fct_orders を編集 ・ 2時間前", "v3_u2": "a.patel", "v3_a2": " ・ 本番にデプロイ ・ 昨日", "v3_u3": "s.wong", "v3_a3": " ・ モデルを閲覧 ・ 3日前", "c3": "環境は手作業で管理する <code>targets</code> のままで、「誰が触ったか」は結局 <code>git blame</code> 頼み", "f3": "Enterprise ティアのプランで RBAC、SSO、監査ログが使え、dev/staging/prod も管理された環境として提供", "e4": "分岐点 4/8", "t4": "リネージュ図はある、でも誰も完全には信用していない", "m4": "その図は本物です。ただし3週間前のまま更新されておらず、1つのプロジェクトの中だけで、モデル単位までしか見えません。", "v4_lbl_core": "更新停止・モデル単位・単一プロジェクト", "v4_lbl_plat": "リアルタイム・カラム単位・プロジェクト横断", "v4_proj_left": "プロジェクト: sales", "v4_no_cols": "列なし", "v4_stamp_left": "3週間前に生成", "v4_note_left": "モデル単位のリネージュのみ、自前でホスティング", "v4_proj_right": "プロジェクト: sales", "v4_cols": "カラム", "v4_stamp_right": "リアルタイム ・ 所有者: finance-team", "v4_note_right": "カラム単位 ＋ プロジェクト横断、常に最新", "c4": "<code>dbt docs generate</code> で本物のモデル単位の DAG は手に入るが、最後に手動で再生成した時点までしか最新ではなく、範囲も1プロジェクトに限られる", "f4": "dbt Catalog（旧 Explorer）ならカラム単位のリネージュ、プロジェクト横断の可視性、オーナーシップやヘルスのシグナルが常に最新の状態で手に入る", "e5": "分岐点 5/8", "t5": "1つのリポジトリ、複数のチーム", "m5": "別チームのプロジェクトが自分のモデルを必要としている。今のところそれは「自分の SQL をコピーして」を意味する。", "v5_lbl_core": "手動、契約なし", "v5_lbl_plat": "ref() 経由で共有", "v5_cap_manual": "SQL を手動でコピペ", "c5": "<code>ref()</code> は1つのプロジェクトの中でしか解決されず、共有するにはロジックを複製するしかない", "f5": "dbt Mesh なら <code>access: public</code> とプロジェクト横断の <code>ref()</code> で、Production 環境に対して解決される", "mesh_lbl": "mesh の設定を見る →", "mesh_hint": "クリックで展開", "mesh_file1": "アップストリームのプロジェクト ・ models/schema.yml", "mesh_file2": "ダウンストリームのプロジェクト ・ models/finance_summary.sql", "mesh_note": "<code>access: public</code> は単なる提案ではなく、他のプロジェクトの <code>ref()</code> がこのモデルを解決できるかどうかを決めるスイッチです。", "e6": "分岐点 6/8", "t6": "同時に何人が実際に作業できるか", "m6": "3人目のアナリティクスエンジニアを採用した。「ノートPCのセットアップ手順書」が、本人が出荷するモデルより長くなっている。", "v6_lbl_core": "大人数、環境は1つ", "v6_lbl_plat": "1人につき独立した環境", "v6_core_box": "ローカル環境1つ", "v6_core_sub": "ウェアハウス認証情報を共有", "v6_core_warn": "⚠ マージ・データの衝突", "v6_plat_box1": "ホスト環境 #1", "v6_plat_box2": "ホスト環境 #2", "v6_plat_box3": "ホスト環境 #3", "c6": "開発はローカルのみ。人数が増えるほど、1人あたりのセットアップの手間も積み重なる", "f6": "Studio IDE ならすぐ使えるホスト型の開発環境が、コントリビューター全員に用意される", "e7": "分岐点 7/8", "t7": "オープンソース版のプロジェクトは実際に何人の役に立っているか", "m7": "ステークホルダーが、チケットを起票する代わりに自分でモデルを見たいと言う。でも一人ではできない。", "v7_core_h": "今、自分で見られるのは誰か", "v7_chip_eng": "エンジニア", "v7_chip_ana": "アナリスト", "v7_chip_stk": "ステークホルダー", "v7_core_lbl": "到達範囲: CLI を実行できる人だけ", "v7_plat_h": "プラットフォームなら自分で見られるのは誰か", "v7_plat_lbl": "到達範囲: 組織全体、セルフサービスで", "c7": "エンジニア以外は、誰かが再デプロイを忘れずに行った静的サイト経由でしか見られない", "f7": "ここでも dbt Catalog。ホスト型でガバナンスが効き、アクセス権がある人には常に最新の状態", "e8": "分岐点 8/8", "t8": "1つの指標が3つのツールで3通りの意味になる", "m8": "経理は売上高を420万だと言う。BI ツールは440万だと言う。どちらも自信満々。", "v8_lbl_core": "3つのツール、3つの答え", "v8_lbl_plat": "1つの定義を、どこでも", "v8_raw": "raw テーブル", "v8_bi": "BI ツール", "v8_spread": "スプレッドシート", "v8_ai": "AI エージェント", "v8_sem": "Semantic Layer", "c8": "MetricFlow での定義は CLI の中では機能するが、その外から問い合わせる手段がない", "f8": "Semantic Layer が1つの指標定義を、利用するすべてのツールに提供する", "corev2": "軽く触れておくと、dbt Labs は次世代の dbt Core、dbt Core v2 が登場すると発表しています。詳細はまだ固まっていないため、このページでは今インストールできる dbt Core について説明しています。", "fusion_lbl": "⚠ 公開前に要確認", "fusion_p": "dbt は Fusion と呼ばれる次世代エンジンも展開し始めています。それが Core とプラットフォームの境界線のどこに位置づけられるのか、ライセンス、アーキテクチャ、そして上述の dbt Core v2 との関係については、まだ流動的です。dbt 自身のドキュメントページの中にも、内容が食い違っている箇所が現時点で2つあります。この点を判断材料にする前に、最新のドキュメントを必ず確認してください。", "gc_h": "簡易セルフチェック", "gc_intro": "はい・いいえで答える7つの質問です。すべて「いいえ」でもまったく問題ありません。", "q1": "dbt を確実に実行させるためだけに、cron でも Airflow でも GitHub Actions でも、スケジューラーの面倒を見続けていますか？", "yn_yes": "はい", "yn_no": "いいえ", "q2": "完成したダッシュボードを見るだけでなく、エンジニアでない人がモデルを作成・レビューする必要がありますか？", "q3": "今すぐ「誰が本番環境に対して何を実行したか」を証明しろと言われたら、困りますか？", "hard_tag": "必須条件", "q4": "dbt チームの外の人が、まずチケットを起票することなくモデルを見つけて信頼できる必要がありますか？", "q5": "他のプロジェクトのモデルを参照する必要がある dbt プロジェクトが、2つ以上ありますか？", "q6": "同じ dbt プロジェクトで、同時に2、3人以上が積極的に開発しようとしていますか？", "q7": "BI ツール、スプレッドシート、AI エージェントなど、複数のツールが同じ指標を問い合わせて同じ数字にたどり着く必要がありますか？", "gut_badge_lbl": "推奨", "closing_p": "dbt Core は優れたツールです。だからこそ、この話全体が成り立っています。本当の問いはこうです。<b>すでに dbt を自分たちで運用するコストを、サブスクリプション料金の代わりに時間とリスクで払っていないか</b>ということです。その取引が正しいこともあります。このページは、それを意識的な選択にするためのものです。", "gh_src": "github でソースを見る"}};
+function CvPCacheEn(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){el.dataset.en=el.textContent;});
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){el.dataset.enHtml=el.innerHTML;});
+}
+function CvPSetLang(lang){
+  CvPCurLang=lang;
+  var dict=CvPTranslations[lang]||{};
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k=el.getAttribute('data-i18n');
+    if(lang==='en'){if(el.dataset.en!==undefined)el.textContent=el.dataset.en;}
+    else if(dict[k]!==undefined){el.textContent=dict[k];}
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+    var k=el.getAttribute('data-i18n-html');
+    if(lang==='en'){if(el.dataset.enHtml!==undefined)el.innerHTML=el.dataset.enHtml;}
+    else if(dict[k]!==undefined){el.innerHTML=dict[k];}
+  });
+  document.documentElement.lang=lang;
+  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-lang')===lang);});
+  try{localStorage.setItem('lang',lang);}catch(e){}
+}
+CvPCacheEn();
+(function(){
+  var saved=null;try{saved=localStorage.getItem('lang');}catch(e){}
+  var initial=saved||(((navigator.language||navigator.userLanguage||'').toLowerCase().indexOf('ja')===0)?'ja':'en');
+  CvPSetLang(initial);
+})();
+</script>
+</body>
+</html>
