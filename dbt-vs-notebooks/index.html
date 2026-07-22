@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="field-notes">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>dbt vs Notebooks: Interactive Walkthrough</title>
+<title>from notebooks to dbt: interactive walkthrough</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -137,26 +138,785 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
 .lang-btn.active{background:#ff6b35;color:#fff}
 :lang(ja) .code-body pre,:lang(ja) .dbt-reveal pre,:lang(pt) .code-body pre,:lang(pt) .dbt-reveal pre,:lang(es) .code-body pre,:lang(es) .dbt-reveal pre{white-space:pre-wrap}
 </style>
+<style id="redesign-preview-styles">
+:root {
+  --paper: #fafaf9;
+  --ink: #1c1c1c;
+  --text: #2a2a2a;
+  --muted-light: #777;
+  --faint-light: #aaa;
+  --rule-light: #e8e5e0;
+  --surface: #fff;
+  --soft: #f9f8f6;
+  --danger-light: #991b1b;
+  --danger-bg: #fff1f2;
+  --success-light: #166534;
+  --success-bg: #f0fdf4;
+  --warning-light: #92400e;
+  --code-font: "Space Mono", "SFMono-Regular", Consolas, monospace;
+  --body-font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+* { box-shadow: none !important; }
+body {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  font-family: var(--body-font) !important;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.app {
+  max-width: 980px;
+  padding: 32px 24px 100px;
+}
+.btn-nav.primary:hover:not(:disabled) {
+  opacity: .75;
+}
+.btn-nav.primary {
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+}
+.step-ind { color: var(--faint-light); }
+footer,
+.app > div:last-of-type { border-color: var(--rule-light) !important; }
+@media (max-width: 680px) {
+  .app { padding-inline: 14px; }
+  .hdr { margin-bottom: 32px; }
+  .hint { grid-template-columns: 1fr; }
+  .cmp,
+  .par-wrap,
+  .debug-split { grid-template-columns: 1fr; }
+  .dc:first-child {
+    border-right: 0;
+    border-bottom: 1px solid var(--rule-light);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+<style id="dbt-editor-cleanup-styles">
+.hint-icon { display: none !important; }
+.hint {
+  display: block;
+  padding: 0 0 0 18px;
+  background: transparent !important;
+  border: 0 !important;
+  border-left: 2px solid var(--ink) !important;
+}
+.code-wrap {
+  background: #fff !important;
+  border-color: #e5e5e5 !important;
+}
+.code-head {
+  min-height: 42px;
+  padding: 11px 14px 11px 58px;
+  background: #fafafa !important;
+  border-bottom-color: #e5e5e5;
+}
+.badge {
+  padding: 0;
+  color: #777 !important;
+  background: transparent !important;
+  border: 0;
+  font-weight: 400;
+}
+.code-body,
+.dbt-reveal {
+  padding: 0 !important;
+  background: #fff !important;
+}
+pre.editor-rendered {
+  min-width: max-content;
+  margin: 0;
+  padding: 8px 0 12px !important;
+  color: #1c1c1c !important;
+  background: #fff !important;
+  font-family: var(--code-font) !important;
+  font-size: 11.5px !important;
+  line-height: 1.72 !important;
+}
+.editor-line {
+  display: grid;
+  grid-template-columns: 48px minmax(640px, 1fr);
+  min-height: 20px;
+}
+.editor-gutter {
+  display: block;
+  padding-right: 13px;
+  color: #777;
+  background: #fafafa;
+  border-right: 1px solid #eeeeee;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  user-select: none;
+}
+.editor-code {
+  display: block;
+  min-height: 20px;
+  padding: 0 18px;
+  color: #1c1c1c;
+  white-space: pre;
+  background-color: #fff;
+  background-image: linear-gradient(90deg, transparent 0, transparent 3.95ch, #f3f3f3 4ch, transparent 4.05ch);
+  background-size: 4ch 100%;
+}
+.editor-line.is-problem .editor-gutter {
+  color: #8f1712;
+  background-color: #ffd6d6;
+  border-right-color: #d92d20;
+  font-weight: 700;
+}
+.editor-line.is-problem .editor-code {
+  background-color: #ffe8e8 !important;
+  background-image: none;
+  box-shadow: inset 3px 0 0 #d92d20;
+}
+.editor-code .tok-keyword { color: #2f6fcc !important; }
+.editor-code .tok-jinja { color: #5b35ff !important; }
+.editor-code .tok-function { color: #287da8 !important; }
+.editor-code .tok-string { color: #ad3f16 !important; }
+.editor-code .tok-comment { color: #536577 !important; }
+.editor-line.is-problem .tok-comment { color: #704040 !important; }
+.ann,
+.ann.ok,
+.ann.danger,
+.what-changed {
+  margin-top: 18px;
+  padding: 5px 0 5px 16px;
+  color: #666;
+  background: transparent !important;
+  border: 0 !important;
+  border-left: 2px solid #d6d3d1 !important;
+}
+.ann strong,
+.ann.ok strong,
+.ann.danger strong,
+.what-changed strong { color: #1c1c1c !important; }
+.debug-note {
+  padding-left: 16px;
+  background: transparent;
+  border-left: 2px solid #d6d3d1;
+}
+@media (max-width: 680px) {
+  .editor-line { grid-template-columns: 38px minmax(560px, 1fr); }
+  .editor-gutter { padding-right: 10px; }
+  .editor-code { padding-inline: 12px; }
+}
+</style>
+<style id="field-notes-theme">
+.field-notes body {
+  background: #fff;
+  color: #171717;
+  font-family: var(--body-font);
+}
+.field-notes .app {
+  max-width: 1100px;
+  padding: 68px 28px 110px;
+}
+.field-notes .topbar { border-bottom-color: #171717; }
+.field-notes .language-picker { position: relative; z-index: 20; }
+.field-notes .language-current {
+  min-width: 154px;
+  padding: 9px 14px;
+  color: var(--language-ink, #1f5b8f);
+  background: #fff;
+  border: 1.5px solid currentColor;
+  border-radius: 48% 4px 45% 3px / 10% 45% 8% 42%;
+  cursor: pointer;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+}
+.field-notes .language-current::after {
+  float: right;
+  content: "+";
+  font-family: var(--code-font);
+  font-weight: 400;
+}
+.field-notes .language-current[aria-expanded="true"]::after { content: "−"; }
+.field-notes .language-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 218px;
+  padding: 8px;
+  background: #fff;
+  border: 1.5px solid #171717;
+}
+.field-notes .language-menu[hidden] { display: none; }
+.field-notes .language-option {
+  display: block;
+  width: 100%;
+  margin: 0 0 5px;
+  padding: 10px 13px;
+  color: var(--option-ink);
+  background: #fff;
+  border: 1.5px solid currentColor;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+  transform: rotate(var(--option-turn));
+}
+.field-notes .language-option:last-child { margin-bottom: 0; }
+.field-notes .language-option:hover,
+.field-notes .language-option:focus-visible,
+.field-notes .language-option[aria-selected="true"] {
+  color: #fff;
+  background: var(--option-ink);
+  outline: 0;
+}
+.field-notes .language-en { --option-ink: #1f5b8f; --option-turn: -.4deg; font-family: Inter, sans-serif; }
+.field-notes .language-ja { --option-ink: #c43b2f; --option-turn: .7deg; font-family: "Noto Sans JP", sans-serif; }
+.field-notes .language-es { --option-ink: #a9432f; --option-turn: -.8deg; border-bottom-color: #c89118; font-family: "Alegreya Sans", sans-serif; }
+.field-notes .language-pt-br { --option-ink: #267044; --option-turn: .5deg; border-bottom-color: #b48a19; font-family: "Bricolage Grotesque", sans-serif; }
+.field-notes .language-de { --option-ink: #2f3032; --option-turn: -.3deg; border-bottom-color: #b52f35; font-family: "IBM Plex Sans Condensed", sans-serif; }
+.field-notes .brand,
+.field-notes .hdr-tag,
+.field-notes .step-ind { color: #4a4a4a; }
+.field-notes .hdr {
+  max-width: none;
+  margin: 72px 0 78px;
+  text-align: left;
+}
+.field-notes .hdr-tag {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-family: var(--code-font);
+  letter-spacing: .08em;
+}
+.field-notes .hdr h1 {
+  max-width: none;
+  color: #171717;
+  font-size: clamp(42px, 6vw, 66px);
+  font-weight: 500;
+  line-height: .98;
+  letter-spacing: -.055em;
+  white-space: nowrap;
+}
+.field-notes .hdr p {
+  max-width: 560px;
+  margin: 28px 0 0;
+  color: #4a4a4a;
+  font-size: 15px;
+  line-height: 1.75;
+}
+.field-notes .nav {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(90px, 1fr));
+  gap: 0;
+  margin: 0 0 96px;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.field-notes .nav::before {
+  position: absolute;
+  z-index: 0;
+  top: 23px;
+  right: 4.5%;
+  left: 4.5%;
+  height: 7px;
+  border-top: 1.5px solid #171717;
+  border-bottom: 1px solid #d8d8d4;
+  content: "";
+  display: none;
+  transform: rotate(-.35deg) skewX(-8deg);
+  transform-origin: left center;
+}
+.field-notes .field-notes-route {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 52px;
+  overflow: visible;
+  pointer-events: none;
+}
+.field-notes .route-segment {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 2.6;
+  vector-effect: non-scaling-stroke;
+}
+.field-notes .route-1 { color: #1f5b8f; }
+.field-notes .route-2 { color: #16807a; }
+.field-notes .route-3 { color: #3f7c49; }
+.field-notes .route-4 { color: #b07226; }
+.field-notes .route-5 { color: #b8512e; }
+.field-notes .route-6 { color: #aa4b73; }
+.field-notes .nav-step {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  padding: 0 5px;
+  gap: 12px;
+  color: #8a8a84;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-family: var(--body-font);
+  min-height: 46px;
+}
+.field-notes .nav-step:nth-of-type(1) { --step-ink: #1f5b8f; }
+.field-notes .nav-step:nth-of-type(2) { --step-ink: #16807a; }
+.field-notes .nav-step:nth-of-type(3) { --step-ink: #3f7c49; }
+.field-notes .nav-step:nth-of-type(4) { --step-ink: #b07226; }
+.field-notes .nav-step:nth-of-type(5) { --step-ink: #b8512e; }
+.field-notes .nav-step:nth-of-type(6) { --step-ink: #aa4b73; }
+.field-notes .nav-step:nth-of-type(7) { --step-ink: #6e4b8b; }
+.field-notes .nav-step:hover,
+.field-notes .nav-step.active {
+  color: #171717;
+  background: transparent;
+}
+.field-notes .nav-step .step-num {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  color: color-mix(in srgb, var(--step-ink) 58%, white);
+  background: #fff;
+  border: 1.7px solid color-mix(in srgb, var(--step-ink) 48%, white);
+  border-radius: 50% 47% 52% 45%;
+  font-family: var(--code-font);
+  font-weight: 400;
+  transform: rotate(var(--step-turn, 0deg));
+}
+.field-notes .nav-step .step-num::after {
+  position: absolute;
+  inset: -4px -3px -3px -4px;
+  border: 1px solid var(--step-ink);
+  border-radius: 47% 53% 45% 55%;
+  content: "";
+  opacity: .34;
+  pointer-events: none;
+  transform: rotate(4deg) translate(1px, -1px);
+}
+.field-notes .nav-step:nth-of-type(2n) { --step-turn: 2deg; }
+.field-notes .nav-step:nth-of-type(3n) { --step-turn: -2deg; }
+.field-notes .nav-step.active .step-num {
+  color: #fff;
+  background: var(--step-ink);
+  border-color: var(--step-ink);
+}
+.field-notes .nav-step.done .step-num {
+  color: var(--step-ink);
+  background: #fff;
+  border-color: var(--step-ink);
+}
+.field-notes .nav-step.active .step-num::after,
+.field-notes .nav-step.done .step-num::after { opacity: .82; }
+.field-notes .step-lbl {
+  position: absolute;
+  top: 60px;
+  max-width: 108px;
+  padding: 2px 4px;
+  color: inherit;
+  background: #fff;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.field-notes .nav-step:nth-of-type(even) .step-lbl {
+  top: auto;
+  bottom: 60px;
+}
+.field-notes .panel.active { animation: field-notes-in 160ms ease-out; }
+@keyframes field-notes-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.field-notes .hint,
+.field-notes .ann,
+.field-notes .ann.ok,
+.field-notes .ann.danger,
+.field-notes .what-changed {
+  max-width: 760px;
+  margin: 0 0 54px;
+  padding: 2px 0 2px 22px;
+  color: #353535;
+  background: transparent !important;
+  border: 0;
+  border-left: 1.5px solid #171717;
+  border-radius: 0;
+  font-size: 14px;
+  line-height: 1.75;
+}
+.field-notes .ann.ok { border-left-color: #176a3a; }
+.field-notes .ann.danger { border-left-color: #8b2922; }
+.field-notes .dag-cap {
+  margin-bottom: 14px;
+  color: #4a4a4a !important;
+}
+.field-notes .dag-wrap {
+  margin-bottom: 68px;
+  padding: 8px 0 18px;
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid #d8d8d4;
+}
+.field-notes .code-wrap {
+  margin-bottom: 48px;
+  background: #fff;
+  border: 1.5px solid #171717 !important;
+  border-radius: 1px 3px 2px 0;
+}
+.field-notes .code-head {
+  background: #fff !important;
+  border-bottom: 1px solid #d8d8d4;
+}
+.field-notes pre.editor-rendered {
+  background: #fff !important;
+  border-radius: 0;
+}
+.field-notes .cmp {
+  gap: 0;
+  margin: 72px 0;
+  border-top: 1px solid #171717;
+  border-bottom: 1px solid #171717;
+}
+.field-notes .cmp-col {
+  padding: 28px 30px 34px 0;
+  background: #fff;
+  border: 0;
+  border-radius: 0;
+}
+.field-notes .cmp-col + .cmp-col {
+  padding-right: 0;
+  padding-left: 30px;
+  border-left: 1px solid #d8d8d4;
+}
+.field-notes .cmp-col li code,
+.field-notes .cmp-col p code {
+  color: #252525 !important;
+  background: #f3f3ef !important;
+  font-family: var(--code-font);
+  font-weight: 500;
+}
+.field-notes [data-i18n-html="box_par"] {
+  max-width: 760px;
+  margin: 54px 0;
+  padding: 2px 0 2px 22px !important;
+  color: #353535 !important;
+  background: #fff !important;
+  border: 0 !important;
+  border-left: 1.5px solid #16807a !important;
+  border-radius: 0 !important;
+  font-size: 14px !important;
+  line-height: 1.75 !important;
+}
+.field-notes [data-i18n-html="box_par"] strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #171717 !important;
+  font-weight: 600;
+}
+.field-notes [data-i18n-html="box_par"] code {
+  color: #252525 !important;
+  background: #f3f3ef !important;
+  font-family: var(--code-font) !important;
+  font-weight: 500;
+}
+.field-notes .debug-scenario {
+  margin: 0;
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid #d8d8d4;
+  border-radius: 0;
+}
+.field-notes .debug-scenario:first-child { border-top: 1px solid #171717; }
+.field-notes .debug-trigger {
+  padding: 19px 0;
+  color: #171717;
+  background: #fff;
+}
+.field-notes .debug-trigger .chevron {
+  color: transparent;
+  font-size: 0;
+}
+.field-notes .debug-trigger .chevron::after {
+  color: #171717;
+  content: "+";
+  font-family: var(--code-font);
+  font-size: 18px;
+}
+.field-notes .debug-trigger.open .chevron::after { content: "−"; }
+.field-notes .debug-body,
+.field-notes .debug-split,
+.field-notes .dc,
+.field-notes .debug-note {
+  background: #fff !important;
+  border-color: #d8d8d4 !important;
+}
+.field-notes .naming-row,
+.field-notes .src-box,
+.field-notes .legend,
+.field-notes .par-box,
+.field-notes .yaml-wrap {
+  background: #fff !important;
+  border-color: #d8d8d4 !important;
+  border-radius: 0;
+}
+.field-notes .bottom-nav { margin-top: 84px; }
+.field-notes .btn-nav { color: #4a4a4a; }
+.field-notes .btn-nav.primary { color: #171717; }
+@media(max-width:700px) {
+  .field-notes .app { padding: 42px 20px 82px; }
+  .field-notes .hdr { margin: 56px 0 64px; }
+  .field-notes .hdr h1 { font-size: clamp(42px, 15vw, 66px); }
+  .field-notes .hdr h1 { white-space: normal; }
+  .field-notes .nav { grid-template-columns: 1fr 1fr; gap: 28px 0; margin-bottom: 76px; }
+  .field-notes .nav::before {
+    top: 20px;
+    right: auto;
+    bottom: 20px;
+    left: 50%;
+    width: 6px;
+    height: auto;
+    border-top: 0;
+    border-right: 1px solid #d8d8d4;
+    border-bottom: 0;
+    border-left: 1.5px solid #171717;
+    transform: skewY(-4deg);
+    display: block;
+  }
+  .field-notes .field-notes-route { display: none; }
+  .field-notes .nav-step:nth-of-type(odd) { grid-column: 1; }
+  .field-notes .nav-step:nth-of-type(even) { grid-column: 2; }
+  .field-notes .nav-step:nth-of-type(2) { grid-row: 2; }
+  .field-notes .nav-step:nth-of-type(3) { grid-row: 3; }
+  .field-notes .nav-step:nth-of-type(4) { grid-row: 4; }
+  .field-notes .nav-step:nth-of-type(5) { grid-row: 5; }
+  .field-notes .nav-step:nth-of-type(6) { grid-row: 6; }
+  .field-notes .nav-step:nth-of-type(7) { grid-row: 7; }
+  .field-notes .step-lbl,
+  .field-notes .nav-step:nth-of-type(even) .step-lbl {
+    position: static;
+    padding: 0;
+    background: transparent;
+  }
+  .field-notes .cmp { grid-template-columns: 1fr; }
+  .field-notes .cmp-col,
+  .field-notes .cmp-col + .cmp-col { padding: 26px 0; border-left: 0; }
+  .field-notes .cmp-col + .cmp-col { border-top: 1px solid #d8d8d4; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .field-notes .panel.active { animation: none; }
+}
+</style>
+<style id="notebook-contrast-fixes">
+.field-notes .code-body pre,
+.field-notes .dbt-reveal pre,
+.field-notes .editor-code {
+  color: #1c1c1c !important;
+  background-color: #fff !important;
+}
+.field-notes .code-body pre:not(.editor-rendered) span[style*="#e6edf3"],
+.field-notes .dbt-reveal pre:not(.editor-rendered) span[style*="#e6edf3"] { color: #1c1c1c !important; }
+.field-notes .code-body pre:not(.editor-rendered) span[style*="#a5d6ff"],
+.field-notes .dbt-reveal pre:not(.editor-rendered) span[style*="#a5d6ff"] { color: #9a3412 !important; }
+.field-notes .code-body pre:not(.editor-rendered) span[style*="#8b949e"],
+.field-notes .dbt-reveal pre:not(.editor-rendered) span[style*="#8b949e"] { color: #536577 !important; }
+.field-notes .naming-card,
+.field-notes .par-block {
+  color: #353535;
+  background: #fff !important;
+  border-color: #d8d8d4 !important;
+  border-radius: 0;
+}
+.field-notes .naming-card .meaning,
+.field-notes .naming-card .meaning strong,
+.field-notes .par-block h4 {
+  color: #353535 !important;
+}
+.field-notes .bar-track { background: #f3f3ef; }
+.field-notes [data-i18n-html="box_sched"] {
+  max-width: 760px;
+  margin: 54px 0;
+  padding: 2px 0 2px 22px !important;
+  color: #353535 !important;
+  background: #fff !important;
+  border: 0 !important;
+  border-left: 1.5px solid #b07226 !important;
+  border-radius: 0 !important;
+  font-size: 14px !important;
+  line-height: 1.75 !important;
+}
+.field-notes [data-i18n-html="box_sched"] strong { color: #171717 !important; }
+.field-notes [data-i18n-html="box_sched"] code,
+.field-notes .dc code,
+.field-notes .src-box code {
+  color: #252525 !important;
+  background: #f3f3ef !important;
+}
+.field-notes .dc p,
+.field-notes .debug-note { color: #353535 !important; }
+.field-notes svg text[fill="#e6edf3"] { fill: #171717; }
+.field-notes .dag-wrap svg rect[fill="#1c2129"] {
+  fill: #fff;
+  stroke: #4a4a4a;
+}
+.field-notes .dag-wrap svg text[fill="#8b949e"] { fill: #4a4a4a; }
+.field-notes .dag-wrap svg line[stroke="#2d333b"] { stroke: #c9c9c4; }
+.field-notes .dag-wrap svg path[stroke="#8b949e"] { stroke: #62625e; opacity: .75; }
+@media(max-width:700px) {
+  .field-notes .app { padding-right: 16px; padding-left: 16px; }
+  .field-notes .hdr h1 { font-size: clamp(38px, 13vw, 58px); line-height: .98; }
+  .field-notes .hint,
+  .field-notes .ann,
+  .field-notes .ann.ok,
+  .field-notes .ann.danger,
+  .field-notes .what-changed,
+  .field-notes [data-i18n-html="box_par"],
+  .field-notes [data-i18n-html="box_sched"] { margin-bottom: 38px; padding-left: 16px !important; }
+  .field-notes .code-body,
+  .field-notes .dbt-reveal { padding-right: 12px; padding-left: 12px; }
+  .field-notes pre { font-size: 11px; line-height: 1.65; }
+  .field-notes .code-head { align-items: flex-start; gap: 8px; }
+  .field-notes .code-head .lbl { overflow-wrap: anywhere; }
+  .field-notes .badge { flex: 0 0 auto; }
+  .field-notes .naming-row,
+  .field-notes .par-wrap,
+  .field-notes .debug-split { grid-template-columns: 1fr; }
+  .field-notes .src-row { align-items: flex-start; overflow-x: auto; }
+  .field-notes .dag-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .field-notes .dag-wrap svg { min-width: 680px !important; }
+  .field-notes .bar-lbl { width: 62px; font-size: 9px; }
+  .field-notes .bar-fill { overflow: hidden; font-size: 8px; white-space: nowrap; }
+  .field-notes .bottom-nav { gap: 10px; }
+  .field-notes .btn-nav { min-width: 0; padding: 10px 12px; }
+}
+</style>
+<style id="notebook-editor-match">
+.field-notes .code-wrap {
+  overflow: hidden;
+  background: #fff !important;
+  border: 1px solid #e5e5e5 !important;
+  border-radius: 1px 3px 2px 0;
+}
+.field-notes .code-head {
+  min-height: 42px;
+  padding: 11px 14px 11px 58px;
+  background: #fafafa !important;
+  border-bottom: 1px solid #e5e5e5;
+}
+.field-notes .badge {
+  padding: 0;
+  color: #777 !important;
+  background: transparent !important;
+  border: 0;
+  font-weight: 400;
+}
+.field-notes .code-body,
+.field-notes .dbt-reveal {
+  padding: 0 !important;
+  overflow-x: auto;
+  background: #fff !important;
+}
+.field-notes pre.editor-rendered {
+  min-width: max-content;
+  margin: 0;
+  padding: 8px 0 12px !important;
+  color: #1c1c1c !important;
+  background: #fff !important;
+  font-family: var(--code-font) !important;
+  font-size: 11.5px !important;
+  line-height: 1.72 !important;
+}
+.field-notes .editor-line {
+  display: grid;
+  grid-template-columns: 48px minmax(640px, 1fr);
+  min-height: 20px;
+}
+.field-notes .editor-gutter {
+  display: block;
+  padding-right: 13px;
+  color: #777;
+  background: #fafafa;
+  border-right: 1px solid #eee;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  user-select: none;
+}
+.field-notes .editor-code {
+  display: block;
+  min-height: 20px;
+  padding: 0 18px;
+  color: #1c1c1c !important;
+  white-space: pre;
+  background-color: #fff !important;
+  background-image: linear-gradient(90deg, transparent 0, transparent 3.95ch, #f3f3f3 4ch, transparent 4.05ch);
+  background-size: 4ch 100%;
+}
+.field-notes .editor-line.is-problem .editor-gutter {
+  color: #8f1712;
+  background: #ffd6d6;
+  border-right-color: #d92d20;
+  font-weight: 700;
+}
+.field-notes .editor-line.is-problem .editor-code {
+  background-color: #ffe8e8 !important;
+  background-image: none;
+  box-shadow: inset 3px 0 0 #d92d20;
+}
+.field-notes .editor-code .tok-keyword { color: #2f6fcc !important; }
+.field-notes .editor-code .tok-jinja { color: #5b35ff !important; }
+.field-notes .editor-code .tok-function { color: #287da8 !important; }
+.field-notes .editor-code .tok-string { color: #ad3f16 !important; }
+.field-notes .editor-code .tok-number,
+.field-notes .editor-code .tok-constant { color: #7c3aed !important; }
+.field-notes .editor-code .tok-comment,
+.field-notes .editor-code .tok-prompt { color: #536577 !important; }
+.field-notes .editor-line.is-problem .tok-comment { color: #704040 !important; }
+.field-notes .hint strong,
+.field-notes .what-changed strong,
+.field-notes .ann strong,
+.field-notes .debug-note strong {
+  color: #171717 !important;
+  font-weight: 600;
+}
+@media(max-width:700px) {
+  .field-notes .editor-line { grid-template-columns: 38px minmax(560px, 1fr); }
+  .field-notes .editor-gutter { padding-right: 10px; }
+  .field-notes .editor-code { padding-inline: 12px; }
+}
+</style>
+
 </head>
 <body>
 <div class="app">
 
 <div style="margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:12px">
   <a href="../" data-i18n-html="back_all" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'">← all explainers</a>
-  <div class="lang-toggle" role="group" aria-label="Language / 言語">
-    <button type="button" class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
-    <button type="button" class="lang-btn" data-lang="ja" onclick="setLang('ja')">日本語</button>
-    <button type="button" class="lang-btn" data-lang="pt" onclick="setLang('pt')">Português</button>
-    <button type="button" class="lang-btn" data-lang="es" onclick="setLang('es')">Español</button>
+  <div class="language-picker">
+    <button type="button" class="language-current" id="language-current" aria-haspopup="listbox" aria-expanded="false" aria-controls="language-menu" onclick="toggleLanguageMenu()" onkeydown="handleLanguageKeydown(event)">English</button>
+    <div class="language-menu" id="language-menu" role="listbox" aria-label="language" hidden>
+      <button type="button" class="language-option language-en" role="option" aria-selected="true" data-lang="en" onclick="selectLanguage('en')">English</button>
+      <button type="button" class="language-option language-ja" role="option" aria-selected="false" data-lang="ja" onclick="selectLanguage('ja')">日本語</button>
+      <button type="button" class="language-option language-es" role="option" aria-selected="false" data-lang="es" onclick="selectLanguage('es')">Español</button>
+      <button type="button" class="language-option language-pt-br" role="option" aria-selected="false" data-lang="pt-BR" onclick="selectLanguage('pt-BR')">Português (Brasil)</button>
+      <button type="button" class="language-option language-de" role="option" aria-selected="false" data-lang="de" onclick="selectLanguage('de')">Deutsch</button>
+    </div>
   </div>
 </div>
 <div class="hdr">
   <div class="hdr-tag">dbt 101</div>
   <h1 data-i18n-html="h1">From notebooks to dbt</h1>
-  <p data-i18n-html="intro">An interactive walkthrough. Follow the steps; each one builds on the last so you can see exactly what changes and why.</p>
+  <p data-i18n-html="intro">A notebook pipeline, rebuilt in dbt one step at a time.</p>
 </div>
 
 <div class="nav">
+  <svg class="field-notes-route" viewBox="0 0 1000 52" preserveAspectRatio="none" aria-hidden="true"><path d="M18,31 C120,5 180,48 278,25 S455,8 550,29 S730,48 812,22 S925,10 982,30" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
   <button class="nav-step active" onclick="go(0)"><span class="step-num">1</span><span class="step-lbl" data-i18n-html="nav1">The notebook</span></button>
   <button class="nav-step" onclick="go(1)"><span class="step-num">2</span><span class="step-lbl" data-i18n-html="nav2">Breaking it apart</span></button>
   <button class="nav-step" onclick="go(2)"><span class="step-num">3</span><span class="step-lbl" data-i18n-html="nav3">Where data comes from</span></button>
@@ -168,12 +928,12 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
 <div class="panel active" id="p0">
   <div class="hint">
     <span class="hint-icon">💡</span>
-    <div data-i18n-html="h_t0">This is a complete pipeline in a Jupyter notebook, the kind you'd inherit today. Five cells build a customer order summary using pandas. <strong>Highlighted lines</strong> are the things that create problems at scale, and the <strong style="color:#e6edf3">In [ ]:</strong> counts are out of order because nothing forces you to run cells top to bottom. Read the inline labels, then move to the next tab to see how dbt solves each one.</div>
+    <div data-i18n-html="h_t0">Below is a five-cell Jupyter notebook that builds a customer order summary in pandas. The highlighted lines point out the operational problems. The <strong style="color:#171717">In [ ]:</strong> counts are out of order because a notebook does not enforce execution order.</div>
   </div>
 
   <div class="code-wrap" style="border-color:#f85149">
     <div class="code-head" style="background:rgba(248,81,73,.05)">
-      <span class="lbl" style="color:#f85149" data-i18n-html="lbl_full">build_customer_summary.ipynb — full pipeline notebook</span>
+      <span class="lbl" style="color:#f85149" data-i18n-html="lbl_full">build_customer_summary.ipynb: full pipeline notebook</span>
       <span class="badge" style="background:rgba(248,81,73,.14);color:#f85149" data-i18n-html="badge_nb">1 notebook · 5 cells</span>
     </div>
     <div class="code-body"><pre><span style="color:#d2a8ff">In [4]:</span>
@@ -238,7 +998,7 @@ result = summary.groupby(
   </div>
 
   <div class="ann danger" data-i18n-html="ann_t0">
-    <strong>What you're looking at:</strong> One notebook, 5 cells, all data loaded into the kernel, cells that can run in any order, hardcoded connection strings and schema names, full table overwrite on every run, and no trustworthy intermediate state when something fails. It works, until it doesn't. The next tab shows what dbt does differently.
+    One notebook holds five steps and loads every DataFrame into the kernel. Cells can run out of order, connection details and schemas are hardcoded, each run overwrites the output, and a kernel restart removes the intermediate state. The next tab moves the same work into dbt.
   </div>
 </div>
 
@@ -246,7 +1006,7 @@ result = summary.groupby(
 <div class="panel" id="p1">
   <div class="hint">
     <span class="hint-icon">🧩</span>
-    <div data-i18n-html="h_t1">The notebook is one file, five cells sharing one kernel. dbt breaks it into 5 files, one per logical step. <strong>Click each block</strong> to see how that step translates into dbt, and exactly what changes.</div>
+    <div data-i18n-html="h_t1">The notebook keeps five steps in one kernel. dbt puts each step in its own file. <strong>Open each block</strong> to compare the notebook code with its dbt model.</div>
   </div>
 
   <div class="code-wrap tmp-block" id="tmp1" onclick="toggleTmp('tmp1','dbt1')">
@@ -268,7 +1028,7 @@ tmp_customers[<span style="color:#a5d6ff">'region'</span>] = tmp_customers[<span
     <span style="color:#ff7b72">CASE WHEN</span> region <span style="color:#ff7b72">IS NULL THEN</span> <span style="color:#a5d6ff">'Unassigned'</span> <span style="color:#ff7b72">ELSE</span> <span style="color:#79c0ff">UPPER</span>(region) <span style="color:#ff7b72">END</span> <span style="color:#ff7b72">AS</span> region,
     created_at
 <span style="color:#ff7b72">FROM</span> {{ <span style="color:#d2a8ff">source</span>(<span style="color:#a5d6ff">'raw'</span>, <span style="color:#a5d6ff">'customers'</span>) }}</pre>
-        <div class="what-changed" data-i18n-html="wc1"><strong>What changed:</strong> The transformation logic is identical, just SQL now. No Python runtime, no kernel memory limits, no network transfer of raw data. <code>pd.read_sql("... FROM raw.customers")</code> becomes <code>source('raw','customers')</code>, and dbt registers this as an official data entry point it can test, monitor for freshness, and alert on. The result is a real, persistent, queryable table in your warehouse, not a variable that lives and dies with one kernel session.</div>
+        <div class="what-changed" data-i18n-html="wc1">The transformation is now SQL that runs in the warehouse. <code>pd.read_sql("... FROM raw.customers")</code> becomes <code>source('raw','customers')</code>, which tells dbt where the data enters the project. dbt can test that source and monitor its freshness. The model result persists in the warehouse after the run ends.</div>
       </div>
     </div>
   </div>
@@ -285,7 +1045,7 @@ tmp_orders = tmp_orders[
         <pre><span style="color:#ff7b72">SELECT</span> order_id, customer_id, order_date, status, total_amount
 <span style="color:#ff7b72">FROM</span> {{ <span style="color:#d2a8ff">source</span>(<span style="color:#a5d6ff">'raw'</span>, <span style="color:#a5d6ff">'orders'</span>) }}
 <span style="color:#ff7b72">WHERE</span> order_id <span style="color:#ff7b72">IS NOT NULL</span> <span style="color:#ff7b72">AND</span> status != <span style="color:#a5d6ff">'cancelled'</span></pre>
-        <div class="what-changed" data-i18n-html="wc2"><strong>What changed:</strong> Same filter logic, now a standalone file. When another team builds a revenue pipeline and needs clean orders, they reference <code>ref('stg_orders')</code> instead of copy-pasting the filter logic into their own notebook. Across notebooks, "what is a valid order" ends up defined in five different files, and they drift.</div>
+        <div class="what-changed" data-i18n-html="wc2">The filter logic is unchanged, but it now lives in a model other work can reference with <code>ref('stg_orders')</code>. Teams can reuse the cleaned orders instead of copying the filter into another notebook.</div>
       </div>
     </div>
   </div>
@@ -305,7 +1065,7 @@ tmp_payments = tmp_payments[
     created_at <span style="color:#ff7b72">AS</span> payment_date
 <span style="color:#ff7b72">FROM</span> {{ <span style="color:#d2a8ff">source</span>(<span style="color:#a5d6ff">'raw'</span>, <span style="color:#a5d6ff">'payments'</span>) }}
 <span style="color:#ff7b72">WHERE</span> payment_id <span style="color:#ff7b72">IS NOT NULL</span> <span style="color:#ff7b72">AND</span> amount &gt; <span style="color:#79c0ff">0</span></pre>
-        <div class="what-changed" data-i18n-html="wc3"><strong>What changed:</strong> Same transformation. Now steps 1, 2, and 3 are three independent files with no dependency on each other — dbt can run all three in parallel. The notebook runs them one cell at a time, in whatever order you happened to click.</div>
+        <div class="what-changed" data-i18n-html="wc3">The transformation is unchanged. Steps 1, 2, and 3 have no dependencies between them, so dbt can run them in parallel. A notebook runs the cells one at a time in the order you choose.</div>
       </div>
     </div>
   </div>
@@ -332,7 +1092,7 @@ tmp_orders_with_payments[<span style="color:#a5d6ff">'outstanding_balance'</span
 <span style="color:#ff7b72">FROM</span> {{ <span style="color:#d2a8ff">ref</span>(<span style="color:#a5d6ff">'stg_orders'</span>) }} o
 <span style="color:#ff7b72">LEFT JOIN</span> {{ <span style="color:#d2a8ff">ref</span>(<span style="color:#a5d6ff">'stg_payments'</span>) }} p <span style="color:#ff7b72">ON</span> o.order_id = p.order_id
 <span style="color:#ff7b72">GROUP BY</span> o.order_id, o.customer_id, o.order_date, o.total_amount</pre>
-        <div class="what-changed" data-i18n-html="wc4"><strong>What changed:</strong> <code>tmp_orders</code> and <code>tmp_payments</code> (cell variables that exist only while the kernel is alive) become <code>ref('stg_orders')</code> and <code>ref('stg_payments')</code> — persistent, queryable warehouse tables. Those <code>ref()</code> calls also declare the dependency: dbt knows to finish both staging models before running this one. You didn't write any orchestration logic — the <code>ref()</code> calls are the orchestration.</div>
+        <div class="what-changed" data-i18n-html="wc4"><code>tmp_orders</code> and <code>tmp_payments</code> become <code>ref('stg_orders')</code> and <code>ref('stg_payments')</code>. Those models persist as warehouse tables. The two <code>ref()</code> calls also tell dbt to finish both staging models before running this one.</div>
       </div>
     </div>
   </div>
@@ -366,13 +1126,13 @@ result = summary.groupby(
 <span style="color:#ff7b72">LEFT JOIN</span> {{ <span style="color:#d2a8ff">ref</span>(<span style="color:#a5d6ff">'int_orders_with_payments'</span>) }} op
     <span style="color:#ff7b72">ON</span> c.customer_id = op.customer_id
 <span style="color:#ff7b72">GROUP BY</span> c.customer_id, c.email, full_name, c.region</pre>
-        <div class="what-changed" data-i18n-html="wc5"><strong>You've now seen all 5 steps.</strong> The transformation logic didn't change. What changed: (1) transformations run in the warehouse, not in the notebook kernel, so no memory ceilings and no data transfer overhead; (2) each step is a real, persistent, queryable table — not a variable that vanishes; (3) <code>if_exists='replace'</code> is gone — materialization is a one-line config, not code you have to maintain.</div>
+        <div class="what-changed" data-i18n-html="wc5">The SQL still performs the same five transformations. dbt runs them in the warehouse, keeps each model available for inspection, and moves the output strategy from <code>if_exists='replace'</code> into model configuration.</div>
       </div>
     </div>
   </div>
 
   <div class="ann danger" data-i18n-html="ann_t1">
-    <strong>The pattern:</strong> Same transformation logic throughout. What dbt changes is the execution environment and the wrapper: transformations move from the notebook kernel into the warehouse, <code>pd.read_sql("... FROM raw.x")</code> becomes <code>source()</code>, <code>tmp_x</code> variable references become <code>ref()</code>. Those three substitutions unlock everything else.
+    The transformation logic stays the same. It moves from the notebook kernel into the warehouse, <code>pd.read_sql("... FROM raw.x")</code> becomes <code>source()</code>, and <code>tmp_x</code> becomes <code>ref()</code>. Those changes give dbt the information it needs to build and run the dependency graph.
   </div>
 </div>
 
@@ -380,38 +1140,38 @@ result = summary.groupby(
 <div class="panel" id="p2">
   <div class="hint">
     <span class="hint-icon">📂</span>
-    <div data-i18n-html="h_t2">Before the lineage graph makes sense, it helps to understand what the prefixes mean and how dbt tracks where data enters and flows through the pipeline.</div>
+    <div data-i18n-html="h_t2">The model names describe each layer of the project. <code>source()</code> marks where data enters, and <code>ref()</code> records how models depend on one another.</div>
   </div>
 
   <div class="naming-row">
     <div class="naming-card stg-c">
       <div class="prefix">stg_</div>
-      <div class="meaning" data-i18n-html="nm_stg"><strong style="color:#e6edf3">Staging</strong> — one file per source table. Cleans, renames, casts. Raw in, usable columns out. Nothing is joined here.</div>
+      <div class="meaning" data-i18n-html="nm_stg"><strong style="color:#171717">Staging</strong>: one file per source table for cleaning, renaming, and casting columns. Joins happen later.</div>
     </div>
     <div class="naming-card int-c">
       <div class="prefix">int_</div>
-      <div class="meaning" data-i18n-html="nm_int"><strong style="color:#e6edf3">Intermediate</strong> — joins and transforms that aren't the final output. Shared building blocks between mart models.</div>
+      <div class="meaning" data-i18n-html="nm_int"><strong style="color:#171717">Intermediate</strong>: joins and transformations used by downstream models.</div>
     </div>
     <div class="naming-card mart-c">
       <div class="prefix">fct_ / dim_</div>
-      <div class="meaning" data-i18n-html="nm_mart"><strong style="color:#e6edf3">Marts</strong> — what BI tools and business users actually query. One table per business question.</div>
+      <div class="meaning" data-i18n-html="nm_mart"><strong style="color:#171717">Marts</strong>: tables built for BI tools and business analysis.</div>
     </div>
   </div>
 
   <div class="src-box">
-    <h4 data-i18n-html="sb1_h">source() — where raw data enters</h4>
+    <h4 data-i18n-html="sb1_h">source(): where raw data enters</h4>
     <div class="src-row"><span class="raw-s">pd.read_sql("... FROM raw.customers", engine)</span><span class="arr-s">→</span><span class="fn-s">{{ source('raw', 'customers') }}</span></div>
     <div class="src-row"><span class="raw-s">pd.read_sql("... FROM raw.orders", engine)</span><span class="arr-s">→</span><span class="fn-s">{{ source('raw', 'orders') }}</span></div>
     <div class="src-row"><span class="raw-s">pd.read_sql("... FROM raw.payments", engine)</span><span class="arr-s">→</span><span class="fn-s">{{ source('raw', 'payments') }}</span></div>
-    <div style="margin-top:10px;font-size:12px;color:#8b949e;line-height:1.6" data-i18n-html="sb1_p">The notebook hardcoded schema names and a connection string. If a schema renames, the cell throws an error, or worse, silently returns stale data. <code style="font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px">source()</code> registers these as official entry points — dbt can test them, check freshness, and alert you before a bad data day becomes a bad dashboard day. It also resolves the correct schema per environment automatically, so dev and prod never share the same hardcoded string.</div>
+    <div style="margin-top:10px;font-size:12px;color:#4a4a4a;line-height:1.6" data-i18n-html="sb1_p">The notebook hardcodes schema names and a connection string. A schema rename can cause an error or return stale data. <code style="font-family:'JetBrains Mono',monospace;font-size:10px;background:#f3f3ef;padding:1px 4px;border-radius:3px">source()</code> gives dbt a named entry point it can test and check for freshness. It also resolves the correct schema for each environment.</div>
   </div>
 
   <div class="src-box">
-    <h4 data-i18n-html="sb2_h">ref() — how models depend on each other</h4>
+    <h4 data-i18n-html="sb2_h">ref(): how models depend on each other</h4>
     <div class="src-row"><span class="raw-s" data-i18n-html="ref_row1">tmp_orders (cell variable)</span><span class="arr-s">→</span><span class="ref-s">{{ ref('stg_orders') }}</span></div>
     <div class="src-row"><span class="raw-s" data-i18n-html="ref_row2">tmp_payments (cell variable)</span><span class="arr-s">→</span><span class="ref-s">{{ ref('stg_payments') }}</span></div>
     <div class="src-row"><span class="raw-s">tmp_customers, tmp_orders_with_payments</span><span class="arr-s">→</span><span class="ref-s">ref('stg_customers'), ref('int_orders_with_payments')</span></div>
-    <div style="margin-top:10px;font-size:12px;color:#8b949e;line-height:1.6" data-i18n-html="sb2_p">Every <code>ref()</code> is a declared dependency. dbt reads them all and builds the execution order automatically. You don't write orchestration code; the <code>ref()</code> calls <em>are</em> the orchestration. In the notebook, the order was enforced by cell position and hope, and running cells out of order quietly broke it; here it's enforced by the system.</div>
+    <div style="margin-top:10px;font-size:12px;color:#4a4a4a;line-height:1.6" data-i18n-html="sb2_p">Every <code>ref()</code> declares a dependency. dbt uses those references to build the execution order. In the notebook, execution depends on which cell runs first. In dbt, the graph controls the order.</div>
   </div>
 
   <div class="dag-wrap">
@@ -463,7 +1223,7 @@ result = summary.groupby(
   </div>
 
   <div class="ann" data-i18n-html="ann_t2">
-    <strong>This graph is the notebook made visible.</strong> The notebook had this same structure, it just wasn't visible. You had to read through five cells (in whatever order they were last run) to understand that step 4 depended on steps 2 and 3. dbt makes it explicit, queryable, and documented automatically.
+    The notebook contains the same dependencies, but they are implicit in the cell variables. dbt reads each <code>ref()</code> and draws the graph, so the dependency between steps 2, 3, and 4 is visible without reading every file.
   </div>
 </div>
 
@@ -471,12 +1231,12 @@ result = summary.groupby(
 <div class="panel" id="p3">
   <div class="hint">
     <span class="hint-icon">⚡</span>
-    <div data-i18n-html="h_t3">The notebook runs cell by cell, top to bottom, when you remember to run them in order. That's the only option a kernel gives you. dbt reads the dependency graph and runs independent models simultaneously across threads.</div>
+    <div data-i18n-html="h_t3">A notebook kernel executes one cell at a time. dbt reads the dependency graph and can run models at the same time when none depends on another.</div>
   </div>
 
   <div class="par-wrap">
     <div class="par-block">
-      <h4 data-i18n-html="pb1_h">❌ notebook — serial, cell by cell</h4>
+      <h4 data-i18n-html="pb1_h">notebook: serial, cell by cell</h4>
       <div class="bar-row"><span class="bar-lbl" data-i18n-html="bl_s1">step 1</span><div class="bar-track"><div class="bar-fill" style="width:20%;background:#58a6ff;left:0%">stg_cust</div></div></div>
       <div class="bar-row"><span class="bar-lbl" data-i18n-html="bl_s2">step 2</span><div class="bar-track"><div class="bar-fill" style="width:20%;background:#3fb950;left:20%">stg_orders</div></div></div>
       <div class="bar-row"><span class="bar-lbl" data-i18n-html="bl_s3">step 3</span><div class="bar-track"><div class="bar-fill" style="width:20%;background:#d29922;left:40%">stg_pay</div></div></div>
@@ -485,7 +1245,7 @@ result = summary.groupby(
       <div style="margin-top:10px;font-size:11px;color:#8b949e" data-i18n-html="et1">Execution time: <strong style="color:#f85149">5 units</strong></div>
     </div>
     <div class="par-block">
-      <h4 data-i18n-html="pb2_h">✅ dbt — parallel (3 threads)</h4>
+      <h4 data-i18n-html="pb2_h">dbt: parallel (3 threads)</h4>
       <div class="bar-row"><span class="bar-lbl" data-i18n-html="bl_t1">thread 1</span><div class="bar-track"><div class="bar-fill" style="width:20%;background:#58a6ff;left:0%">stg_cust</div></div></div>
       <div class="bar-row"><span class="bar-lbl" data-i18n-html="bl_t2">thread 2</span><div class="bar-track"><div class="bar-fill" style="width:20%;background:#3fb950;left:0%">stg_orders</div></div></div>
       <div class="bar-row"><span class="bar-lbl" data-i18n-html="bl_t3">thread 3</span><div class="bar-track"><div class="bar-fill" style="width:20%;background:#d29922;left:0%">stg_pay</div></div></div>
@@ -497,16 +1257,16 @@ result = summary.groupby(
 
   <div style="background:#161b22;border:1px solid #2d333b;border-radius:9px;padding:14px 16px;margin-bottom:16px;font-size:12px;color:#8b949e;line-height:1.6" data-i18n-html="box_par">
     <strong style="color:#e6edf3;display:block;margin-bottom:5px">How does dbt know it can parallelize?</strong>
-    Because <code style="font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px">stg_customers</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px">stg_orders</code>, and <code style="font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px">stg_payments</code> each only reference <code>source()</code> — they have no <code>ref()</code> edges between them. dbt reads the graph, sees no dependencies, and dispatches all three at once. The <code>ref()</code> declarations from tab 2 are the orchestration — you didn't write any extra config to make this happen.
+    dbt can see that the customer, order, and payment models do not depend on one another. That means it can run all three at the same time instead of waiting for each one to finish.
   </div>
 
   <div style="background:#161b22;border:1px solid #2d333b;border-radius:9px;padding:14px 16px;margin-bottom:16px;font-size:12px;color:#8b949e;line-height:1.6" data-i18n-html="box_sched">
     <strong style="color:#e6edf3;display:block;margin-bottom:5px">What about scheduling notebooks with papermill or Airflow?</strong>
-    You can productionize notebooks with papermill, nbconvert, or an Airflow DAG, but now you're maintaining two systems: the transformation logic in cells, and the schedule and dependency wiring outside the notebook. And a notebook run is still one kernel executing cells in sequence. In dbt, the <code>ref()</code> calls inside your SQL files <em>are</em> the DAG. There's no separate orchestration file to keep in sync.
+    Tools like papermill and Airflow can schedule a notebook. You still have to manage the notebook and its run order in separate places. With dbt, the model files describe what depends on what, so dbt can work out the run order for you.
   </div>
 
   <div class="ann" data-i18n-html="ann_t3">
-    <strong>At scale:</strong> This example has 5 models. Real projects have hundreds. A pipeline with 40 independent staging models runs in roughly the time it takes to run one, given enough threads — no orchestrator config required.
+    This example has five models. If a project has 40 independent staging models and enough available threads, dbt can start those models together.
   </div>
 </div>
 
@@ -514,17 +1274,17 @@ result = summary.groupby(
 <div class="panel" id="p4">
   <div class="hint">
     <span class="hint-icon">🔬</span>
-    <div data-i18n-html="h_t4">The notebook works until it doesn't. When it breaks, the debugging experience is fundamentally different. <strong>Click each scenario</strong> to compare.</div>
+    <div data-i18n-html="h_t4">These examples compare what remains available after a notebook or dbt run fails. <strong>Open a scenario</strong> to see both sides.</div>
   </div>
 
   <div class="debug-scenario">
     <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname" data-i18n-html="ds1">Pipeline fails at the join step (step 4)</span><span class="chevron">▼</span></div>
     <div class="debug-body">
       <div class="debug-split">
-        <div class="dc"><div class="ch" data-i18n-html="ch_nb">notebook</div><p data-i18n-html="dp1a">Cell 4 failed. If the kernel is still alive, the DataFrames from cells 1–3 linger, but can you trust them? Were they run in this order, against this version of the code? If you restart the kernel to be sure, they're gone and you re-run every cell from the top. Every debug cycle risks another full re-run, including the expensive <code>pd.read_sql()</code> calls.</p></div>
+        <div class="dc"><div class="ch" data-i18n-html="ch_nb">notebook</div><p data-i18n-html="dp1a">Cell 4 failed. The DataFrames from cells 1–3 remain only while the kernel is alive, and their state depends on which code and execution order produced them. Restarting the kernel removes them, so reproducing the failure requires running the earlier cells again, including the <code>pd.read_sql()</code> calls.</p></div>
         <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp1b">Step 4 failed. <code>stg_orders</code> and <code>stg_payments</code> are still in the warehouse as real tables. Run <code>dbt run -s int_orders_with_payments</code> to re-execute only that model. Upstream work stays intact.</p></div>
       </div>
-      <div class="debug-note" data-i18n-html="dn1">The difference comes from one thing: dbt models are real, persistent tables in your warehouse. Notebook DataFrames live in a kernel and die when it restarts. That's the whole game.</div>
+      <div class="debug-note" data-i18n-html="dn1">dbt models persist as warehouse tables. Notebook DataFrames disappear when the kernel restarts. That difference determines what you can inspect after a failure.</div>
     </div>
   </div>
 
@@ -532,21 +1292,21 @@ result = summary.groupby(
     <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname" data-i18n-html="ds2">Wrong row count in the final output</span><span class="chevron">▼</span></div>
     <div class="debug-body">
       <div class="debug-split">
-        <div class="dc"><div class="ch" data-i18n-html="ch_nb">notebook</div><p data-i18n-html="dp2a">Fan-out in the merge? Bad filter in cell 2? You scatter <code>df.shape</code> into extra cells, re-run them, and hope you ran them in the right order against current state. Or you temporarily write intermediate CSVs to disk. Multiple re-run cycles to isolate the problem.</p></div>
-        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp2b">Query <code>stg_orders</code> — how many rows? Query <code>int_orders_with_payments</code> — how many? The difference shows exactly where the fan-out happened. No re-run needed. The intermediate tables are just sitting there in the warehouse.</p></div>
+        <div class="dc"><div class="ch" data-i18n-html="ch_nb">notebook</div><p data-i18n-html="dp2a">Add <code>df.shape</code> checks to the notebook and run the relevant cells again. Those checks must use DataFrames produced by the current code in the intended order. Saving intermediate CSVs is another way to inspect each step.</p></div>
+        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp2b">Query <code>stg_orders</code>, then query <code>int_orders_with_payments</code>. Comparing their row counts shows where the fan-out occurred. The intermediate tables already exist in the warehouse.</p></div>
       </div>
-      <div class="debug-note" data-i18n-html="dn2">Because every intermediate model is a real table, you can bisect a row count problem the same way you'd bisect a bug in code — without re-running anything.</div>
+      <div class="debug-note" data-i18n-html="dn2">Persisted intermediate models let you compare row counts at each step without rerunning the pipeline.</div>
     </div>
   </div>
 
   <div class="debug-scenario">
-    <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname" data-i18n-html="ds3">Upstream schema change — a column got renamed</span><span class="chevron">▼</span></div>
+    <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname" data-i18n-html="ds3">Upstream schema change: a column got renamed</span><span class="chevron">▼</span></div>
     <div class="debug-body">
       <div class="debug-split">
         <div class="dc"><div class="ch" data-i18n-html="ch_nb">notebook</div><p data-i18n-html="dp3a">The rename surfaces when you re-run cell 3: <code>KeyError: 'amount'</code>. Cells 1 and 2 already ran and their DataFrames still sit in the kernel, so the notebook is now in a half-updated state. Find every notebook and cell where <code>'amount'</code> is referenced; there's no central list.</p></div>
-        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp3b"><code>stg_payments</code> is the only model that touches <code>raw.payments</code>. Fix the column reference there. Every downstream model gets the fix automatically on the next run. One change point, not five notebooks to grep through.</p></div>
+        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp3b"><code>stg_payments</code> is the only model that touches <code>raw.payments</code>. Fix the column reference there. Downstream models use the corrected staging model on the next run.</p></div>
       </div>
-      <div class="debug-note" data-i18n-html="dn3">The <code>stg_</code> layer acts as an isolation boundary. Raw schema changes only affect one file — the staging model for that source.</div>
+      <div class="debug-note" data-i18n-html="dn3">The <code>stg_</code> layer limits a raw schema change to the staging model for that source.</div>
     </div>
   </div>
 
@@ -554,10 +1314,10 @@ result = summary.groupby(
     <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname" data-i18n-html="ds4">3am on-call alert fires</span><span class="chevron">▼</span></div>
     <div class="debug-body">
       <div class="debug-split">
-        <div class="dc"><div class="ch" data-i18n-html="ch_nb">notebook</div><p data-i18n-html="dp4a">The scheduled run failed. It ran in a fresh, headless kernel (papermill), which then exited, so no DataFrames anywhere. Open the notebook, run every cell to reproduce, add cells, run again. Multiple cycles before you even start fixing, and all the expensive source queries run again each time.</p></div>
-        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp4b">dbt run logs show the exact model that failed and the exact SQL error. Intermediate models are still in the warehouse. Fix the model, run <code>dbt run -s failed_model+</code> to re-run it and only its dependents.</p></div>
+        <div class="dc"><div class="ch" data-i18n-html="ch_nb">notebook</div><p data-i18n-html="dp4a">The scheduled run used a fresh, headless kernel that exited after the failure. Reproducing it requires opening the notebook and running the earlier cells again. Each attempt also reruns the source queries.</p></div>
+        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp4b">The dbt run log identifies the failed model and reports the SQL error. Intermediate models remain in the warehouse. After fixing the model, run <code>dbt run -s failed_model+</code> to rerun it and its downstream dependents.</p></div>
       </div>
-      <div class="debug-note" data-i18n-html="dn4">This is where the value becomes visceral. The engineer on-call at 3am cares a lot about whether the intermediate state survived the failure.</div>
+      <div class="debug-note" data-i18n-html="dn4">If the intermediate state survives the failed run, the on-call engineer can inspect it immediately instead of rebuilding it at 3am.</div>
     </div>
   </div>
 
@@ -565,10 +1325,10 @@ result = summary.groupby(
     <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname" data-i18n-html="ds5">What else depends on payments data?</span><span class="chevron">▼</span></div>
     <div class="debug-body">
       <div class="debug-split">
-        <div class="dc"><div class="ch" data-i18n-html="ch_nb">notebook</div><p data-i18n-html="dp5a">Grep every notebook for <code>raw.payments</code>, across <code>.ipynb</code> files where the code is buried in JSON cell arrays and hard to search, and hope everyone uses the same connection string format. Hope nobody copied the logic into yet another notebook. No system-of-record for what reads what.</p></div>
-        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp5b">The lineage graph shows every downstream model that references <code>stg_payments</code>. Click on it in the dbt DAG and see the full impact of any change instantly. A new engineer can answer "what depends on this?" in 5 seconds.</p></div>
+        <div class="dc"><div class="ch" data-i18n-html="ch_nb">notebook</div><p data-i18n-html="dp5a">Search the <code>.ipynb</code> files for <code>raw.payments</code>. The code sits inside JSON cell arrays, connection strings may use different formats, and copied logic may not contain the same source name.</p></div>
+        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp5b">The lineage graph lists every downstream model that references <code>stg_payments</code>. Selecting the model in the dbt DAG shows which models a change can affect.</p></div>
       </div>
-      <div class="debug-note" data-i18n-html="dn5">A grep of the codebase finds what you know to look for. The dbt DAG shows you what you didn't know existed.</div>
+      <div class="debug-note" data-i18n-html="dn5">Text search depends on matching source names. The dbt DAG uses declared dependencies.</div>
     </div>
   </div>
 
@@ -576,15 +1336,15 @@ result = summary.groupby(
     <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname" data-i18n-html="ds6">Reviewing a teammate's change in a pull request</span><span class="chevron">▼</span></div>
     <div class="debug-body">
       <div class="debug-split">
-        <div class="dc"><div class="ch" data-i18n-html="ch_nb">notebook</div><p data-i18n-html="dp6a">A one-line logic change shows up in the PR as a wall of JSON: shifted <code>execution_count</code> values, regenerated <code>outputs</code>, and base64 image blobs from re-run charts. The actual change is buried in a <code>"source"</code> array. Reviewers can't read it, so they rubber-stamp it or skip review entirely.</p></div>
-        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp6b">Models are plain <code>.sql</code> files. The same change is a two-line SQL diff in the PR: readable, reviewable, commentable line by line. Version control works the way it does for the rest of your code.</p></div>
+        <div class="dc"><div class="ch" data-i18n-html="ch_nb">notebook</div><p data-i18n-html="dp6a">A one-line logic change can appear beside changed <code>execution_count</code> values, regenerated <code>outputs</code>, and base64 image data. The SQL or Python change sits inside the notebook's <code>"source"</code> array.</p></div>
+        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp6b">Models are plain <code>.sql</code> files. The same edit appears as a short SQL diff that reviewers can comment on line by line.</p></div>
       </div>
-      <div class="debug-note" data-i18n-html="dn6">A notebook is JSON with code inside it; a dbt model is code. That's why one reviews cleanly in git and the other doesn't.</div>
+      <div class="debug-note" data-i18n-html="dn6">Notebook diffs include document state and outputs. dbt model diffs contain the SQL file.</div>
     </div>
   </div>
 
   <div class="ann ok" data-i18n-html="ann_t4">
-    <strong>The root cause of every dbt debugging advantage:</strong> Intermediate models are real, persistent, queryable tables. Notebook DataFrames live in a kernel and disappear when it restarts. Every other difference flows from that one fact.
+    dbt keeps intermediate models as queryable warehouse tables. A notebook kernel restart removes its DataFrames and their intermediate state.
   </div>
 </div>
 
@@ -627,8 +1387,9 @@ function toggleDebug(t){
 
 /* ---- i18n: language toggle (EN / 日本語) ---- */
 var curLang='en';
-var NAV={en:{back:'← back',next:'next →',done:'done ✓'},ja:{back:'← 戻る',next:'次へ →',done:'完了 ✓'},pt:{back:'← voltar',next:'próximo →',done:'concluído ✓'},es:{back:'← atrás',next:'siguiente →',done:'listo ✓'}};
-var translations={"ja": {"back_all": "← すべての解説へ", "h1": "ノートブックから dbt へ", "intro": "インタラクティブな解説です。各ステップは前のステップを土台にしているので、何がどう変わるのか、そしてなぜ変わるのかを順に見ていけます。", "nav1": "ノートブック", "nav2": "分解する", "nav3": "データの出どころ", "nav4": "何がいつ実行されるか", "nav5": "問題が起きたとき", "h_t0": "これは Jupyter ノートブックに書かれた、完全なパイプラインです。今どき引き継ぐことになりそうなものです。5つのセルが pandas を使って顧客の注文サマリーを作成します。<strong>ハイライトされた行</strong>が、規模が大きくなると問題になる箇所です。<strong style=\"color:#e6edf3\">In [ ]:</strong> の実行番号がバラバラなのは、セルを上から順に実行させる仕組みが何もないからです。行内のラベルを読んでから、次のタブで dbt がそれぞれをどう解決するか見てみましょう。", "lbl_full": "build_customer_summary.ipynb（パイプライン全体のノートブック）", "badge_nb": "1ノートブック・5セル", "cmt_s1": "# ステップ1: 顧客データを整える", "in_conn": "⚠ 接続情報が直書き。dev と prod を分けられない", "in_hardbreak": "⚠ スキーマ名が直書き。名前が変わると気づかないうちに壊れる", "cmt_s2": "# ステップ2: 注文データを整える", "in_hard": "⚠ スキーマ名が直書き", "cmt_s3": "# ステップ3: 支払いデータを整える", "cmt_s4wn": "# ステップ4: 注文と支払いを結合  <span class=\"wn\">⚡ 先にセル2と3を、しかもその順で実行しておかなければならず、そう実行されたことを願うしかない</span>", "cmt_s5": "# ステップ5: 最終サマリー", "in_over": "⚠ 毎回全件を上書き。差分更新の選択肢がない", "cmt_kernel": "# カーネルが生きている間は、5つの DataFrame が古く信用できないまま残り続ける。\n# カーネルを再起動すれば消える。何かを確認するには全セルを再実行するしかない。  <span class=\"in\">⚠ 一からデバッグ</span>", "ann_t0": "<strong>今見ているもの:</strong> 1つのノートブック、5つのセル、データはすべてカーネルに読み込まれ、セルはどの順でも実行でき、接続文字列とスキーマ名は直書き、毎回テーブルを全件上書き、そして何かが失敗しても信用できる中間状態が残らない。動くうちはいい。壊れるまでは。次のタブでは dbt が何を変えるのかを見ていきます。", "h_t1": "ノートブックは1つのファイルで、5つのセルが1つのカーネルを共有しています。dbt はこれを論理ステップごとに5つのファイルへ分割します。<strong>各ブロックをクリック</strong>すると、そのステップが dbt でどう表現され、何が変わるのかがわかります。", "badge_df": "カーネル上の DataFrame", "in_hardname": "⚠ スキーマ名が直書き", "t_arr1": "<strong style=\"color:#3fb950\">models/staging/stg_customers.sql</strong> になる", "cmt_noimports": "-- import もエンジンもなし。SELECT だけ。", "wc1": "<strong>変わった点:</strong> 変換ロジックは同じで、ただ SQL になっただけです。Python ランタイムも、カーネルのメモリ上限も、生データのネットワーク転送もありません。<code>pd.read_sql(\"... FROM raw.customers\")</code> は <code>source('raw','customers')</code> になり、dbt はこれを正式なデータの入り口として登録します。だからテストをかけ、鮮度を監視し、異常があればアラートを出せます。でき上がるのは、1つのカーネルセッションと運命を共にする変数ではなく、ウェアハウスに残る本物の、クエリできるテーブルです。", "t_arr2": "<strong style=\"color:#3fb950\">models/staging/stg_orders.sql</strong> になる", "wc2": "<strong>変わった点:</strong> 同じフィルターのロジックが、独立したファイルになりました。別のチームが売上パイプラインを作っていてきれいな注文データが必要になったら、フィルターのロジックを自分のノートブックにコピペする代わりに <code>ref('stg_orders')</code> を参照します。ノートブックごとにやっていると、「有効な注文とは何か」がバラバラに5つのファイルで定義され、少しずつ食い違っていきます。", "t_arr3": "<strong style=\"color:#3fb950\">models/staging/stg_payments.sql</strong> になる", "wc3": "<strong>変わった点:</strong> 変換は同じです。ステップ1・2・3は互いに依存しない3つの独立したファイルになり、dbt は3つを並列で実行できます。ノートブックは、あなたがたまたまクリックした順で、1セルずつ実行するだけです。", "badge_join": "結合ステップ", "wn_join": "⚡ 先にセル2と3を、しかもその順で実行しておく必要がある。システムではなくあなた任せ", "t_arr4": "<strong style=\"color:#3fb950\">models/intermediate/int_orders_with_payments.sql</strong> になる", "wc4": "<strong>変わった点:</strong> <code>tmp_orders</code> と <code>tmp_payments</code>（カーネルが生きている間だけ存在するセル変数）は <code>ref('stg_orders')</code> と <code>ref('stg_payments')</code> になります。これらはウェアハウスに残る、クエリできるテーブルです。この <code>ref()</code> の呼び出しが依存関係も宣言するので、dbt は両方のステージングモデルを先に仕上げてからこのモデルを実行すべきだとわかります。オーケストレーションのロジックは一切書いていません。<code>ref()</code> の呼び出しそのものがオーケストレーションです。", "badge_over": "全件上書き", "in_over2": "⚠ 毎回全件を上書き", "cmt_kernel2": "# 頼れるのはカーネルの状態だけ。再起動すれば、確認できるものは何も残らない。  <span class=\"in\">⚠ 一からデバッグ</span>", "t_arr5": "<strong style=\"color:#3fb950\">models/marts/fct_customer_order_summary.sql</strong> になる", "cmt_matz": "-- マテリアライズの方法（table・incremental・view）は、コードではなく設定で決める。", "wc5": "<strong>これで5つのステップすべてを見ました。</strong> 変換ロジックは変わっていません。変わったのは次の点です。(1) 変換はノートブックのカーネルではなくウェアハウスで実行されるので、メモリの上限もデータ転送のオーバーヘッドもありません。(2) 各ステップが本物の、残る、クエリできるテーブルであり、消えてしまう変数ではありません。(3) <code>if_exists='replace'</code> はなくなりました。マテリアライズは、保守すべきコードではなく1行の設定です。", "ann_t1": "<strong>パターン:</strong> 全体を通して変換ロジックは同じです。dbt が変えるのは実行環境と外側の入れ物です。変換はノートブックのカーネルからウェアハウスへ移り、<code>pd.read_sql(\"... FROM raw.x\")</code> は <code>source()</code> に、<code>tmp_x</code> という変数参照は <code>ref()</code> になります。この3つの置き換えが、ほかのすべてを解き放ちます。", "h_t2": "リネージュ（データの系統）グラフを理解する前に、接頭辞が何を意味するのか、そして dbt がデータの入り口とパイプライン内の流れをどう追跡するのかを押さえておくと役立ちます。", "nm_stg": "<strong style=\"color:#e6edf3\">ステージング</strong>。ソーステーブル1つにつき1ファイル。整形・リネーム・型変換を行います。生データが入り、使える列が出てきます。ここでは結合はしません。", "nm_int": "<strong style=\"color:#e6edf3\">中間（intermediate）</strong>。最終アウトプットではない結合や変換。マートモデル間で共有する部品です。", "nm_mart": "<strong style=\"color:#e6edf3\">マート</strong>。BI ツールやビジネスユーザーが実際にクエリする層。1つのビジネス上の問いにつき1テーブルです。", "sb1_h": "source() ― 生データの入り口", "ref_row1": "tmp_orders（セル変数）", "ref_row2": "tmp_payments（セル変数）", "sb1_p": "ノートブックはスキーマ名と接続文字列を直書きしていました。スキーマ名が変わると、そのセルはエラーを投げるか、もっと悪いと、何も言わずに古いデータを返します。<code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">source()</code> はこれらを正式な入り口として登録するので、dbt はテストをかけ、鮮度を確認し、データの不調がダッシュボードの不調になる前にアラートを出せます。さらに環境ごとに正しいスキーマを自動で解決するので、dev と prod が同じ直書き文字列を共有することは二度とありません。", "sb2_h": "ref() ― モデル同士の依存関係", "sb2_p": "すべての <code>ref()</code> が宣言された依存関係です。dbt はそれらをすべて読み取り、実行順序を自動で組み立てます。オーケストレーションのコードを書く必要はありません。<code>ref()</code> の呼び出しそのものが<em>オーケストレーションです</em>。ノートブックでは、順序はセルの位置と願望で担保されていて、セルを順番どおりに実行しなければ何も言わずに壊れました。ここでは順序をシステムが担保します。", "s_sources": "ソース", "s_staging": "ステージング", "s_intermediate": "中間", "s_marts": "マート", "s_parallel": "すべて並列で実行", "s_waits": "stg_orders と stg_payments を待つ", "s_final": "最終アウトプット", "ann_t2": "<strong>このグラフは、ノートブックを目に見えるようにしたものです。</strong> ノートブックにも同じ構造はありました。ただ見えなかっただけです。ステップ4がステップ2と3に依存していると理解するには、5つのセルを（最後に実行された順で）読み解く必要がありました。dbt はそれを明示的にし、クエリでき、自動でドキュメント化します。", "h_t3": "ノートブックはセルを1つずつ、上から下へ、あなたが順番に実行するのを忘れなければ、そう動きます。カーネルが与えてくれる選択肢はそれだけです。dbt は依存関係グラフを読み取り、独立したモデルを複数スレッドで同時に実行します。", "pb1_h": "❌ ノートブック（直列・セルごと）", "bl_s1": "ステップ1", "bl_s2": "ステップ2", "bl_s3": "ステップ3", "bl_s4": "ステップ4", "bl_s5": "ステップ5", "et1": "実行時間: <strong style=\"color:#f85149\">5単位</strong>", "pb2_h": "✅ dbt（並列・3スレッド）", "bl_t1": "スレッド1", "bl_t2": "スレッド2", "bl_t3": "スレッド3", "et2": "実行時間: <strong style=\"color:#3fb950\">3単位</strong>", "box_par": "<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">dbt はなぜ並列化できるとわかるのか？</strong>\n    <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_customers</code>・<code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_orders</code>・<code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_payments</code> はどれも <code>source()</code> しか参照しておらず、互いの間に <code>ref()</code> のつながりがありません。dbt はグラフを読み、依存がないと判断し、3つを一度に実行します。タブ2で出てきた <code>ref()</code> の宣言がオーケストレーションそのものであり、これを動かすために追加の設定は一切書いていません。", "box_sched": "<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">papermill や Airflow でノートブックをスケジュール実行すればいいのでは？</strong>\n    papermill や nbconvert、あるいは Airflow の DAG でノートブックを本番運用することはできます。ただ、そうなると2つのシステムを保守することになります。セルの中の変換ロジックと、ノートブックの外にあるスケジュールと依存関係の配線です。しかもノートブックの実行は、結局1つのカーネルがセルを順番に処理するだけです。dbt では、SQL ファイルの中の <code>ref()</code> 呼び出し<em>そのものが</em> DAG です。別に同期し続けるオーケストレーション用のファイルはありません。", "ann_t3": "<strong>スケールすると:</strong> この例はモデルが5つですが、実際のプロジェクトでは数百に及びます。独立したステージングモデルが40個あるパイプラインでも、スレッドさえ十分あれば、ほぼ1個分の時間で実行が終わります。オーケストレーターの設定は要りません。", "h_t4": "ノートブックは、壊れるまでは動きます。いざ壊れると、デバッグの体験が根本的に違います。<strong>各シナリオをクリック</strong>して比べてみましょう。", "ds1": "結合ステップ（ステップ4）でパイプラインが失敗", "dp1a": "セル4が失敗。カーネルがまだ生きていれば、セル1〜3の DataFrame は残っています。でも信用できますか？ この順で、このバージョンのコードで実行されたものですか？ 念のためカーネルを再起動すれば消えてしまい、全セルを頭から再実行することになります。デバッグのたびに、高コストな <code>pd.read_sql()</code> の呼び出しも含めて、全体を再実行する羽目になりかねません。", "dp1b": "ステップ4が失敗。<code>stg_orders</code> と <code>stg_payments</code> はウェアハウスに本物のテーブルとして残っています。<code>dbt run -s int_orders_with_payments</code> を実行すれば、そのモデルだけを再実行できます。上流の成果はそのまま残ります。", "dn1": "違いはただ1点から生まれます。dbt のモデルはウェアハウス上にある本物の、残るテーブルです。ノートブックの DataFrame はカーネルの中に生き、再起動すれば死にます。要はそれがすべてです。", "ds2": "最終アウトプットの行数がおかしい", "dp2a": "merge でファンアウト？ セル2のフィルターが悪い？ あちこちのセルに <code>df.shape</code> をばらまき、再実行して、今の状態に対して正しい順で動かせたことを祈ります。あるいは中間結果を一時的に CSV へ書き出します。原因を切り分けるのに、何度も再実行を繰り返すことになります。", "dp2b": "<code>stg_orders</code> をクエリして、行数は？ <code>int_orders_with_payments</code> をクエリして、行数は？ その差が、ファンアウトの発生場所をぴたりと示します。再実行は不要です。中間テーブルはウェアハウスにそのまま置いてあります。", "dn2": "中間モデルがどれも本物のテーブルなので、行数の問題も、コードのバグを二分探索するのと同じ要領で、何も再実行せずに切り分けられます。", "ds3": "上流のスキーマ変更 ― 列名が変わった", "dp3a": "リネームは、セル3を再実行したときに <code>KeyError: 'amount'</code> として表面化します。セル1と2はすでに実行済みで、その DataFrame はカーネルに残ったままなので、ノートブックは中途半端に更新された状態になります。<code>'amount'</code> を参照しているノートブックとセルを、すべて探し出すしかありません。まとまった一覧はどこにもありません。", "dp3b": "<code>raw.payments</code> に触れるモデルは <code>stg_payments</code> だけです。そこで列の参照を直します。下流のモデルは、次の実行ですべて自動的に修正が反映されます。修正箇所は1か所。5つのノートブックを grep して回る必要はありません。", "dn3": "<code>stg_</code> の層が隔離の境界になります。生データのスキーマ変更が影響するのは1ファイル、そのソースのステージングモデルだけです。", "ds4": "深夜3時、オンコールのアラートが鳴る", "dp4a": "スケジュール実行が失敗。まっさらなヘッドレスカーネル（papermill）で動いて、そのまま終了したので、DataFrame はどこにもありません。ノートブックを開き、再現のために全セルを実行し、セルを足して、もう一度実行。修正に取りかかる前に何サイクルも繰り返し、そのたびに高コストなソースクエリが毎回また走ります。", "dp4b": "dbt の実行ログには、失敗したモデルと SQL エラーが正確に出ます。中間モデルはウェアハウスに残っています。モデルを直し、<code>dbt run -s failed_model+</code> を実行すれば、そのモデルとその下流だけを再実行できます。", "dn4": "ここで価値が身にしみます。深夜3時にオンコール対応するエンジニアにとって、失敗しても中間状態が残っているかどうかは大きな問題です。", "ds5": "ほかに支払いデータへ依存しているものは？", "dp5a": "すべてのノートブックを <code>raw.payments</code> で grep します。しかも <code>.ipynb</code> ファイルはコードが JSON のセル配列に埋もれていて検索しづらく、全員が同じ接続文字列の書式を使っていることを祈るしかありません。誰かがロジックをまた別のノートブックにコピペしていないことも祈ります。何が何を読んでいるかの正式な記録はどこにもありません。", "dp5b": "リネージュグラフが、<code>stg_payments</code> を参照する下流モデルをすべて表示します。dbt の DAG 上でクリックすれば、どんな変更の影響範囲もその場で全部わかります。新しく入ったエンジニアでも、「これに依存しているのは何か」に5秒で答えられます。", "dn5": "コードベースの grep は、探すと分かっているものしか見つけてくれません。dbt の DAG は、存在すら知らなかったものまで見せてくれます。", "ds6": "プルリクエストでチームメイトの変更をレビューする", "dp6a": "1行のロジック変更が、PR では JSON の壁として現れます。ずれた <code>execution_count</code> の値、作り直された <code>outputs</code>、再実行したチャートの base64 画像データ。肝心の変更は <code>\"source\"</code> 配列の中に埋もれています。レビュアーは読めないので、めくら判を押すか、レビューそのものを飛ばします。", "dp6b": "モデルはただの <code>.sql</code> ファイルです。同じ変更は、PR では2行の SQL の差分として出ます。読めて、レビューでき、行ごとにコメントできます。バージョン管理が、ほかのコードと同じように機能します。", "dn6": "ノートブックはコードを内包した JSON であり、dbt モデルはコードそのものです。だから一方は git できれいにレビューでき、もう一方はできないのです。", "ann_t4": "<strong>dbt のデバッグ上の強みの、すべての根っこ:</strong> 中間モデルは本物の、残る、クエリできるテーブルです。ノートブックの DataFrame はカーネルの中に生き、再起動すれば消えます。ほかのあらゆる違いは、この1つの事実から生まれます。", "ch_nb": "ノートブック", "gh_src": "GitHub でソースを見る"}, "pt": {"back_all": "← todos os explicadores", "h1": "Dos notebooks para o dbt", "intro": "Um passo a passo interativo. Siga as etapas: cada uma se apoia na anterior, para você ver exatamente o que muda e por quê.", "nav1": "O notebook", "nav2": "Dividindo em partes", "nav3": "De onde vêm os dados", "nav4": "O que roda e quando", "nav5": "Quando algo quebra", "h_t0": "Este é um pipeline completo em um notebook Jupyter, do tipo que você herdaria hoje em dia. Cinco células constroem um resumo de pedidos por cliente usando pandas. <strong>As linhas destacadas</strong> são os pontos que geram problemas em escala, e os números de <strong style=\"color:#e6edf3\">In [ ]:</strong> estão fora de ordem porque nada obriga você a rodar as células de cima para baixo. Leia os rótulos ao lado de cada linha e depois vá para a próxima aba para ver como o dbt resolve cada um deles.", "lbl_full": "build_customer_summary.ipynb: notebook do pipeline completo", "badge_nb": "1 notebook · 5 células", "cmt_s1": "# Etapa 1: limpar os clientes", "in_conn": "⚠ conexão fixa no código, sem separação entre dev e prod", "in_hardbreak": "⚠ schema fixo no código: renomear quebra silenciosamente", "cmt_s2": "# Etapa 2: limpar os pedidos", "in_hard": "⚠ schema fixo no código", "cmt_s3": "# Etapa 3: limpar os pagamentos", "cmt_s4wn": "# Etapa 4: juntar pedidos + pagamentos  <span class=\"wn\">⚡ é preciso rodar as células 2 e 3 antes, nessa ordem, e torcer para que tenha sido assim</span>", "cmt_s5": "# Etapa 5: resumo final", "in_over": "⚠ sobrescreve tudo a cada execução, sem opção incremental", "cmt_kernel": "# Enquanto o kernel estiver vivo, os 5 DataFrames continuam por aí, desatualizados e pouco confiáveis.\n# Reinicie o kernel e eles somem: para inspecionar qualquer coisa, é preciso rodar todas as células de novo.  <span class=\"in\">⚠ depuração do zero</span>", "ann_t0": "<strong>O que você está vendo:</strong> um notebook, 5 células, todos os dados carregados no kernel, células que podem rodar em qualquer ordem, strings de conexão e nomes de schema fixos no código, sobrescrita completa da tabela a cada execução, e nenhum estado intermediário confiável quando algo falha. Funciona, até não funcionar mais. A próxima aba mostra o que o dbt faz de diferente.", "h_t1": "O notebook é um único arquivo, com cinco células compartilhando um kernel. O dbt divide isso em 5 arquivos, um por etapa lógica. <strong>Clique em cada bloco</strong> para ver como essa etapa se traduz em dbt, e exatamente o que muda.", "badge_df": "DataFrame no kernel", "in_hardname": "⚠ nome de schema fixo no código", "t_arr1": "vira → <strong style=\"color:#3fb950\">models/staging/stg_customers.sql</strong>", "cmt_noimports": "-- Sem imports. Sem engine. Só SELECT.", "wc1": "<strong>O que mudou:</strong> a lógica de transformação é idêntica, só que agora em SQL. Sem runtime Python, sem limite de memória do kernel, sem transferência de dados brutos pela rede. <code>pd.read_sql(\"... FROM raw.customers\")</code> vira <code>source('raw','customers')</code>, e o dbt registra isso como um ponto de entrada oficial dos dados, que ele pode testar, monitorar quanto à atualização e usar para disparar alertas. O resultado é uma tabela real, persistente e consultável no seu warehouse, não uma variável que nasce e morre junto com uma sessão do kernel.", "t_arr2": "vira → <strong style=\"color:#3fb950\">models/staging/stg_orders.sql</strong>", "wc2": "<strong>O que mudou:</strong> a mesma lógica de filtro, agora em um arquivo independente. Quando outro time monta um pipeline de receita e precisa de pedidos limpos, ele referencia <code>ref('stg_orders')</code> em vez de copiar e colar a lógica de filtro no próprio notebook. Espalhada entre notebooks, a pergunta \"o que é um pedido válido\" acaba definida em cinco arquivos diferentes, e eles vão divergindo.", "t_arr3": "vira → <strong style=\"color:#3fb950\">models/staging/stg_payments.sql</strong>", "wc3": "<strong>O que mudou:</strong> a mesma transformação. Agora as etapas 1, 2 e 3 são três arquivos independentes, sem dependência entre eles: o dbt consegue rodar os três em paralelo. O notebook executa uma célula de cada vez, na ordem em que você foi clicando.", "badge_join": "Etapa de junção", "wn_join": "⚡ exige que as células 2 e 3 rodem antes, nessa ordem, e isso depende de você, não do sistema", "t_arr4": "vira → <strong style=\"color:#3fb950\">models/intermediate/int_orders_with_payments.sql</strong>", "wc4": "<strong>O que mudou:</strong> <code>tmp_orders</code> e <code>tmp_payments</code> (variáveis de célula que só existem enquanto o kernel está vivo) viram <code>ref('stg_orders')</code> e <code>ref('stg_payments')</code>: tabelas persistentes e consultáveis no warehouse. Essas chamadas de <code>ref()</code> também declaram a dependência: o dbt sabe que precisa terminar os dois modelos de staging antes de rodar este. Você não escreveu nenhuma lógica de orquestração, as chamadas de <code>ref()</code> são a orquestração.", "badge_over": "Sobrescrita completa", "in_over2": "⚠ sobrescreve tudo a cada execução", "cmt_kernel2": "# O estado do kernel é tudo o que você tem; reinicie e nada sobra para inspecionar.  <span class=\"in\">⚠ depuração do zero</span>", "t_arr5": "vira → <strong style=\"color:#3fb950\">models/marts/fct_customer_order_summary.sql</strong>", "cmt_matz": "-- A estratégia de materialização (table, incremental, view) é configuração, não código.", "wc5": "<strong>Você já viu as 5 etapas.</strong> A lógica de transformação não mudou. O que mudou: (1) as transformações rodam no warehouse, não no kernel do notebook, então não há teto de memória nem overhead de transferência de dados; (2) cada etapa é uma tabela real, persistente e consultável, não uma variável que desaparece; (3) o <code>if_exists='replace'</code> sumiu: a materialização é uma configuração de uma linha, não código que você precisa manter.", "ann_t1": "<strong>O padrão:</strong> a lógica de transformação é a mesma do início ao fim. O que o dbt muda é o ambiente de execução e a camada em volta: as transformações saem do kernel do notebook e vão para o warehouse, <code>pd.read_sql(\"... FROM raw.x\")</code> vira <code>source()</code>, referências a variáveis <code>tmp_x</code> viram <code>ref()</code>. Essas três substituições destravam tudo o resto.", "h_t2": "Antes que o grafo de linhagem faça sentido, ajuda entender o que os prefixos significam e como o dbt rastreia por onde os dados entram e fluem pelo pipeline.", "nm_stg": "<strong style=\"color:#e6edf3\">Staging</strong>: um arquivo por tabela de origem. Limpa, renomeia, converte tipos. Entra dado bruto, saem colunas utilizáveis. Aqui não se faz nenhum join.", "nm_int": "<strong style=\"color:#e6edf3\">Intermediate</strong>: joins e transformações que ainda não são o resultado final. Blocos reutilizados entre os modelos de mart.", "nm_mart": "<strong style=\"color:#e6edf3\">Marts</strong>: o que as ferramentas de BI e os usuários de negócio realmente consultam. Uma tabela por pergunta de negócio.", "sb1_h": "source(): por onde os dados brutos entram", "ref_row1": "tmp_orders (variável de célula)", "ref_row2": "tmp_payments (variável de célula)", "sb1_p": "O notebook tinha nomes de schema e uma string de conexão fixos no código. Se um schema é renomeado, a célula lança um erro ou, pior, devolve dados desatualizados sem avisar nada. O <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">source()</code> registra esses pontos como entradas oficiais: o dbt pode testá-los, checar a atualização e te alertar antes que um dia ruim de dados vire um dia ruim de dashboard. Ele também resolve o schema correto para cada ambiente automaticamente, então dev e prod nunca compartilham a mesma string fixa.", "sb2_h": "ref(): como os modelos dependem uns dos outros", "sb2_p": "Cada <code>ref()</code> é uma dependência declarada. O dbt lê todas elas e monta a ordem de execução automaticamente. Você não escreve código de orquestração; as chamadas de <code>ref()</code> <em>são</em> a orquestração. No notebook, a ordem era garantida pela posição das células e por um pouco de fé, e rodar as células fora de ordem quebrava tudo silenciosamente; aqui, é o sistema que garante isso.", "s_sources": "FONTES", "s_staging": "STAGING", "s_intermediate": "INTERMEDIÁRIO", "s_marts": "MARTS", "s_parallel": "tudo roda em paralelo", "s_waits": "espera stg_orders + stg_payments", "s_final": "saída final", "ann_t2": "<strong>Esse grafo é o notebook tornado visível.</strong> O notebook tinha essa mesma estrutura, ela só não era visível. Você tinha que ler as cinco células (na ordem em que foram executadas por último) para entender que a etapa 4 dependia das etapas 2 e 3. O dbt torna isso explícito, consultável e documentado automaticamente.", "h_t3": "O notebook roda célula por célula, de cima para baixo, quando você lembra de executá-las na ordem certa. É a única opção que um kernel te dá. O dbt lê o grafo de dependências e roda modelos independentes ao mesmo tempo, em várias threads.", "pb1_h": "❌ notebook: serial, célula por célula", "bl_s1": "etapa 1", "bl_s2": "etapa 2", "bl_s3": "etapa 3", "bl_s4": "etapa 4", "bl_s5": "etapa 5", "et1": "Tempo de execução: <strong style=\"color:#f85149\">5 unidades</strong>", "pb2_h": "✅ dbt: paralelo (3 threads)", "bl_t1": "thread 1", "bl_t2": "thread 2", "bl_t3": "thread 3", "et2": "Tempo de execução: <strong style=\"color:#3fb950\">3 unidades</strong>", "box_par": "<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">Como o dbt sabe que pode paralelizar?</strong>\n    Porque <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_customers</code>, <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_orders</code> e <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_payments</code> referenciam apenas <code>source()</code>, sem nenhuma aresta de <code>ref()</code> entre eles. O dbt lê o grafo, não encontra dependências e dispara os três de uma vez. As declarações de <code>ref()</code> vistas na aba 2 são a orquestração: você não escreveu nenhuma configuração extra para isso acontecer.", "box_sched": "<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">E se eu agendar os notebooks com papermill ou Airflow?</strong>\n    Dá para colocar notebooks em produção com papermill, nbconvert ou um DAG do Airflow, mas aí você passa a manter dois sistemas: a lógica de transformação nas células e o agendamento e as dependências fora do notebook. E rodar o notebook ainda significa um único kernel executando células em sequência. No dbt, as chamadas de <code>ref()</code> dentro dos arquivos SQL <em>são</em> o DAG. Não existe um arquivo de orquestração separado para manter sincronizado.", "ann_t3": "<strong>Em escala:</strong> este exemplo tem 5 modelos. Projetos reais têm centenas. Um pipeline com 40 modelos de staging independentes roda em mais ou menos o tempo de rodar um só, desde que haja threads suficientes: nenhuma configuração de orquestrador é necessária.", "h_t4": "O notebook funciona até não funcionar mais. Quando quebra, a experiência de depuração é fundamentalmente diferente. <strong>Clique em cada cenário</strong> para comparar.", "ds1": "O pipeline falha na etapa de junção (etapa 4)", "dp1a": "A célula 4 falhou. Se o kernel ainda está vivo, os DataFrames das células 1 a 3 continuam por lá, mas dá para confiar neles? Foram executados nessa ordem, com essa versão do código? Se você reinicia o kernel para ter certeza, eles somem e você reroda todas as células desde o início. Cada ciclo de depuração arrisca mais uma reexecução completa, incluindo as chamadas caras de <code>pd.read_sql()</code>.", "dp1b": "A etapa 4 falhou. <code>stg_orders</code> e <code>stg_payments</code> continuam no warehouse como tabelas reais. Rode <code>dbt run -s int_orders_with_payments</code> para reexecutar só esse modelo. O trabalho upstream fica intacto.", "dn1": "A diferença vem de uma coisa só: modelos do dbt são tabelas reais e persistentes no seu warehouse. DataFrames de notebook vivem num kernel e morrem quando ele reinicia. É basicamente isso.", "ds2": "Contagem de linhas errada na saída final", "dp2a": "Fan-out no merge? Filtro errado na célula 2? Você espalha <code>df.shape</code> em células extras, roda de novo e torce para ter executado na ordem certa em cima do estado atual. Ou escreve CSVs intermediários em disco temporariamente. Vários ciclos de reexecução só para isolar o problema.", "dp2b": "Consulte <code>stg_orders</code>: quantas linhas? Consulte <code>int_orders_with_payments</code>: quantas? A diferença mostra exatamente onde aconteceu o fan-out. Não precisa reexecutar nada. As tabelas intermediárias já estão lá, no warehouse.", "dn2": "Como cada modelo intermediário é uma tabela real, você consegue investigar um problema de contagem de linhas do mesmo jeito que investigaria um bug no código, por bisseção, sem reexecutar nada.", "ds3": "Mudança de schema upstream: uma coluna foi renomeada", "dp3a": "A renomeação aparece quando você reroda a célula 3: <code>KeyError: 'amount'</code>. As células 1 e 2 já rodaram e seus DataFrames continuam no kernel, então o notebook fica num estado meio atualizado. Agora é preciso achar todo notebook e toda célula onde <code>'amount'</code> é referenciado; não existe uma lista central.", "dp3b": "<code>stg_payments</code> é o único modelo que toca em <code>raw.payments</code>. Corrija a referência à coluna ali. Todo modelo downstream recebe a correção automaticamente na próxima execução. Um único ponto de mudança, não cinco notebooks para vasculhar com grep.", "dn3": "A camada <code>stg_</code> funciona como uma barreira de isolamento. Mudanças no schema bruto afetam só um arquivo: o modelo de staging daquela fonte.", "ds4": "O alerta de plantão dispara às 3 da manhã", "dp4a": "A execução agendada falhou. Ela rodou num kernel novo e headless (papermill), que depois encerrou, então não sobrou DataFrame nenhum. Você abre o notebook, roda todas as células para reproduzir, adiciona células, roda de novo. Vários ciclos antes mesmo de começar a corrigir, e todas as consultas caras nas fontes rodam de novo a cada vez.", "dp4b": "Os logs do dbt run mostram exatamente qual modelo falhou e qual foi o erro de SQL. Os modelos intermediários continuam no warehouse. Corrija o modelo e rode <code>dbt run -s failed_model+</code> para reexecutar só ele e seus dependentes.", "dn4": "É aqui que o valor fica visceral. O engenheiro de plantão às 3 da manhã se importa muito se o estado intermediário sobreviveu à falha.", "ds5": "O que mais depende dos dados de pagamento?", "dp5a": "Faça um grep de <code>raw.payments</code> em todos os notebooks, em arquivos <code>.ipynb</code> onde o código fica enterrado em arrays JSON de células e é difícil de buscar, e torça para que todo mundo use o mesmo formato de string de conexão. Torça também para que ninguém tenha copiado a lógica para outro notebook. Não existe um registro central de quem lê o quê.", "dp5b": "O grafo de linhagem mostra todo modelo downstream que referencia <code>stg_payments</code>. Clique nele no DAG do dbt e veja o impacto completo de qualquer mudança na hora. Um engenheiro novo consegue responder \"o que depende disso?\" em 5 segundos.", "dn5": "Um grep no código encontra o que você já sabe que precisa procurar. O DAG do dbt mostra o que você nem sabia que existia.", "ds6": "Revisando a mudança de um colega em um pull request", "dp6a": "Uma mudança de lógica de uma linha aparece no PR como uma parede de JSON: valores de <code>execution_count</code> deslocados, <code>outputs</code> regenerados e blobs de imagem em base64 dos gráficos reexecutados. A mudança de verdade fica enterrada em um array <code>\"source\"</code>. Os revisores não conseguem ler aquilo, então aprovam sem olhar direito ou pulam a revisão de vez.", "dp6b": "Modelos são simples arquivos <code>.sql</code>. A mesma mudança vira um diff de SQL de duas linhas no PR: legível, revisável, comentável linha a linha. O controle de versão funciona do mesmo jeito que funciona para o resto do seu código.", "dn6": "Um notebook é um JSON com código dentro; um modelo dbt é código. É por isso que um se revisa bem no git e o outro não.", "ann_t4": "<strong>A causa raiz de toda vantagem do dbt na depuração:</strong> os modelos intermediários são tabelas reais, persistentes e consultáveis. Os DataFrames do notebook vivem num kernel e desaparecem quando ele reinicia. Toda outra diferença decorre desse único fato.", "ch_nb": "notebook", "gh_src": "ver código-fonte no github"}, "es": {"back_all": "← todos los explicadores", "h1": "De los notebooks a dbt", "intro": "Un recorrido interactivo. Sigue los pasos: cada uno se apoya en el anterior, para que veas exactamente qué cambia y por qué.", "nav1": "El notebook", "nav2": "Separándolo en partes", "nav3": "De dónde vienen los datos", "nav4": "Qué se ejecuta y cuándo", "nav5": "Cuando algo se rompe", "h_t0": "Este es un pipeline completo en un notebook de Jupyter, del tipo que hoy heredarías de alguien más. Cinco celdas arman un resumen de pedidos por cliente usando pandas. <strong>Las líneas resaltadas</strong> son los puntos que generan problemas a gran escala, y los números de <strong style=\"color:#e6edf3\">In [ ]:</strong> están desordenados porque nada te obliga a ejecutar las celdas de arriba hacia abajo. Lee las etiquetas junto a cada línea y luego pasa a la siguiente pestaña para ver cómo dbt resuelve cada uno de estos problemas.", "lbl_full": "build_customer_summary.ipynb: notebook del pipeline completo", "badge_nb": "1 notebook · 5 celdas", "cmt_s1": "# Paso 1: limpiar los clientes", "in_conn": "⚠ conexión fija en el código, sin separación entre dev y prod", "in_hardbreak": "⚠ esquema fijo en el código: renombrar rompe todo en silencio", "cmt_s2": "# Paso 2: limpiar los pedidos", "in_hard": "⚠ esquema fijo en el código", "cmt_s3": "# Paso 3: limpiar los pagos", "cmt_s4wn": "# Paso 4: unir pedidos + pagos  <span class=\"wn\">⚡ hay que ejecutar antes las celdas 2 y 3, en ese orden, y esperar que así haya sido</span>", "cmt_s5": "# Paso 5: resumen final", "in_over": "⚠ sobrescribe todo en cada ejecución, sin opción incremental", "cmt_kernel": "# Mientras el kernel siga vivo, los 5 DataFrames quedan dando vueltas, desactualizados y poco confiables.\n# Si reinicias el kernel, desaparecen: para inspeccionar cualquier cosa hay que volver a ejecutar todas las celdas.  <span class=\"in\">⚠ depuración desde cero</span>", "ann_t0": "<strong>Lo que estás viendo:</strong> un notebook, 5 celdas, todos los datos cargados en el kernel, celdas que pueden ejecutarse en cualquier orden, cadenas de conexión y nombres de esquema fijos en el código, sobrescritura completa de la tabla en cada ejecución, y ningún estado intermedio confiable cuando algo falla. Funciona, hasta que deja de funcionar. La siguiente pestaña muestra qué hace dbt de forma distinta.", "h_t1": "El notebook es un solo archivo, con cinco celdas que comparten un kernel. dbt lo divide en 5 archivos, uno por cada paso lógico. <strong>Haz clic en cada bloque</strong> para ver cómo ese paso se traduce a dbt, y qué es exactamente lo que cambia.", "badge_df": "DataFrame en el kernel", "in_hardname": "⚠ nombre de esquema fijo en el código", "t_arr1": "se convierte en → <strong style=\"color:#3fb950\">models/staging/stg_customers.sql</strong>", "cmt_noimports": "-- Sin imports. Sin engine. Solo SELECT.", "wc1": "<strong>Qué cambió:</strong> la lógica de transformación es idéntica, solo que ahora en SQL. Sin runtime de Python, sin límites de memoria del kernel, sin transferencia de datos crudos por la red. <code>pd.read_sql(\"... FROM raw.customers\")</code> se convierte en <code>source('raw','customers')</code>, y dbt registra esto como un punto de entrada oficial de datos, que puede testear, monitorear en cuanto a su frescura y usar para disparar alertas. El resultado es una tabla real, persistente y consultable en tu warehouse, no una variable que nace y muere junto con una sesión del kernel.", "t_arr2": "se convierte en → <strong style=\"color:#3fb950\">models/staging/stg_orders.sql</strong>", "wc2": "<strong>Qué cambió:</strong> la misma lógica de filtro, ahora en un archivo independiente. Cuando otro equipo arma un pipeline de ingresos y necesita pedidos limpios, referencia <code>ref('stg_orders')</code> en lugar de copiar y pegar la lógica de filtro en su propio notebook. Repartida entre notebooks, la pregunta \"qué es un pedido válido\" termina definida en cinco archivos distintos, y con el tiempo se desalinean.", "t_arr3": "se convierte en → <strong style=\"color:#3fb950\">models/staging/stg_payments.sql</strong>", "wc3": "<strong>Qué cambió:</strong> la misma transformación. Ahora los pasos 1, 2 y 3 son tres archivos independientes, sin dependencia entre ellos: dbt puede ejecutar los tres en paralelo. El notebook los corre de a una celda por vez, en el orden en que fuiste haciendo clic.", "badge_join": "Paso de unión", "wn_join": "⚡ exige que las celdas 2 y 3 se ejecuten antes, en ese orden, y eso depende de ti, no del sistema", "t_arr4": "se convierte en → <strong style=\"color:#3fb950\">models/intermediate/int_orders_with_payments.sql</strong>", "wc4": "<strong>Qué cambió:</strong> <code>tmp_orders</code> y <code>tmp_payments</code> (variables de celda que solo existen mientras el kernel está vivo) se convierten en <code>ref('stg_orders')</code> y <code>ref('stg_payments')</code>: tablas persistentes y consultables en el warehouse. Esas llamadas a <code>ref()</code> también declaran la dependencia: dbt sabe que debe terminar ambos modelos de staging antes de ejecutar este. No escribiste ninguna lógica de orquestación, las llamadas a <code>ref()</code> son la orquestación.", "badge_over": "Sobrescritura completa", "in_over2": "⚠ sobrescribe todo en cada ejecución", "cmt_kernel2": "# El estado del kernel es todo lo que tienes; reinícialo y no queda nada para inspeccionar.  <span class=\"in\">⚠ depuración desde cero</span>", "t_arr5": "se convierte en → <strong style=\"color:#3fb950\">models/marts/fct_customer_order_summary.sql</strong>", "cmt_matz": "-- La estrategia de materialización (table, incremental, view) es configuración, no código.", "wc5": "<strong>Ya viste los 5 pasos.</strong> La lógica de transformación no cambió. Lo que cambió: (1) las transformaciones se ejecutan en el warehouse, no en el kernel del notebook, así que no hay techo de memoria ni sobrecarga de transferencia de datos; (2) cada paso es una tabla real, persistente y consultable, no una variable que desaparece; (3) <code>if_exists='replace'</code> desapareció: la materialización es una configuración de una línea, no código que tengas que mantener.", "ann_t1": "<strong>El patrón:</strong> la lógica de transformación es la misma de principio a fin. Lo que dbt cambia es el entorno de ejecución y la capa que lo envuelve: las transformaciones pasan del kernel del notebook al warehouse, <code>pd.read_sql(\"... FROM raw.x\")</code> se convierte en <code>source()</code>, las referencias a variables <code>tmp_x</code> se convierten en <code>ref()</code>. Esas tres sustituciones destraban todo lo demás.", "h_t2": "Antes de que el grafo de linaje tenga sentido, ayuda entender qué significan los prefijos y cómo dbt rastrea por dónde entran los datos y cómo fluyen por el pipeline.", "nm_stg": "<strong style=\"color:#e6edf3\">Staging</strong>: un archivo por tabla de origen. Limpia, renombra, convierte tipos. Entran datos crudos, salen columnas utilizables. Acá no se hace ningún join.", "nm_int": "<strong style=\"color:#e6edf3\">Intermediate</strong>: joins y transformaciones que todavía no son el resultado final. Bloques compartidos entre los modelos de mart.", "nm_mart": "<strong style=\"color:#e6edf3\">Marts</strong>: lo que las herramientas de BI y los usuarios de negocio realmente consultan. Una tabla por pregunta de negocio.", "sb1_h": "source(): por dónde entran los datos crudos", "ref_row1": "tmp_orders (variable de celda)", "ref_row2": "tmp_payments (variable de celda)", "sb1_p": "El notebook tenía nombres de esquema y una cadena de conexión fijos en el código. Si un esquema se renombra, la celda lanza un error o, peor, devuelve datos desactualizados sin avisar. <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">source()</code> registra estos puntos como entradas oficiales: dbt puede testearlos, revisar su frescura y avisarte antes de que un mal día de datos se convierta en un mal día de dashboard. Además resuelve el esquema correcto según el ambiente de forma automática, así que dev y prod nunca comparten la misma cadena fija.", "sb2_h": "ref(): cómo dependen los modelos entre sí", "sb2_p": "Cada <code>ref()</code> es una dependencia declarada. dbt las lee todas y arma el orden de ejecución automáticamente. No escribes código de orquestación; las llamadas a <code>ref()</code> <em>son</em> la orquestación. En el notebook, el orden dependía de la posición de las celdas y de la fe, y ejecutar las celdas fuera de orden lo rompía todo en silencio; acá, es el sistema el que lo garantiza.", "s_sources": "FUENTES", "s_staging": "STAGING", "s_intermediate": "INTERMEDIO", "s_marts": "MARTS", "s_parallel": "todo se ejecuta en paralelo", "s_waits": "espera a stg_orders + stg_payments", "s_final": "salida final", "ann_t2": "<strong>Este grafo es el notebook hecho visible.</strong> El notebook tenía esta misma estructura, solo que no era visible. Tenías que leer las cinco celdas (en el orden en que se ejecutaron por última vez) para entender que el paso 4 dependía de los pasos 2 y 3. dbt lo hace explícito, consultable y documentado automáticamente.", "h_t3": "El notebook se ejecuta celda por celda, de arriba hacia abajo, cuando te acuerdas de ejecutarlas en orden. Esa es la única opción que te da un kernel. dbt lee el grafo de dependencias y ejecuta los modelos independientes al mismo tiempo, en varios threads.", "pb1_h": "❌ notebook: en serie, celda por celda", "bl_s1": "paso 1", "bl_s2": "paso 2", "bl_s3": "paso 3", "bl_s4": "paso 4", "bl_s5": "paso 5", "et1": "Tiempo de ejecución: <strong style=\"color:#f85149\">5 unidades</strong>", "pb2_h": "✅ dbt: en paralelo (3 threads)", "bl_t1": "thread 1", "bl_t2": "thread 2", "bl_t3": "thread 3", "et2": "Tiempo de ejecución: <strong style=\"color:#3fb950\">3 unidades</strong>", "box_par": "<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">¿Cómo sabe dbt que puede paralelizar?</strong>\n    Porque <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_customers</code>, <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_orders</code> y <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_payments</code> solo referencian <code>source()</code>, sin ninguna arista de <code>ref()</code> entre ellos. dbt lee el grafo, no encuentra dependencias y despacha los tres al mismo tiempo. Las declaraciones de <code>ref()</code> que viste en la pestaña 2 son la orquestación: no escribiste ninguna configuración extra para que esto pasara.", "box_sched": "<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">¿Y si programo los notebooks con papermill o Airflow?</strong>\n    Se puede llevar notebooks a producción con papermill, nbconvert o un DAG de Airflow, pero ahí terminas manteniendo dos sistemas: la lógica de transformación en las celdas, y la programación y el cableado de dependencias fuera del notebook. Y ejecutar el notebook sigue siendo un solo kernel corriendo celdas en secuencia. En dbt, las llamadas a <code>ref()</code> dentro de tus archivos SQL <em>son</em> el DAG. No hay un archivo de orquestación aparte que mantener sincronizado.", "ann_t3": "<strong>A escala:</strong> este ejemplo tiene 5 modelos. Los proyectos reales tienen cientos. Un pipeline con 40 modelos de staging independientes se ejecuta en más o menos el tiempo que toma ejecutar uno solo, siempre que haya suficientes threads: no se necesita ninguna configuración de orquestador.", "h_t4": "El notebook funciona hasta que deja de funcionar. Cuando se rompe, la experiencia de depuración es fundamentalmente distinta. <strong>Haz clic en cada escenario</strong> para comparar.", "ds1": "El pipeline falla en el paso de unión (paso 4)", "dp1a": "La celda 4 falló. Si el kernel sigue vivo, los DataFrames de las celdas 1 a 3 siguen ahí, pero ¿se puede confiar en ellos? ¿Se ejecutaron en ese orden, con esta versión del código? Si reinicias el kernel para estar seguro, desaparecen y tienes que volver a correr todas las celdas desde el principio. Cada ciclo de depuración arriesga otra reejecución completa, incluidas las costosas llamadas a <code>pd.read_sql()</code>.", "dp1b": "El paso 4 falló. <code>stg_orders</code> y <code>stg_payments</code> siguen en el warehouse como tablas reales. Ejecuta <code>dbt run -s int_orders_with_payments</code> para volver a correr solo ese modelo. El trabajo upstream queda intacto.", "dn1": "La diferencia viene de una sola cosa: los modelos de dbt son tablas reales y persistentes en tu warehouse. Los DataFrames de un notebook viven en un kernel y mueren cuando este se reinicia. Ahí está todo el juego.", "ds2": "Cantidad de filas incorrecta en la salida final", "dp2a": "¿Fan-out en el merge? ¿Un filtro mal puesto en la celda 2? Vas metiendo <code>df.shape</code> en celdas extra, las ejecutas de nuevo y esperas haberlo hecho en el orden correcto sobre el estado actual. O escribes CSVs intermedios en disco de forma temporal. Varios ciclos de reejecución solo para aislar el problema.", "dp2b": "Consulta <code>stg_orders</code>: ¿cuántas filas? Consulta <code>int_orders_with_payments</code>: ¿cuántas? La diferencia muestra exactamente dónde ocurrió el fan-out. No hace falta reejecutar nada. Las tablas intermedias ya están ahí, en el warehouse.", "dn2": "Como cada modelo intermedio es una tabla real, puedes investigar un problema de conteo de filas de la misma forma en que investigarías un bug en el código, por bisección, sin reejecutar nada.", "ds3": "Cambio de esquema upstream: se renombró una columna", "dp3a": "El cambio de nombre aparece cuando vuelves a correr la celda 3: <code>KeyError: 'amount'</code>. Las celdas 1 y 2 ya se ejecutaron y sus DataFrames siguen en el kernel, así que el notebook queda en un estado a medio actualizar. Ahora hay que encontrar cada notebook y cada celda donde se referencia <code>'amount'</code>; no existe una lista central.", "dp3b": "<code>stg_payments</code> es el único modelo que toca <code>raw.payments</code>. Corrige la referencia a la columna ahí. Todo modelo downstream recibe la corrección automáticamente en la próxima ejecución. Un solo punto de cambio, no cinco notebooks para revisar con grep.", "dn3": "La capa <code>stg_</code> funciona como una barrera de aislamiento. Los cambios en el esquema crudo afectan solo a un archivo: el modelo de staging de esa fuente.", "ds4": "Salta la alerta de guardia a las 3 de la madrugada", "dp4a": "La ejecución programada falló. Corrió en un kernel nuevo, sin interfaz (papermill), que luego terminó, así que no quedó ningún DataFrame. Abres el notebook, ejecutas todas las celdas para reproducir el error, agregas celdas, ejecutas de nuevo. Varios ciclos antes de siquiera empezar a corregir, y todas las consultas costosas a las fuentes se vuelven a ejecutar cada vez.", "dp4b": "Los logs de dbt run muestran exactamente qué modelo falló y cuál fue el error de SQL. Los modelos intermedios siguen en el warehouse. Corrige el modelo y ejecuta <code>dbt run -s failed_model+</code> para volver a correr solo ese modelo y sus dependientes.", "dn4": "Acá es donde el valor se siente en carne propia. Al ingeniero de guardia a las 3 de la madrugada le importa mucho si el estado intermedio sobrevivió a la falla.", "ds5": "¿Qué más depende de los datos de pagos?", "dp5a": "Hacer grep de <code>raw.payments</code> en todos los notebooks, en archivos <code>.ipynb</code> donde el código queda enterrado en arrays JSON de celdas y es difícil de buscar, y esperar que todos usen el mismo formato de cadena de conexión. Esperar también que nadie haya copiado la lógica a otro notebook más. No existe un registro central de quién lee qué.", "dp5b": "El grafo de linaje muestra todo modelo downstream que referencia <code>stg_payments</code>. Haz clic en él dentro del DAG de dbt y ve el impacto completo de cualquier cambio al instante. Un ingeniero recién llegado puede responder \"qué depende de esto\" en 5 segundos.", "dn5": "Un grep en el código encuentra lo que ya sabes que tienes que buscar. El DAG de dbt te muestra lo que ni sabías que existía.", "ds6": "Revisando el cambio de un compañero en un pull request", "dp6a": "Un cambio de lógica de una línea aparece en el PR como una pared de JSON: valores de <code>execution_count</code> desplazados, <code>outputs</code> regenerados y blobs de imagen en base64 de los gráficos reejecutados. El cambio real queda enterrado dentro de un array <code>\"source\"</code>. Los revisores no pueden leerlo, así que lo aprueban sin mirar bien o directamente se saltan la revisión.", "dp6b": "Los modelos son simples archivos <code>.sql</code>. El mismo cambio se convierte en un diff de SQL de dos líneas en el PR: legible, revisable, comentable línea por línea. El control de versiones funciona igual que para el resto de tu código.", "dn6": "Un notebook es un JSON con código adentro; un modelo de dbt es código. Por eso uno se revisa bien en git y el otro no.", "ann_t4": "<strong>La causa raíz de toda ventaja de dbt en la depuración:</strong> los modelos intermedios son tablas reales, persistentes y consultables. Los DataFrames del notebook viven en un kernel y desaparecen cuando este se reinicia. Cualquier otra diferencia se desprende de ese único hecho.", "ch_nb": "notebook", "gh_src": "ver código fuente en github"}};
+var NAV={en:{back:'← back',next:'next →',done:'done ✓'},ja:{back:'← 戻る',next:'次へ →',done:'完了 ✓'},pt:{back:'← voltar',next:'próximo →',done:'concluído ✓'},es:{back:'← atrás',next:'siguiente →',done:'listo ✓'},de:{back:'← zurück',next:'weiter →',done:'fertig ✓'}};
+var translations={"ja":{"back_all":"← すべての解説へ","h1":"ノートブックから dbt へ","intro":"インタラクティブな解説です。各ステップは前のステップを土台にしているので、何がどう変わるのか、そしてなぜ変わるのかを順に見ていけます。","nav1":"ノートブック","nav2":"分解する","nav3":"データの出どころ","nav4":"何がいつ実行されるか","nav5":"問題が起きたとき","h_t0":"これは Jupyter ノートブックに書かれた、完全なパイプラインです。今どき引き継ぐことになりそうなものです。5つのセルが pandas を使って顧客の注文サマリーを作成します。<strong>ハイライトされた行</strong>が、規模が大きくなると問題になる箇所です。<strong style=\"color:#e6edf3\">In [ ]:</strong> の実行番号がバラバラなのは、セルを上から順に実行させる仕組みが何もないからです。行内のラベルを読んでから、次のタブで dbt がそれぞれをどう解決するか見てみましょう。","lbl_full":"build_customer_summary.ipynb（パイプライン全体のノートブック）","badge_nb":"1ノートブック・5セル","cmt_s1":"# ステップ1: 顧客データを整える","in_conn":"⚠ 接続情報が直書き。dev と prod を分けられない","in_hardbreak":"⚠ スキーマ名が直書き。名前が変わると気づかないうちに壊れる","cmt_s2":"# ステップ2: 注文データを整える","in_hard":"⚠ スキーマ名が直書き","cmt_s3":"# ステップ3: 支払いデータを整える","cmt_s4wn":"# ステップ4: 注文と支払いを結合  <span class=\"wn\">⚡ 先にセル2と3を、しかもその順で実行しておかなければならず、そう実行されたことを願うしかない</span>","cmt_s5":"# ステップ5: 最終サマリー","in_over":"⚠ 毎回全件を上書き。差分更新の選択肢がない","cmt_kernel":"# カーネルが生きている間は、5つの DataFrame が古く信用できないまま残り続ける。\n# カーネルを再起動すれば消える。何かを確認するには全セルを再実行するしかない。  <span class=\"in\">⚠ 一からデバッグ</span>","ann_t0":"<strong>今見ているもの:</strong> 1つのノートブック、5つのセル、データはすべてカーネルに読み込まれ、セルはどの順でも実行でき、接続文字列とスキーマ名は直書き、毎回テーブルを全件上書き、そして何かが失敗しても信用できる中間状態が残らない。動くうちはいい。壊れるまでは。次のタブでは dbt が何を変えるのかを見ていきます。","h_t1":"ノートブックは1つのファイルで、5つのセルが1つのカーネルを共有しています。dbt はこれを論理ステップごとに5つのファイルへ分割します。<strong>各ブロックをクリック</strong>すると、そのステップが dbt でどう表現され、何が変わるのかがわかります。","badge_df":"カーネル上の DataFrame","in_hardname":"⚠ スキーマ名が直書き","t_arr1":"<strong style=\"color:#3fb950\">models/staging/stg_customers.sql</strong> になる","cmt_noimports":"-- import もエンジンもなし。SELECT だけ。","wc1":"<strong>変わった点:</strong> 変換ロジックは同じで、ただ SQL になっただけです。Python ランタイムも、カーネルのメモリ上限も、生データのネットワーク転送もありません。<code>pd.read_sql(\"... FROM raw.customers\")</code> は <code>source('raw','customers')</code> になり、dbt はこれを正式なデータの入り口として登録します。だからテストをかけ、鮮度を監視し、異常があればアラートを出せます。でき上がるのは、1つのカーネルセッションと運命を共にする変数ではなく、ウェアハウスに残る本物の、クエリできるテーブルです。","t_arr2":"<strong style=\"color:#3fb950\">models/staging/stg_orders.sql</strong> になる","wc2":"<strong>変わった点:</strong> 同じフィルターのロジックが、独立したファイルになりました。別のチームが売上パイプラインを作っていてきれいな注文データが必要になったら、フィルターのロジックを自分のノートブックにコピペする代わりに <code>ref('stg_orders')</code> を参照します。ノートブックごとにやっていると、「有効な注文とは何か」がバラバラに5つのファイルで定義され、少しずつ食い違っていきます。","t_arr3":"<strong style=\"color:#3fb950\">models/staging/stg_payments.sql</strong> になる","wc3":"<strong>変わった点:</strong> 変換は同じです。ステップ1・2・3は互いに依存しない3つの独立したファイルになり、dbt は3つを並列で実行できます。ノートブックは、あなたがたまたまクリックした順で、1セルずつ実行するだけです。","badge_join":"結合ステップ","wn_join":"⚡ 先にセル2と3を、しかもその順で実行しておく必要がある。システムではなくあなた任せ","t_arr4":"<strong style=\"color:#3fb950\">models/intermediate/int_orders_with_payments.sql</strong> になる","wc4":"<strong>変わった点:</strong> <code>tmp_orders</code> と <code>tmp_payments</code>（カーネルが生きている間だけ存在するセル変数）は <code>ref('stg_orders')</code> と <code>ref('stg_payments')</code> になります。これらはウェアハウスに残る、クエリできるテーブルです。この <code>ref()</code> の呼び出しが依存関係も宣言するので、dbt は両方のステージングモデルを先に仕上げてからこのモデルを実行すべきだとわかります。オーケストレーションのロジックは一切書いていません。<code>ref()</code> の呼び出しそのものがオーケストレーションです。","badge_over":"全件上書き","in_over2":"⚠ 毎回全件を上書き","cmt_kernel2":"# 頼れるのはカーネルの状態だけ。再起動すれば、確認できるものは何も残らない。  <span class=\"in\">⚠ 一からデバッグ</span>","t_arr5":"<strong style=\"color:#3fb950\">models/marts/fct_customer_order_summary.sql</strong> になる","cmt_matz":"-- マテリアライズの方法（table・incremental・view）は、コードではなく設定で決める。","wc5":"<strong>これで5つのステップすべてを見ました。</strong> 変換ロジックは変わっていません。変わったのは次の点です。(1) 変換はノートブックのカーネルではなくウェアハウスで実行されるので、メモリの上限もデータ転送のオーバーヘッドもありません。(2) 各ステップが本物の、残る、クエリできるテーブルであり、消えてしまう変数ではありません。(3) <code>if_exists='replace'</code> はなくなりました。マテリアライズは、保守すべきコードではなく1行の設定です。","ann_t1":"<strong>パターン:</strong> 全体を通して変換ロジックは同じです。dbt が変えるのは実行環境と外側の入れ物です。変換はノートブックのカーネルからウェアハウスへ移り、<code>pd.read_sql(\"... FROM raw.x\")</code> は <code>source()</code> に、<code>tmp_x</code> という変数参照は <code>ref()</code> になります。この3つの置き換えが、ほかのすべてを解き放ちます。","h_t2":"リネージュ（データの系統）グラフを理解する前に、接頭辞が何を意味するのか、そして dbt がデータの入り口とパイプライン内の流れをどう追跡するのかを押さえておくと役立ちます。","nm_stg":"<strong style=\"color:#e6edf3\">ステージング</strong>。ソーステーブル1つにつき1ファイル。整形・リネーム・型変換を行います。生データが入り、使える列が出てきます。ここでは結合はしません。","nm_int":"<strong style=\"color:#e6edf3\">中間（intermediate）</strong>。最終アウトプットではない結合や変換。マートモデル間で共有する部品です。","nm_mart":"<strong style=\"color:#e6edf3\">マート</strong>。BI ツールやビジネスユーザーが実際にクエリする層。1つのビジネス上の問いにつき1テーブルです。","sb1_h":"source() ― 生データの入り口","ref_row1":"tmp_orders（セル変数）","ref_row2":"tmp_payments（セル変数）","sb1_p":"ノートブックはスキーマ名と接続文字列を直書きしていました。スキーマ名が変わると、そのセルはエラーを投げるか、もっと悪いと、何も言わずに古いデータを返します。<code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">source()</code> はこれらを正式な入り口として登録するので、dbt はテストをかけ、鮮度を確認し、データの不調がダッシュボードの不調になる前にアラートを出せます。さらに環境ごとに正しいスキーマを自動で解決するので、dev と prod が同じ直書き文字列を共有することは二度とありません。","sb2_h":"ref() ― モデル同士の依存関係","sb2_p":"すべての <code>ref()</code> が宣言された依存関係です。dbt はそれらをすべて読み取り、実行順序を自動で組み立てます。オーケストレーションのコードを書く必要はありません。<code>ref()</code> の呼び出しそのものが<em>オーケストレーションです</em>。ノートブックでは、順序はセルの位置と願望で担保されていて、セルを順番どおりに実行しなければ何も言わずに壊れました。ここでは順序をシステムが担保します。","s_sources":"ソース","s_staging":"ステージング","s_intermediate":"中間","s_marts":"マート","s_parallel":"すべて並列で実行","s_waits":"stg_orders と stg_payments を待つ","s_final":"最終アウトプット","ann_t2":"<strong>このグラフは、ノートブックを目に見えるようにしたものです。</strong> ノートブックにも同じ構造はありました。ただ見えなかっただけです。ステップ4がステップ2と3に依存していると理解するには、5つのセルを（最後に実行された順で）読み解く必要がありました。dbt はそれを明示的にし、クエリでき、自動でドキュメント化します。","h_t3":"ノートブックはセルを1つずつ、上から下へ、あなたが順番に実行するのを忘れなければ、そう動きます。カーネルが与えてくれる選択肢はそれだけです。dbt は依存関係グラフを読み取り、独立したモデルを複数スレッドで同時に実行します。","pb1_h":"❌ ノートブック（直列・セルごと）","bl_s1":"ステップ1","bl_s2":"ステップ2","bl_s3":"ステップ3","bl_s4":"ステップ4","bl_s5":"ステップ5","et1":"実行時間: <strong style=\"color:#f85149\">5単位</strong>","pb2_h":"✅ dbt（並列・3スレッド）","bl_t1":"スレッド1","bl_t2":"スレッド2","bl_t3":"スレッド3","et2":"実行時間: <strong style=\"color:#3fb950\">3単位</strong>","box_par":"<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">dbt はなぜ並列化できるとわかるのか？</strong>\n    <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_customers</code>・<code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_orders</code>・<code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_payments</code> はどれも <code>source()</code> しか参照しておらず、互いの間に <code>ref()</code> のつながりがありません。dbt はグラフを読み、依存がないと判断し、3つを一度に実行します。タブ2で出てきた <code>ref()</code> の宣言がオーケストレーションそのものであり、これを動かすために追加の設定は一切書いていません。","box_sched":"<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">papermill や Airflow でノートブックをスケジュール実行すればいいのでは？</strong>\n    papermill や nbconvert、あるいは Airflow の DAG でノートブックを本番運用することはできます。ただ、そうなると2つのシステムを保守することになります。セルの中の変換ロジックと、ノートブックの外にあるスケジュールと依存関係の配線です。しかもノートブックの実行は、結局1つのカーネルがセルを順番に処理するだけです。dbt では、SQL ファイルの中の <code>ref()</code> 呼び出し<em>そのものが</em> DAG です。別に同期し続けるオーケストレーション用のファイルはありません。","ann_t3":"<strong>スケールすると:</strong> この例はモデルが5つですが、実際のプロジェクトでは数百に及びます。独立したステージングモデルが40個あるパイプラインでも、スレッドさえ十分あれば、ほぼ1個分の時間で実行が終わります。オーケストレーターの設定は要りません。","h_t4":"ノートブックは、壊れるまでは動きます。いざ壊れると、デバッグの体験が根本的に違います。<strong>各シナリオをクリック</strong>して比べてみましょう。","ds1":"結合ステップ（ステップ4）でパイプラインが失敗","dp1a":"セル4が失敗。カーネルがまだ生きていれば、セル1〜3の DataFrame は残っています。でも信用できますか？ この順で、このバージョンのコードで実行されたものですか？ 念のためカーネルを再起動すれば消えてしまい、全セルを頭から再実行することになります。デバッグのたびに、高コストな <code>pd.read_sql()</code> の呼び出しも含めて、全体を再実行する羽目になりかねません。","dp1b":"ステップ4が失敗。<code>stg_orders</code> と <code>stg_payments</code> はウェアハウスに本物のテーブルとして残っています。<code>dbt run -s int_orders_with_payments</code> を実行すれば、そのモデルだけを再実行できます。上流の成果はそのまま残ります。","dn1":"dbt モデルはウェアハウスのテーブルとして残ります。ノートブックの DataFrame はカーネルを再起動すると消えます。この違いが、失敗後に何を確認できるかを決めます。","ds2":"最終アウトプットの行数がおかしい","dp2a":"merge でファンアウト？ セル2のフィルターが悪い？ あちこちのセルに <code>df.shape</code> をばらまき、再実行して、今の状態に対して正しい順で動かせたことを祈ります。あるいは中間結果を一時的に CSV へ書き出します。原因を切り分けるのに、何度も再実行を繰り返すことになります。","dp2b":"<code>stg_orders</code> をクエリして、行数は？ <code>int_orders_with_payments</code> をクエリして、行数は？ その差が、ファンアウトの発生場所をぴたりと示します。再実行は不要です。中間テーブルはウェアハウスにそのまま置いてあります。","dn2":"中間モデルがどれも本物のテーブルなので、行数の問題も、コードのバグを二分探索するのと同じ要領で、何も再実行せずに切り分けられます。","ds3":"上流のスキーマ変更 ― 列名が変わった","dp3a":"リネームは、セル3を再実行したときに <code>KeyError: 'amount'</code> として表面化します。セル1と2はすでに実行済みで、その DataFrame はカーネルに残ったままなので、ノートブックは中途半端に更新された状態になります。<code>'amount'</code> を参照しているノートブックとセルを、すべて探し出すしかありません。まとまった一覧はどこにもありません。","dp3b":"<code>raw.payments</code> に触れるモデルは <code>stg_payments</code> だけです。そこで列の参照を直します。下流のモデルは、次の実行ですべて自動的に修正が反映されます。修正箇所は1か所。5つのノートブックを grep して回る必要はありません。","dn3":"<code>stg_</code> の層が隔離の境界になります。生データのスキーマ変更が影響するのは1ファイル、そのソースのステージングモデルだけです。","ds4":"深夜3時、オンコールのアラートが鳴る","dp4a":"スケジュール実行が失敗。まっさらなヘッドレスカーネル（papermill）で動いて、そのまま終了したので、DataFrame はどこにもありません。ノートブックを開き、再現のために全セルを実行し、セルを足して、もう一度実行。修正に取りかかる前に何サイクルも繰り返し、そのたびに高コストなソースクエリが毎回また走ります。","dp4b":"dbt の実行ログには、失敗したモデルと SQL エラーが正確に出ます。中間モデルはウェアハウスに残っています。モデルを直し、<code>dbt run -s failed_model+</code> を実行すれば、そのモデルとその下流だけを再実行できます。","dn4":"失敗した実行の中間状態が残っていれば、オンコールのエンジニアは深夜3時に再構築せず、すぐ確認できます。","ds5":"ほかに支払いデータへ依存しているものは？","dp5a":"すべてのノートブックを <code>raw.payments</code> で grep します。しかも <code>.ipynb</code> ファイルはコードが JSON のセル配列に埋もれていて検索しづらく、全員が同じ接続文字列の書式を使っていることを祈るしかありません。誰かがロジックをまた別のノートブックにコピペしていないことも祈ります。何が何を読んでいるかの正式な記録はどこにもありません。","dp5b":"リネージュグラフが、<code>stg_payments</code> を参照する下流モデルをすべて表示します。dbt の DAG 上でクリックすれば、どんな変更の影響範囲もその場で全部わかります。新しく入ったエンジニアでも、「これに依存しているのは何か」に5秒で答えられます。","dn5":"コードベースの grep は、探すと分かっているものしか見つけてくれません。dbt の DAG は、存在すら知らなかったものまで見せてくれます。","ds6":"プルリクエストでチームメイトの変更をレビューする","dp6a":"1行のロジック変更が、PR では JSON の壁として現れます。ずれた <code>execution_count</code> の値、作り直された <code>outputs</code>、再実行したチャートの base64 画像データ。肝心の変更は <code>\"source\"</code> 配列の中に埋もれています。レビュアーは読めないので、めくら判を押すか、レビューそのものを飛ばします。","dp6b":"モデルはただの <code>.sql</code> ファイルです。同じ変更は、PR では2行の SQL の差分として出ます。読めて、レビューでき、行ごとにコメントできます。バージョン管理が、ほかのコードと同じように機能します。","dn6":"ノートブックはコードを内包した JSON であり、dbt モデルはコードそのものです。だから一方は git できれいにレビューでき、もう一方はできないのです。","ann_t4":"<strong>dbt をデバッグしやすい理由:</strong> 中間モデルはクエリできるウェアハウステーブルとして残ります。ノートブックの DataFrame はカーネルの再起動時に、中間状態と一緒に消えます。","ch_nb":"ノートブック","gh_src":"GitHub でソースを見る"},"pt":{"back_all":"← todos os explicadores","h1":"Dos notebooks para o dbt","intro":"Um passo a passo interativo. Siga as etapas: cada uma se apoia na anterior, para você ver exatamente o que muda e por quê.","nav1":"O notebook","nav2":"Dividindo em partes","nav3":"De onde vêm os dados","nav4":"O que roda e quando","nav5":"Quando algo quebra","h_t0":"Este é um pipeline completo em um notebook Jupyter, do tipo que você herdaria hoje em dia. Cinco células constroem um resumo de pedidos por cliente usando pandas. <strong>As linhas destacadas</strong> são os pontos que geram problemas em escala, e os números de <strong style=\"color:#e6edf3\">In [ ]:</strong> estão fora de ordem porque nada obriga você a rodar as células de cima para baixo. Leia os rótulos ao lado de cada linha e depois vá para a próxima aba para ver como o dbt resolve cada um deles.","lbl_full":"build_customer_summary.ipynb: notebook do pipeline completo","badge_nb":"1 notebook · 5 células","cmt_s1":"# Etapa 1: limpar os clientes","in_conn":"⚠ conexão fixa no código, sem separação entre dev e prod","in_hardbreak":"⚠ schema fixo no código: renomear quebra silenciosamente","cmt_s2":"# Etapa 2: limpar os pedidos","in_hard":"⚠ schema fixo no código","cmt_s3":"# Etapa 3: limpar os pagamentos","cmt_s4wn":"# Etapa 4: juntar pedidos + pagamentos  <span class=\"wn\">⚡ é preciso rodar as células 2 e 3 antes, nessa ordem, e torcer para que tenha sido assim</span>","cmt_s5":"# Etapa 5: resumo final","in_over":"⚠ sobrescreve tudo a cada execução, sem opção incremental","cmt_kernel":"# Enquanto o kernel estiver vivo, os 5 DataFrames continuam por aí, desatualizados e pouco confiáveis.\n# Reinicie o kernel e eles somem: para inspecionar qualquer coisa, é preciso rodar todas as células de novo.  <span class=\"in\">⚠ depuração do zero</span>","ann_t0":"<strong>O que você está vendo:</strong> um notebook, 5 células, todos os dados carregados no kernel, células que podem rodar em qualquer ordem, strings de conexão e nomes de schema fixos no código, sobrescrita completa da tabela a cada execução, e nenhum estado intermediário confiável quando algo falha. Funciona, até não funcionar mais. A próxima aba mostra o que o dbt faz de diferente.","h_t1":"O notebook é um único arquivo, com cinco células compartilhando um kernel. O dbt divide isso em 5 arquivos, um por etapa lógica. <strong>Clique em cada bloco</strong> para ver como essa etapa se traduz em dbt, e exatamente o que muda.","badge_df":"DataFrame no kernel","in_hardname":"⚠ nome de schema fixo no código","t_arr1":"vira → <strong style=\"color:#3fb950\">models/staging/stg_customers.sql</strong>","cmt_noimports":"-- Sem imports. Sem engine. Só SELECT.","wc1":"<strong>O que mudou:</strong> a lógica de transformação é idêntica, só que agora em SQL. Sem runtime Python, sem limite de memória do kernel, sem transferência de dados brutos pela rede. <code>pd.read_sql(\"... FROM raw.customers\")</code> vira <code>source('raw','customers')</code>, e o dbt registra isso como um ponto de entrada oficial dos dados, que ele pode testar, monitorar quanto à atualização e usar para disparar alertas. O resultado é uma tabela real, persistente e consultável no seu warehouse, não uma variável que nasce e morre junto com uma sessão do kernel.","t_arr2":"vira → <strong style=\"color:#3fb950\">models/staging/stg_orders.sql</strong>","wc2":"<strong>O que mudou:</strong> a mesma lógica de filtro, agora em um arquivo independente. Quando outro time monta um pipeline de receita e precisa de pedidos limpos, ele referencia <code>ref('stg_orders')</code> em vez de copiar e colar a lógica de filtro no próprio notebook. Espalhada entre notebooks, a pergunta \"o que é um pedido válido\" acaba definida em cinco arquivos diferentes, e eles vão divergindo.","t_arr3":"vira → <strong style=\"color:#3fb950\">models/staging/stg_payments.sql</strong>","wc3":"<strong>O que mudou:</strong> a mesma transformação. Agora as etapas 1, 2 e 3 são três arquivos independentes, sem dependência entre eles: o dbt consegue rodar os três em paralelo. O notebook executa uma célula de cada vez, na ordem em que você foi clicando.","badge_join":"Etapa de junção","wn_join":"⚡ exige que as células 2 e 3 rodem antes, nessa ordem, e isso depende de você, não do sistema","t_arr4":"vira → <strong style=\"color:#3fb950\">models/intermediate/int_orders_with_payments.sql</strong>","wc4":"<strong>O que mudou:</strong> <code>tmp_orders</code> e <code>tmp_payments</code> (variáveis de célula que só existem enquanto o kernel está vivo) viram <code>ref('stg_orders')</code> e <code>ref('stg_payments')</code>: tabelas persistentes e consultáveis no warehouse. Essas chamadas de <code>ref()</code> também declaram a dependência: o dbt sabe que precisa terminar os dois modelos de staging antes de rodar este. Você não escreveu nenhuma lógica de orquestração, as chamadas de <code>ref()</code> são a orquestração.","badge_over":"Sobrescrita completa","in_over2":"⚠ sobrescreve tudo a cada execução","cmt_kernel2":"# O estado do kernel é tudo o que você tem; reinicie e nada sobra para inspecionar.  <span class=\"in\">⚠ depuração do zero</span>","t_arr5":"vira → <strong style=\"color:#3fb950\">models/marts/fct_customer_order_summary.sql</strong>","cmt_matz":"-- A estratégia de materialização (table, incremental, view) é configuração, não código.","wc5":"<strong>Você já viu as 5 etapas.</strong> A lógica de transformação não mudou. O que mudou: (1) as transformações rodam no warehouse, não no kernel do notebook, então não há teto de memória nem overhead de transferência de dados; (2) cada etapa é uma tabela real, persistente e consultável, não uma variável que desaparece; (3) o <code>if_exists='replace'</code> sumiu: a materialização é uma configuração de uma linha, não código que você precisa manter.","ann_t1":"<strong>O padrão:</strong> a lógica de transformação é a mesma do início ao fim. O que o dbt muda é o ambiente de execução e a camada em volta: as transformações saem do kernel do notebook e vão para o warehouse, <code>pd.read_sql(\"... FROM raw.x\")</code> vira <code>source()</code>, referências a variáveis <code>tmp_x</code> viram <code>ref()</code>. Essas três substituições destravam tudo o resto.","h_t2":"Antes que o grafo de linhagem faça sentido, ajuda entender o que os prefixos significam e como o dbt rastreia por onde os dados entram e fluem pelo pipeline.","nm_stg":"<strong style=\"color:#e6edf3\">Staging</strong>: um arquivo por tabela de origem. Limpa, renomeia, converte tipos. Entra dado bruto, saem colunas utilizáveis. Aqui não se faz nenhum join.","nm_int":"<strong style=\"color:#e6edf3\">Intermediate</strong>: joins e transformações que ainda não são o resultado final. Blocos reutilizados entre os modelos de mart.","nm_mart":"<strong style=\"color:#e6edf3\">Marts</strong>: o que as ferramentas de BI e os usuários de negócio realmente consultam. Uma tabela por pergunta de negócio.","sb1_h":"source(): por onde os dados brutos entram","ref_row1":"tmp_orders (variável de célula)","ref_row2":"tmp_payments (variável de célula)","sb1_p":"O notebook tinha nomes de schema e uma string de conexão fixos no código. Se um schema é renomeado, a célula lança um erro ou, pior, devolve dados desatualizados sem avisar nada. O <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">source()</code> registra esses pontos como entradas oficiais: o dbt pode testá-los, checar a atualização e te alertar antes que um dia ruim de dados vire um dia ruim de dashboard. Ele também resolve o schema correto para cada ambiente automaticamente, então dev e prod nunca compartilham a mesma string fixa.","sb2_h":"ref(): como os modelos dependem uns dos outros","sb2_p":"Cada <code>ref()</code> é uma dependência declarada. O dbt lê todas elas e monta a ordem de execução automaticamente. Você não escreve código de orquestração; as chamadas de <code>ref()</code> <em>são</em> a orquestração. No notebook, a ordem era garantida pela posição das células e por um pouco de fé, e rodar as células fora de ordem quebrava tudo silenciosamente; aqui, é o sistema que garante isso.","s_sources":"FONTES","s_staging":"STAGING","s_intermediate":"INTERMEDIÁRIO","s_marts":"MARTS","s_parallel":"tudo roda em paralelo","s_waits":"espera stg_orders + stg_payments","s_final":"saída final","ann_t2":"<strong>Esse grafo é o notebook tornado visível.</strong> O notebook tinha essa mesma estrutura, ela só não era visível. Você tinha que ler as cinco células (na ordem em que foram executadas por último) para entender que a etapa 4 dependia das etapas 2 e 3. O dbt torna isso explícito, consultável e documentado automaticamente.","h_t3":"O notebook roda célula por célula, de cima para baixo, quando você lembra de executá-las na ordem certa. É a única opção que um kernel te dá. O dbt lê o grafo de dependências e roda modelos independentes ao mesmo tempo, em várias threads.","pb1_h":"❌ notebook: serial, célula por célula","bl_s1":"etapa 1","bl_s2":"etapa 2","bl_s3":"etapa 3","bl_s4":"etapa 4","bl_s5":"etapa 5","et1":"Tempo de execução: <strong style=\"color:#f85149\">5 unidades</strong>","pb2_h":"✅ dbt: paralelo (3 threads)","bl_t1":"thread 1","bl_t2":"thread 2","bl_t3":"thread 3","et2":"Tempo de execução: <strong style=\"color:#3fb950\">3 unidades</strong>","box_par":"<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">Como o dbt sabe que pode paralelizar?</strong>\n    Porque <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_customers</code>, <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_orders</code> e <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_payments</code> referenciam apenas <code>source()</code>, sem nenhuma aresta de <code>ref()</code> entre eles. O dbt lê o grafo, não encontra dependências e dispara os três de uma vez. As declarações de <code>ref()</code> vistas na aba 2 são a orquestração: você não escreveu nenhuma configuração extra para isso acontecer.","box_sched":"<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">E se eu agendar os notebooks com papermill ou Airflow?</strong>\n    Dá para colocar notebooks em produção com papermill, nbconvert ou um DAG do Airflow, mas aí você passa a manter dois sistemas: a lógica de transformação nas células e o agendamento e as dependências fora do notebook. E rodar o notebook ainda significa um único kernel executando células em sequência. No dbt, as chamadas de <code>ref()</code> dentro dos arquivos SQL <em>são</em> o DAG. Não existe um arquivo de orquestração separado para manter sincronizado.","ann_t3":"<strong>Em escala:</strong> este exemplo tem 5 modelos. Projetos reais têm centenas. Um pipeline com 40 modelos de staging independentes roda em mais ou menos o tempo de rodar um só, desde que haja threads suficientes: nenhuma configuração de orquestrador é necessária.","h_t4":"O notebook funciona até não funcionar mais. Quando quebra, a experiência de depuração é fundamentalmente diferente. <strong>Clique em cada cenário</strong> para comparar.","ds1":"O pipeline falha na etapa de junção (etapa 4)","dp1a":"A célula 4 falhou. Se o kernel ainda está vivo, os DataFrames das células 1 a 3 continuam por lá, mas dá para confiar neles? Foram executados nessa ordem, com essa versão do código? Se você reinicia o kernel para ter certeza, eles somem e você reroda todas as células desde o início. Cada ciclo de depuração arrisca mais uma reexecução completa, incluindo as chamadas caras de <code>pd.read_sql()</code>.","dp1b":"A etapa 4 falhou. <code>stg_orders</code> e <code>stg_payments</code> continuam no warehouse como tabelas reais. Rode <code>dbt run -s int_orders_with_payments</code> para reexecutar só esse modelo. O trabalho upstream fica intacto.","dn1":"Os modelos do dbt persistem como tabelas no warehouse. Os DataFrames do notebook desaparecem quando o kernel reinicia. Essa diferença determina o que você consegue inspecionar depois de uma falha.","ds2":"Contagem de linhas errada na saída final","dp2a":"Fan-out no merge? Filtro errado na célula 2? Você espalha <code>df.shape</code> em células extras, roda de novo e torce para ter executado na ordem certa em cima do estado atual. Ou escreve CSVs intermediários em disco temporariamente. Vários ciclos de reexecução só para isolar o problema.","dp2b":"Consulte <code>stg_orders</code>: quantas linhas? Consulte <code>int_orders_with_payments</code>: quantas? A diferença mostra exatamente onde aconteceu o fan-out. Não precisa reexecutar nada. As tabelas intermediárias já estão lá, no warehouse.","dn2":"Como cada modelo intermediário é uma tabela real, você consegue investigar um problema de contagem de linhas do mesmo jeito que investigaria um bug no código, por bisseção, sem reexecutar nada.","ds3":"Mudança de schema upstream: uma coluna foi renomeada","dp3a":"A renomeação aparece quando você reroda a célula 3: <code>KeyError: 'amount'</code>. As células 1 e 2 já rodaram e seus DataFrames continuam no kernel, então o notebook fica num estado meio atualizado. Agora é preciso achar todo notebook e toda célula onde <code>'amount'</code> é referenciado; não existe uma lista central.","dp3b":"<code>stg_payments</code> é o único modelo que toca em <code>raw.payments</code>. Corrija a referência à coluna ali. Todo modelo downstream recebe a correção automaticamente na próxima execução. Um único ponto de mudança, não cinco notebooks para vasculhar com grep.","dn3":"A camada <code>stg_</code> funciona como uma barreira de isolamento. Mudanças no schema bruto afetam só um arquivo: o modelo de staging daquela fonte.","ds4":"O alerta de plantão dispara às 3 da manhã","dp4a":"A execução agendada falhou. Ela rodou num kernel novo e headless (papermill), que depois encerrou, então não sobrou DataFrame nenhum. Você abre o notebook, roda todas as células para reproduzir, adiciona células, roda de novo. Vários ciclos antes mesmo de começar a corrigir, e todas as consultas caras nas fontes rodam de novo a cada vez.","dp4b":"Os logs do dbt run mostram exatamente qual modelo falhou e qual foi o erro de SQL. Os modelos intermediários continuam no warehouse. Corrija o modelo e rode <code>dbt run -s failed_model+</code> para reexecutar só ele e seus dependentes.","dn4":"Se o estado intermediário sobreviver à execução com falha, o engenheiro de plantão poderá inspecioná-lo imediatamente em vez de reconstruí-lo às 3 da manhã.","ds5":"O que mais depende dos dados de pagamento?","dp5a":"Faça um grep de <code>raw.payments</code> em todos os notebooks, em arquivos <code>.ipynb</code> onde o código fica enterrado em arrays JSON de células e é difícil de buscar, e torça para que todo mundo use o mesmo formato de string de conexão. Torça também para que ninguém tenha copiado a lógica para outro notebook. Não existe um registro central de quem lê o quê.","dp5b":"O grafo de linhagem mostra todo modelo downstream que referencia <code>stg_payments</code>. Clique nele no DAG do dbt e veja o impacto completo de qualquer mudança na hora. Um engenheiro novo consegue responder \"o que depende disso?\" em 5 segundos.","dn5":"Um grep no código encontra o que você já sabe que precisa procurar. O DAG do dbt mostra o que você nem sabia que existia.","ds6":"Revisando a mudança de um colega em um pull request","dp6a":"Uma mudança de lógica de uma linha aparece no PR como uma parede de JSON: valores de <code>execution_count</code> deslocados, <code>outputs</code> regenerados e blobs de imagem em base64 dos gráficos reexecutados. A mudança de verdade fica enterrada em um array <code>\"source\"</code>. Os revisores não conseguem ler aquilo, então aprovam sem olhar direito ou pulam a revisão de vez.","dp6b":"Modelos são simples arquivos <code>.sql</code>. A mesma mudança vira um diff de SQL de duas linhas no PR: legível, revisável, comentável linha a linha. O controle de versão funciona do mesmo jeito que funciona para o resto do seu código.","dn6":"Um notebook é um JSON com código dentro; um modelo dbt é código. É por isso que um se revisa bem no git e o outro não.","ann_t4":"<strong>Por que é mais fácil depurar com dbt:</strong> os modelos intermediários persistem como tabelas consultáveis no warehouse. Os DataFrames do notebook desaparecem quando o kernel reinicia, levando o estado intermediário com eles.","ch_nb":"notebook","gh_src":"ver código-fonte no github"},"es":{"back_all":"← todos los explicadores","h1":"De los notebooks a dbt","intro":"Un recorrido interactivo. Sigue los pasos: cada uno se apoya en el anterior, para que veas exactamente qué cambia y por qué.","nav1":"El notebook","nav2":"Separándolo en partes","nav3":"De dónde vienen los datos","nav4":"Qué se ejecuta y cuándo","nav5":"Cuando algo se rompe","h_t0":"Este es un pipeline completo en un notebook de Jupyter, del tipo que hoy heredarías de alguien más. Cinco celdas arman un resumen de pedidos por cliente usando pandas. <strong>Las líneas resaltadas</strong> son los puntos que generan problemas a gran escala, y los números de <strong style=\"color:#e6edf3\">In [ ]:</strong> están desordenados porque nada te obliga a ejecutar las celdas de arriba hacia abajo. Lee las etiquetas junto a cada línea y luego pasa a la siguiente pestaña para ver cómo dbt resuelve cada uno de estos problemas.","lbl_full":"build_customer_summary.ipynb: notebook del pipeline completo","badge_nb":"1 notebook · 5 celdas","cmt_s1":"# Paso 1: limpiar los clientes","in_conn":"⚠ conexión fija en el código, sin separación entre dev y prod","in_hardbreak":"⚠ esquema fijo en el código: renombrar rompe todo en silencio","cmt_s2":"# Paso 2: limpiar los pedidos","in_hard":"⚠ esquema fijo en el código","cmt_s3":"# Paso 3: limpiar los pagos","cmt_s4wn":"# Paso 4: unir pedidos + pagos  <span class=\"wn\">⚡ hay que ejecutar antes las celdas 2 y 3, en ese orden, y esperar que así haya sido</span>","cmt_s5":"# Paso 5: resumen final","in_over":"⚠ sobrescribe todo en cada ejecución, sin opción incremental","cmt_kernel":"# Mientras el kernel siga vivo, los 5 DataFrames quedan dando vueltas, desactualizados y poco confiables.\n# Si reinicias el kernel, desaparecen: para inspeccionar cualquier cosa hay que volver a ejecutar todas las celdas.  <span class=\"in\">⚠ depuración desde cero</span>","ann_t0":"<strong>Lo que estás viendo:</strong> un notebook, 5 celdas, todos los datos cargados en el kernel, celdas que pueden ejecutarse en cualquier orden, cadenas de conexión y nombres de esquema fijos en el código, sobrescritura completa de la tabla en cada ejecución, y ningún estado intermedio confiable cuando algo falla. Funciona, hasta que deja de funcionar. La siguiente pestaña muestra qué hace dbt de forma distinta.","h_t1":"El notebook es un solo archivo, con cinco celdas que comparten un kernel. dbt lo divide en 5 archivos, uno por cada paso lógico. <strong>Haz clic en cada bloque</strong> para ver cómo ese paso se traduce a dbt, y qué es exactamente lo que cambia.","badge_df":"DataFrame en el kernel","in_hardname":"⚠ nombre de esquema fijo en el código","t_arr1":"se convierte en → <strong style=\"color:#3fb950\">models/staging/stg_customers.sql</strong>","cmt_noimports":"-- Sin imports. Sin engine. Solo SELECT.","wc1":"<strong>Qué cambió:</strong> la lógica de transformación es idéntica, solo que ahora en SQL. Sin runtime de Python, sin límites de memoria del kernel, sin transferencia de datos crudos por la red. <code>pd.read_sql(\"... FROM raw.customers\")</code> se convierte en <code>source('raw','customers')</code>, y dbt registra esto como un punto de entrada oficial de datos, que puede testear, monitorear en cuanto a su frescura y usar para disparar alertas. El resultado es una tabla real, persistente y consultable en tu warehouse, no una variable que nace y muere junto con una sesión del kernel.","t_arr2":"se convierte en → <strong style=\"color:#3fb950\">models/staging/stg_orders.sql</strong>","wc2":"<strong>Qué cambió:</strong> la misma lógica de filtro, ahora en un archivo independiente. Cuando otro equipo arma un pipeline de ingresos y necesita pedidos limpios, referencia <code>ref('stg_orders')</code> en lugar de copiar y pegar la lógica de filtro en su propio notebook. Repartida entre notebooks, la pregunta \"qué es un pedido válido\" termina definida en cinco archivos distintos, y con el tiempo se desalinean.","t_arr3":"se convierte en → <strong style=\"color:#3fb950\">models/staging/stg_payments.sql</strong>","wc3":"<strong>Qué cambió:</strong> la misma transformación. Ahora los pasos 1, 2 y 3 son tres archivos independientes, sin dependencia entre ellos: dbt puede ejecutar los tres en paralelo. El notebook los corre de a una celda por vez, en el orden en que fuiste haciendo clic.","badge_join":"Paso de unión","wn_join":"⚡ exige que las celdas 2 y 3 se ejecuten antes, en ese orden, y eso depende de ti, no del sistema","t_arr4":"se convierte en → <strong style=\"color:#3fb950\">models/intermediate/int_orders_with_payments.sql</strong>","wc4":"<strong>Qué cambió:</strong> <code>tmp_orders</code> y <code>tmp_payments</code> (variables de celda que solo existen mientras el kernel está vivo) se convierten en <code>ref('stg_orders')</code> y <code>ref('stg_payments')</code>: tablas persistentes y consultables en el warehouse. Esas llamadas a <code>ref()</code> también declaran la dependencia: dbt sabe que debe terminar ambos modelos de staging antes de ejecutar este. No escribiste ninguna lógica de orquestación, las llamadas a <code>ref()</code> son la orquestación.","badge_over":"Sobrescritura completa","in_over2":"⚠ sobrescribe todo en cada ejecución","cmt_kernel2":"# El estado del kernel es todo lo que tienes; reinícialo y no queda nada para inspeccionar.  <span class=\"in\">⚠ depuración desde cero</span>","t_arr5":"se convierte en → <strong style=\"color:#3fb950\">models/marts/fct_customer_order_summary.sql</strong>","cmt_matz":"-- La estrategia de materialización (table, incremental, view) es configuración, no código.","wc5":"<strong>Ya viste los 5 pasos.</strong> La lógica de transformación no cambió. Lo que cambió: (1) las transformaciones se ejecutan en el warehouse, no en el kernel del notebook, así que no hay techo de memoria ni sobrecarga de transferencia de datos; (2) cada paso es una tabla real, persistente y consultable, no una variable que desaparece; (3) <code>if_exists='replace'</code> desapareció: la materialización es una configuración de una línea, no código que tengas que mantener.","ann_t1":"<strong>El patrón:</strong> la lógica de transformación es la misma de principio a fin. Lo que dbt cambia es el entorno de ejecución y la capa que lo envuelve: las transformaciones pasan del kernel del notebook al warehouse, <code>pd.read_sql(\"... FROM raw.x\")</code> se convierte en <code>source()</code>, las referencias a variables <code>tmp_x</code> se convierten en <code>ref()</code>. Esas tres sustituciones destraban todo lo demás.","h_t2":"Antes de que el grafo de linaje tenga sentido, ayuda entender qué significan los prefijos y cómo dbt rastrea por dónde entran los datos y cómo fluyen por el pipeline.","nm_stg":"<strong style=\"color:#e6edf3\">Staging</strong>: un archivo por tabla de origen. Limpia, renombra, convierte tipos. Entran datos crudos, salen columnas utilizables. Acá no se hace ningún join.","nm_int":"<strong style=\"color:#e6edf3\">Intermediate</strong>: joins y transformaciones que todavía no son el resultado final. Bloques compartidos entre los modelos de mart.","nm_mart":"<strong style=\"color:#e6edf3\">Marts</strong>: lo que las herramientas de BI y los usuarios de negocio realmente consultan. Una tabla por pregunta de negocio.","sb1_h":"source(): por dónde entran los datos crudos","ref_row1":"tmp_orders (variable de celda)","ref_row2":"tmp_payments (variable de celda)","sb1_p":"El notebook tenía nombres de esquema y una cadena de conexión fijos en el código. Si un esquema se renombra, la celda lanza un error o, peor, devuelve datos desactualizados sin avisar. <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">source()</code> registra estos puntos como entradas oficiales: dbt puede testearlos, revisar su frescura y avisarte antes de que un mal día de datos se convierta en un mal día de dashboard. Además resuelve el esquema correcto según el ambiente de forma automática, así que dev y prod nunca comparten la misma cadena fija.","sb2_h":"ref(): cómo dependen los modelos entre sí","sb2_p":"Cada <code>ref()</code> es una dependencia declarada. dbt las lee todas y arma el orden de ejecución automáticamente. No escribes código de orquestación; las llamadas a <code>ref()</code> <em>son</em> la orquestación. En el notebook, el orden dependía de la posición de las celdas y de la fe, y ejecutar las celdas fuera de orden lo rompía todo en silencio; acá, es el sistema el que lo garantiza.","s_sources":"FUENTES","s_staging":"STAGING","s_intermediate":"INTERMEDIO","s_marts":"MARTS","s_parallel":"todo se ejecuta en paralelo","s_waits":"espera a stg_orders + stg_payments","s_final":"salida final","ann_t2":"<strong>Este grafo es el notebook hecho visible.</strong> El notebook tenía esta misma estructura, solo que no era visible. Tenías que leer las cinco celdas (en el orden en que se ejecutaron por última vez) para entender que el paso 4 dependía de los pasos 2 y 3. dbt lo hace explícito, consultable y documentado automáticamente.","h_t3":"El notebook se ejecuta celda por celda, de arriba hacia abajo, cuando te acuerdas de ejecutarlas en orden. Esa es la única opción que te da un kernel. dbt lee el grafo de dependencias y ejecuta los modelos independientes al mismo tiempo, en varios threads.","pb1_h":"❌ notebook: en serie, celda por celda","bl_s1":"paso 1","bl_s2":"paso 2","bl_s3":"paso 3","bl_s4":"paso 4","bl_s5":"paso 5","et1":"Tiempo de ejecución: <strong style=\"color:#f85149\">5 unidades</strong>","pb2_h":"✅ dbt: en paralelo (3 threads)","bl_t1":"thread 1","bl_t2":"thread 2","bl_t3":"thread 3","et2":"Tiempo de ejecución: <strong style=\"color:#3fb950\">3 unidades</strong>","box_par":"<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">¿Cómo sabe dbt que puede paralelizar?</strong>\n    Porque <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_customers</code>, <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_orders</code> y <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_payments</code> solo referencian <code>source()</code>, sin ninguna arista de <code>ref()</code> entre ellos. dbt lee el grafo, no encuentra dependencias y despacha los tres al mismo tiempo. Las declaraciones de <code>ref()</code> que viste en la pestaña 2 son la orquestación: no escribiste ninguna configuración extra para que esto pasara.","box_sched":"<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">¿Y si programo los notebooks con papermill o Airflow?</strong>\n    Se puede llevar notebooks a producción con papermill, nbconvert o un DAG de Airflow, pero ahí terminas manteniendo dos sistemas: la lógica de transformación en las celdas, y la programación y el cableado de dependencias fuera del notebook. Y ejecutar el notebook sigue siendo un solo kernel corriendo celdas en secuencia. En dbt, las llamadas a <code>ref()</code> dentro de tus archivos SQL <em>son</em> el DAG. No hay un archivo de orquestación aparte que mantener sincronizado.","ann_t3":"<strong>A escala:</strong> este ejemplo tiene 5 modelos. Los proyectos reales tienen cientos. Un pipeline con 40 modelos de staging independientes se ejecuta en más o menos el tiempo que toma ejecutar uno solo, siempre que haya suficientes threads: no se necesita ninguna configuración de orquestador.","h_t4":"El notebook funciona hasta que deja de funcionar. Cuando se rompe, la experiencia de depuración es fundamentalmente distinta. <strong>Haz clic en cada escenario</strong> para comparar.","ds1":"El pipeline falla en el paso de unión (paso 4)","dp1a":"La celda 4 falló. Si el kernel sigue vivo, los DataFrames de las celdas 1 a 3 siguen ahí, pero ¿se puede confiar en ellos? ¿Se ejecutaron en ese orden, con esta versión del código? Si reinicias el kernel para estar seguro, desaparecen y tienes que volver a correr todas las celdas desde el principio. Cada ciclo de depuración arriesga otra reejecución completa, incluidas las costosas llamadas a <code>pd.read_sql()</code>.","dp1b":"El paso 4 falló. <code>stg_orders</code> y <code>stg_payments</code> siguen en el warehouse como tablas reales. Ejecuta <code>dbt run -s int_orders_with_payments</code> para volver a correr solo ese modelo. El trabajo upstream queda intacto.","dn1":"Los modelos de dbt persisten como tablas en el warehouse. Los DataFrames del notebook desaparecen cuando se reinicia el kernel. Esa diferencia determina qué puedes inspeccionar después de un fallo.","ds2":"Cantidad de filas incorrecta en la salida final","dp2a":"¿Fan-out en el merge? ¿Un filtro mal puesto en la celda 2? Vas metiendo <code>df.shape</code> en celdas extra, las ejecutas de nuevo y esperas haberlo hecho en el orden correcto sobre el estado actual. O escribes CSVs intermedios en disco de forma temporal. Varios ciclos de reejecución solo para aislar el problema.","dp2b":"Consulta <code>stg_orders</code>: ¿cuántas filas? Consulta <code>int_orders_with_payments</code>: ¿cuántas? La diferencia muestra exactamente dónde ocurrió el fan-out. No hace falta reejecutar nada. Las tablas intermedias ya están ahí, en el warehouse.","dn2":"Como cada modelo intermedio es una tabla real, puedes investigar un problema de conteo de filas de la misma forma en que investigarías un bug en el código, por bisección, sin reejecutar nada.","ds3":"Cambio de esquema upstream: se renombró una columna","dp3a":"El cambio de nombre aparece cuando vuelves a correr la celda 3: <code>KeyError: 'amount'</code>. Las celdas 1 y 2 ya se ejecutaron y sus DataFrames siguen en el kernel, así que el notebook queda en un estado a medio actualizar. Ahora hay que encontrar cada notebook y cada celda donde se referencia <code>'amount'</code>; no existe una lista central.","dp3b":"<code>stg_payments</code> es el único modelo que toca <code>raw.payments</code>. Corrige la referencia a la columna ahí. Todo modelo downstream recibe la corrección automáticamente en la próxima ejecución. Un solo punto de cambio, no cinco notebooks para revisar con grep.","dn3":"La capa <code>stg_</code> funciona como una barrera de aislamiento. Los cambios en el esquema crudo afectan solo a un archivo: el modelo de staging de esa fuente.","ds4":"Salta la alerta de guardia a las 3 de la madrugada","dp4a":"La ejecución programada falló. Corrió en un kernel nuevo, sin interfaz (papermill), que luego terminó, así que no quedó ningún DataFrame. Abres el notebook, ejecutas todas las celdas para reproducir el error, agregas celdas, ejecutas de nuevo. Varios ciclos antes de siquiera empezar a corregir, y todas las consultas costosas a las fuentes se vuelven a ejecutar cada vez.","dp4b":"Los logs de dbt run muestran exactamente qué modelo falló y cuál fue el error de SQL. Los modelos intermedios siguen en el warehouse. Corrige el modelo y ejecuta <code>dbt run -s failed_model+</code> para volver a correr solo ese modelo y sus dependientes.","dn4":"Si el estado intermedio sobrevive a la ejecución fallida, el ingeniero de guardia puede inspeccionarlo de inmediato en vez de reconstruirlo a las 3 de la madrugada.","ds5":"¿Qué más depende de los datos de pagos?","dp5a":"Hacer grep de <code>raw.payments</code> en todos los notebooks, en archivos <code>.ipynb</code> donde el código queda enterrado en arrays JSON de celdas y es difícil de buscar, y esperar que todos usen el mismo formato de cadena de conexión. Esperar también que nadie haya copiado la lógica a otro notebook más. No existe un registro central de quién lee qué.","dp5b":"El grafo de linaje muestra todo modelo downstream que referencia <code>stg_payments</code>. Haz clic en él dentro del DAG de dbt y ve el impacto completo de cualquier cambio al instante. Un ingeniero recién llegado puede responder \"qué depende de esto\" en 5 segundos.","dn5":"Un grep en el código encuentra lo que ya sabes que tienes que buscar. El DAG de dbt te muestra lo que ni sabías que existía.","ds6":"Revisando el cambio de un compañero en un pull request","dp6a":"Un cambio de lógica de una línea aparece en el PR como una pared de JSON: valores de <code>execution_count</code> desplazados, <code>outputs</code> regenerados y blobs de imagen en base64 de los gráficos reejecutados. El cambio real queda enterrado dentro de un array <code>\"source\"</code>. Los revisores no pueden leerlo, así que lo aprueban sin mirar bien o directamente se saltan la revisión.","dp6b":"Los modelos son simples archivos <code>.sql</code>. El mismo cambio se convierte en un diff de SQL de dos líneas en el PR: legible, revisable, comentable línea por línea. El control de versiones funciona igual que para el resto de tu código.","dn6":"Un notebook es un JSON con código adentro; un modelo de dbt es código. Por eso uno se revisa bien en git y el otro no.","ann_t4":"<strong>Por qué dbt es más fácil de depurar:</strong> los modelos intermedios persisten como tablas consultables en el warehouse. Los DataFrames del notebook desaparecen cuando se reinicia el kernel y se llevan consigo el estado intermedio.","ch_nb":"notebook","gh_src":"ver código fuente en github"}};
+translations.de={"back_all":"← alle Erklärer","h1":"Von Notebooks zu dbt","intro":"Ein interaktiver Rundgang. Folgen Sie den Schritten: Jeder baut auf dem vorherigen auf, damit Sie genau sehen, was sich ändert und warum.","nav1":"Das Notizbuch","nav2":"Es auseinander brechen","nav3":"Woher die Daten kommen","nav4":"Was läuft und wann","nav5":"Wenn Dinge kaputt gehen","h_t0":"Dies ist eine vollständige Pipeline in einem Jupyter-Notebook, wie Sie sie heute erben würden. Fünf Zellen erstellen eine Kundenauftragszusammenfassung mit pandas . <strong> Hervorgehobene Zeilen </strong> sind die Dinge, die Probleme im Maßstab verursachen, und die <strong style=\"color:#e6edf3\"> In [ ]: </strong> Zählungen sind nicht in der richtigen Reihenfolge, weil Sie nichts dazu zwingt, Zellen von oben nach unten zu durchlaufen. Lesen Sie die Inline-Beschriftungen und wechseln Sie dann zur nächsten Registerkarte, um zu sehen, wie dbt die einzelnen Beschriftungen löst.","lbl_full":"build_customer_summary.ipynb – vollständiges Pipeline-Notebook","badge_nb":"1 Notizbuch · 5 Zellen","in_conn":"⚠ fest codierte Verbindung, keine dev / prod Trennung","cmt_s1":"# Schritt 1: Kunden bereinigen","in_hardbreak":"⚠ hartcodiertes Schema – Umbenennen bricht stillschweigend ab","cmt_s2":"# Schritt 2: Bestellungen bereinigen","in_hard":"⚠ hartcodiertes Schema","cmt_s3":"# Schritt 3: Zahlungen bereinigen","cmt_s4wn":"# Schritt 4: Bestellungen und Zahlungen verknüpfen  <span class=\"wn\">⚡ Zellen 2 und 3 müssen zuerst und in dieser Reihenfolge ausgeführt werden</span>","cmt_s5":"# Schritt 5: abschließende Zusammenfassung","in_over":"⚠ Vollständiges Überschreiben bei jedem Lauf, keine inkrementelle Option","cmt_kernel":"# Solange der Kernel läuft, bleiben alle 5 DataFrames bestehen, veraltet und nicht vertrauenswürdig.\n# Nach einem Neustart sind sie weg: Um etwas zu prüfen, müssen Sie jede Zelle erneut ausführen.  <span class=\"in\">⚠ Debugging von vorn</span>","ann_t0":"<strong> Was Sie sehen: </strong> Ein Notebook, 5 Zellen, alle in kernel geladenen Daten, Zellen, die in beliebiger Reihenfolge ausgeführt werden können, fest codierte Verbindungszeichenfolgen und Schemanamen, vollständige Tabellenüberschreibung bei jedem Lauf und kein vertrauenswürdiger Zwischenstatus, wenn etwas fehlschlägt. Es funktioniert, bis es nicht mehr funktioniert. Die nächste Registerkarte zeigt, was dbt anders macht.","h_t1":"Das Notizbuch besteht aus einer Datei, fünf Zellen teilen sich ein kernel . dbt unterteilt es in 5 Dateien, eine pro logischem Schritt. <strong> Klicken Sie auf jeden Block </strong>, um zu sehen, wie dieser Schritt in dbt übersetzt wird und was sich genau ändert.","badge_df":"DataFrame in kernel","in_hardname":"⚠ hartcodierter Schemaname","t_arr1":"wird zu → <strong style=\"color:#3fb950\">models/staging/stg_customers.sql</strong>","cmt_noimports":"-- Keine Imports. Keine Engine. Nur SELECT.","wc1":"<strong> Was hat sich geändert: </strong> Die Transformationslogik ist identisch, nur SQL. Keine Python Laufzeit, keine kernel Speicherbeschränkungen, keine Netzwerkübertragung von Rohdaten. <code>pd.read_sql(\"... FROM raw.customers\")</code> wird zu <code>source('raw','customers')</code> und dbt registriert dies als offiziellen Dateneingabepunkt, den es testen, auf Aktualität überwachen und alarmieren kann. Das Ergebnis ist eine echte, persistente, abfragbare Tabelle in Ihrem warehouse und keine Variable, die mit einer kernel-Sitzung lebt und stirbt.","t_arr2":"wird zu → <strong style=\"color:#3fb950\">models/staging/stg_orders.sql</strong>","wc2":"<strong> Was hat sich geändert: </strong> Gleiche Filterlogik, jetzt eine eigenständige Datei. Wenn ein anderes Team eine Umsatzpipeline aufbaut und saubere Aufträge benötigt, verweist es auf <code>ref('stg_orders')</code>, anstatt die Filterlogik in sein eigenes Notizbuch zu kopieren. In allen Notizbüchern wird „Was ist eine gültige Reihenfolge?“ in fünf verschiedenen Dateien definiert, und sie weichen ab.","t_arr3":"wird zu → <strong style=\"color:#3fb950\">models/staging/stg_payments.sql</strong>","wc3":"<strong> Was hat sich geändert: </strong> Gleiche Transformation. Jetzt sind die Schritte 1, 2 und 3 drei unabhängige Dateien ohne Abhängigkeit voneinander – dbt kann alle drei parallel ausführen. Das Notebook führt sie Zelle für Zelle aus, in der Reihenfolge, in der Sie gerade geklickt haben.","badge_join":"Join-Schritt","wn_join":"⚡ Die Zellen 2 und 3 müssen zuerst ausgeführt werden, in dieser Reihenfolge, bei Ihnen, nicht beim System","t_arr4":"wird zu → <strong style=\"color:#3fb950\">models/intermediate/int_orders_with_payments.sql</strong>","wc4":"<strong> Was hat sich geändert: </strong> <code>tmp_orders</code> und <code>tmp_payments</code> (Zellenvariablen, die nur existieren, solange kernel aktiv ist) werden zu <code>ref('stg_orders')</code> und <code>ref('stg_payments')</code> – persistente, abfragbare warehouse-Tabellen. Diese <code>ref()</code>-Aufrufe deklarieren auch die Abhängigkeit: dbt weiß, dass beide Staging-Modelle abgeschlossen werden müssen, bevor dieses ausgeführt wird. Sie haben keine Orchestrierungslogik geschrieben – die <code>ref()</code>-Aufrufe sind die Orchestrierung.","badge_over":"Vollständiges Überschreiben","in_over2":"⚠ Bei jedem Lauf vollständig überschreiben","cmt_kernel2":"# Der Kernel-Zustand ist alles, was Sie haben. Nach einem Neustart bleibt nichts zum Prüfen übrig.  <span class=\"in\">⚠ Debugging von vorn</span>","t_arr5":"wird zu → <strong style=\"color:#3fb950\">models/marts/fct_customer_order_summary.sql</strong>","cmt_matz":"-- Die Materialisierungsstrategie (table, incremental, view) ist Konfiguration, kein Code.","wc5":"<strong> Sie haben jetzt alle 5 Schritte gesehen. </strong> Die Transformationslogik hat sich nicht geändert. Was sich geändert hat: (1) Transformationen werden im warehouse ausgeführt, nicht im Notebook kernel, daher gibt es keine Speicherobergrenzen und keinen Datenübertragungsaufwand; (2) Jeder Schritt ist eine echte, persistente, abfragbare Tabelle – keine Variable, die verschwindet; (3) <code>if_exists='replace'</code> ist weg – die Materialisierung ist eine einzeilige Konfiguration, kein Code, den Sie pflegen müssen.","ann_t1":"<strong> Das Muster: </strong> Durchgehend die gleiche Transformationslogik. Was dbt ändert, ist die Ausführungsumgebung und der Wrapper: Transformationen werden vom Notebook kernel in das warehouse verschoben, <code>pd.read_sql(\"... FROM raw.x\")</code> wird zu <code>source()</code>, <code>tmp_x</code> Variablenreferenzen werden zu <code>ref()</code>. Diese drei Auswechslungen schalten alles andere frei.","h_t2":"Bevor das Abstammungsdiagramm einen Sinn ergibt, ist es hilfreich zu verstehen, was die Präfixe bedeuten und wie dbt verfolgt, wo Daten in die Pipeline eintreten und durch sie fließen.","nm_stg":"<strong style=\"color:#e6edf3\"> Staging </strong> – eine Datei pro source Tabelle. Bereinigt, benennt, umwandelt. Rohmaterial rein, nutzbare Spalten raus. Hier wird nichts zusammengefügt.","nm_int":"<strong style=\"color:#e6edf3\"> Mittelstufe </strong> – Verknüpfungen und Transformationen, die nicht die endgültige Ausgabe darstellen. Gemeinsame Bausteine ​​zwischen Mart-Modellen.","nm_mart":"<strong style=\"color:#e6edf3\"> Marts </strong> – was BI Tools und Geschäftsanwender tatsächlich abfragen. Eine Tabelle pro Geschäftsfrage.","sb1_h":"source() – wo Rohdaten eintreten","sb1_p":"Die im Notebook fest codierten Schemanamen und eine Verbindungszeichenfolge. Wenn ein Schema umbenannt wird, gibt die Zelle einen Fehler aus oder, schlimmer noch, stillschweigend veraltete Daten zurück. <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">source()</code> registriert diese als offizielle Einstiegspunkte – dbt kann sie testen, die Aktualität prüfen und Sie warnen, bevor ein Tag mit schlechten Daten zu einem Tag mit schlechten Dashboards wird. Außerdem wird das richtige Schema pro Umgebung automatisch aufgelöst, sodass dev und prod niemals dieselbe fest codierte Zeichenfolge verwenden.","sb2_h":"ref() – wie Modelle voneinander abhängen","ref_row1":"tmp_orders (Zellenvariable)","ref_row2":"tmp_payments (Zellenvariable)","sb2_p":"Jeder <code>ref()</code> ist eine deklarierte Abhängigkeit. dbt liest sie alle und erstellt automatisch die Ausführungsreihenfolge. Sie schreiben keinen Orchestrierungscode; Die <code>ref()</code>-Aufrufe <em> sind </em> die Orchestrierung. Im Notizbuch wurde die Reihenfolge durch Zellenposition und Hoffnung durchgesetzt, und das Ausführen von Zellen außerhalb der Reihenfolge zerstörte sie stillschweigend; hier wird es vom System erzwungen.","s_sources":"QUELLEN","s_staging":"INSZENIERUNG","s_intermediate":"DAZWISCHENLIEGEND","s_marts":"MARTS","s_parallel":"alle laufen parallel","s_waits":"wartet auf stg_orders + stg_payments","s_final":"endgültige Ausgabe","ann_t2":"<strong> Dieses Diagramm ist das sichtbar gemachte Notizbuch. </strong> Das Notizbuch hatte die gleiche Struktur, es war nur nicht sichtbar. Sie mussten fünf Zellen durchlesen (in der Reihenfolge, in der sie zuletzt ausgeführt wurden), um zu verstehen, dass Schritt 4 von den Schritten 2 und 3 abhängt. dbt macht es explizit, abfragbar und automatisch dokumentiert.","h_t3":"Das Notizbuch läuft Zelle für Zelle von oben nach unten ab, wenn Sie daran denken, sie der Reihe nach auszuführen. Das ist die einzige Option, die Ihnen ein kernel bietet. dbt liest das Abhängigkeitsdiagramm und führt unabhängige Modelle gleichzeitig über Threads hinweg aus.","pb1_h":"❌ Notizbuch – seriell, Zelle für Zelle","bl_s1":"Schritt 1","bl_s2":"Schritt 2","bl_s3":"Schritt 3","bl_s4":"Schritt 4","bl_s5":"Schritt 5","et1":"Ausführungszeit: <strong style=\"color:#f85149\"> 5 Einheiten </strong>","pb2_h":"✅ dbt – parallel (3 Threads)","bl_t1":"Thread 1","bl_t2":"Thread 2","bl_t3":"Thread 3","et2":"Ausführungszeit: <strong style=\"color:#3fb950\"> 3 Einheiten </strong>","box_par":"<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\"> Woher weiß dbt, dass es parallelisieren kann? </strong> \n Da <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_customers</code> , <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_orders</code> und <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_payments</code> jeweils nur auf <code>source()</code> verweisen, haben sie keine <code>ref()</code> Kanten zwischen sich. dbt liest das Diagramm, sieht keine Abhängigkeiten und löst alle drei auf einmal aus. Die <code>ref()</code>-Deklarationen aus Tab 2 sind die Orchestrierung – Sie haben keine zusätzliche Konfiguration geschrieben, um dies zu ermöglichen.","box_sched":"<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">Was ist mit der Planung von Notebooks über papermill oder Airflow?</strong>\n    Sie können Notebooks mit papermill, nbconvert oder einem Airflow-DAG produktiv betreiben. Dann pflegen Sie jedoch zwei Systeme: die Transformationslogik in den Zellen und die Zeitplanung samt Abhängigkeiten außerhalb des Notebooks. Ein Notebook-Lauf bleibt außerdem ein einzelner Kernel, der Zellen nacheinander ausführt. In dbt <em>sind</em> die <code>ref()</code>-Aufrufe in Ihren SQL-Dateien der DAG. Es gibt keine separate Orchestrierungsdatei, die synchron gehalten werden muss.","ann_t3":"<strong> Im Maßstab: </strong> Dieses Beispiel hat 5 Modelle. Echte Projekte haben Hunderte. Eine Pipeline mit 40 unabhängigen Staging-Modellen läuft bei genügend Threads ungefähr so ​​lange wie eines davon – es ist keine Orchestrator-Konfiguration erforderlich.","h_t4":"Das Notebook funktioniert, bis es nicht mehr funktioniert. Wenn es kaputt geht, ist das Debugging-Erlebnis grundlegend anders. <strong> Klicken Sie auf jedes Szenario </strong>, um es zu vergleichen.","ds1":"Pipeline schlägt beim Join-Schritt fehl (Schritt 4)","ch_nb":"Notizbuch","dp1a":"Zelle 4 ist ausgefallen. Wenn kernel noch am Leben ist, bleiben die DataFrames aus den Zellen 1–3 bestehen, aber kann man ihnen vertrauen? Wurden sie in dieser Reihenfolge mit dieser Version des Codes ausgeführt? Wenn Sie kernel zur Sicherheit neu starten, sind sie verschwunden und Sie führen jede Zelle von oben erneut aus. Bei jedem Debug-Zyklus besteht das Risiko einer weiteren vollständigen Wiederholung, einschließlich der teuren <code>pd.read_sql()</code>-Aufrufe.","dp1b":"Schritt 4 ist fehlgeschlagen. <code>stg_orders</code> und <code>stg_payments</code> befinden sich weiterhin als echte Tabellen im warehouse. Führen Sie <code>dbt run -s int_orders_with_payments</code> aus, um nur dieses Modell erneut auszuführen. Die vorgelagerten Arbeiten bleiben erhalten.","dn1":"dbt-Modelle bleiben als Tabellen im Warehouse bestehen. Notebook-DataFrames verschwinden beim Neustart des Kernels. Dieser Unterschied bestimmt, was Sie nach einem Fehler untersuchen können.","ds2":"Falsche Zeilenanzahl in der Endausgabe","dp2a":"Fan-out bei der Fusion? Schlechter Filter in Zelle 2? Sie verteilen <code>df.shape</code> auf zusätzliche Zellen, führen sie erneut aus und hoffen, dass Sie sie in der richtigen Reihenfolge im Vergleich zum aktuellen Status ausgeführt haben. Oder Sie schreiben temporäre CSVs vorübergehend auf die Festplatte. Mehrere Wiederholungszyklen, um das Problem einzugrenzen.","dp2b":"Abfrage <code>stg_orders</code> – wie viele Zeilen? Abfrage <code>int_orders_with_payments</code> – wie viele? Der Unterschied zeigt genau, wo der Fan-Out stattgefunden hat. Keine Wiederholung erforderlich. Die Zwischentabellen liegen einfach da im warehouse .","dn2":"Da es sich bei jedem Zwischenmodell um eine echte Tabelle handelt, können Sie ein Problem mit der Zeilenanzahl auf die gleiche Weise halbieren, wie Sie einen Fehler im Code halbieren würden – ohne etwas erneut ausführen zu müssen.","ds3":"Upstream-Schemaänderung – eine Spalte wurde umbenannt","dp3a":"Die Umbenennung wird angezeigt, wenn Sie Zelle 3 erneut ausführen: <code>KeyError: 'amount'</code> . Die Zellen 1 und 2 wurden bereits ausgeführt und ihr DataFrames befindet sich immer noch im kernel , sodass sich das Notebook jetzt in einem halb aktualisierten Zustand befindet. Suchen Sie jedes Notizbuch und jede Zelle, in der auf <code>'amount'</code> verwiesen wird. Es gibt keine zentrale Liste.","dp3b":"<code>stg_payments</code> ist das einzige Modell, das <code>raw.payments</code> berührt. Korrigieren Sie dort den Spaltenverweis. Jedes Downstream-Modell erhält den Fix beim nächsten Durchlauf automatisch. Ein Änderungspunkt, nicht fünf Notizbücher zum Durchwühlen.","dn3":"Die <code>stg_</code>-Schicht fungiert als Isolationsgrenze. Rohe Schemaänderungen wirken sich nur auf eine Datei aus – das Staging-Modell dafür source .","ds4":"Um 3 Uhr morgens wird ein Bereitschaftsalarm ausgelöst","dp4a":"Die geplante Ausführung ist fehlgeschlagen. Es lief in einem frischen, kopflosen kernel ( papermill ), der dann beendet wurde, also kein DataFrames irgendwo. Öffnen Sie das Notizbuch, führen Sie jede zu reproduzierende Zelle aus, fügen Sie Zellen hinzu und führen Sie den Vorgang erneut aus. Mehrere Zyklen, bevor Sie überhaupt mit der Reparatur beginnen, und alle teuren source-Abfragen werden jedes Mal erneut ausgeführt.","dp4b":"dbt-Ausführungsprotokolle zeigen das genaue Modell, das ausgefallen ist, und den genauen SQL-Fehler. Zwischenmodelle befinden sich noch im warehouse . Korrigieren Sie das Modell, führen Sie <code>dbt run -s failed_model+</code> aus, um es und nur seine abhängigen Elemente erneut auszuführen.","dn4":"Wenn der Zwischenzustand nach dem fehlgeschlagenen Lauf erhalten bleibt, kann der Bereitschaftsdienst ihn sofort untersuchen, statt ihn um 3 Uhr morgens neu aufzubauen.","ds5":"Was hängt sonst noch von Zahlungsdaten ab?","dp5a":"Durchsuchen Sie jedes Notebook nach <code>raw.payments</code> , über <code>.ipynb</code>-Dateien hinweg, in denen der Code in JSON-Zellenarrays vergraben und schwer zu durchsuchen ist, und hoffen Sie, dass jeder das gleiche Verbindungszeichenfolgenformat verwendet. Ich hoffe, niemand hat die Logik in ein weiteres Notizbuch kopiert. Kein Aufzeichnungssystem dafür, was was liest.","dp5b":"Das Abstammungsdiagramm zeigt jedes Downstream-Modell, das auf <code>stg_payments</code> verweist. Klicken Sie im dbt DAG darauf und sehen Sie sofort die volle Auswirkung einer Änderung. Ein neuer Ingenieur kann antworten: „Was hängt davon ab?“ in 5 Sekunden.","dn5":"Ein grep der Codebasis findet, wonach Sie suchen müssen. Der dbt DAG zeigt Ihnen, was Sie nicht wussten, dass es existiert.","ds6":"Überprüfen der Änderung eines Teamkollegen in einer Pull-Anfrage","dp6a":"Eine einzeilige Logikänderung wird im PR als Wand aus JSON angezeigt: verschobene <code>execution_count</code>-Werte, neu generierte <code>outputs</code> und Base64-Bildblobs aus erneut ausgeführten Diagrammen. Die eigentliche Änderung ist in einem <code>\"source\"</code>-Array vergraben. Rezensenten können es nicht lesen, deshalb stempeln sie es ab oder überspringen die Rezension ganz.","dp6b":"Modelle sind einfache <code>.sql</code>-Dateien. Die gleiche Änderung ist ein zweizeiliger SQL-Diff im PR: lesbar, überprüfbar, kommentierbar Zeile für Zeile. Die Versionskontrolle funktioniert genauso wie für den Rest Ihres Codes.","dn6":"Ein Notizbuch ist JSON mit Code darin; Ein dbt-Modell ist Code. Das ist der Grund, warum der eine in git sauber rezensiert und der andere nicht.","ann_t4":"<strong>Warum sich dbt leichter debuggen lässt:</strong> Zwischenmodelle bleiben als abfragbare Warehouse-Tabellen bestehen. Notebook-DataFrames verschwinden beim Neustart des Kernels und nehmen den Zwischenzustand mit.","gh_src":"Quellcode auf GitHub ansehen"};
 function navText(){
   var p=document.getElementById('btn-prev'),nx=document.getElementById('btn-next');
   if(p)p.textContent=NAV[curLang].back;
@@ -639,6 +1400,7 @@ function cacheEn(){
   document.querySelectorAll('[data-i18n-html]').forEach(function(el){el.dataset.enHtml=el.innerHTML;});
 }
 function setLang(lang){
+  if(lang==='pt-BR')lang='pt';
   curLang=lang;
   var dict=translations[lang]||{};
   document.querySelectorAll('[data-i18n]').forEach(function(el){
@@ -651,16 +1413,118 @@ function setLang(lang){
     if(lang==='en'){if(el.dataset.enHtml!==undefined)el.innerHTML=el.dataset.enHtml;}
     else if(dict[k]!==undefined){el.innerHTML=dict[k];}
   });
-  document.documentElement.lang=lang;
-  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-lang')===lang);});
+  document.documentElement.lang=lang==='pt'?'pt-BR':lang;
+  var displayLang=lang==='pt'?'pt-BR':lang;
+  var labels={en:'English',ja:'日本語',es:'Español','pt-BR':'Português (Brasil)',de:'Deutsch'};
+  var current=document.getElementById('language-current');
+  if(current)current.textContent=labels[displayLang]||labels.en;
+  document.querySelectorAll('.language-option').forEach(function(option){option.setAttribute('aria-selected',String(option.getAttribute('data-lang')===displayLang));});
   navText();
-  try{localStorage.setItem('lang',lang);}catch(e){}
+  try{localStorage.setItem('lang',displayLang);}catch(e){}
 }
+function toggleLanguageMenu(){
+  var menu=document.getElementById('language-menu'),button=document.getElementById('language-current');
+  menu.hidden=!menu.hidden;button.setAttribute('aria-expanded',String(!menu.hidden));
+  if(!menu.hidden){var selected=menu.querySelector('[aria-selected="true"]')||menu.querySelector('.language-option');if(selected)selected.focus();}
+}
+function selectLanguage(lang){setLang(lang);document.getElementById('language-menu').hidden=true;var button=document.getElementById('language-current');button.setAttribute('aria-expanded','false');button.focus();}
+function handleLanguageKeydown(event){
+  var menu=document.getElementById('language-menu');
+  if(event.key==='Escape'&&!menu.hidden){event.preventDefault();menu.hidden=true;var button=document.getElementById('language-current');button.setAttribute('aria-expanded','false');button.focus();return;}
+  if(menu.hidden)return;
+  var options=Array.prototype.slice.call(menu.querySelectorAll('.language-option')),index=options.indexOf(document.activeElement);
+  if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();index=(index+(event.key==='ArrowDown'?1:-1)+options.length)%options.length;options[index].focus();}
+  if((event.key==='Enter'||event.key===' ')&&index>=0){event.preventDefault();selectLanguage(options[index].getAttribute('data-lang'));}
+}
+document.addEventListener('click',function(event){var picker=document.querySelector('.language-picker');if(picker&&!picker.contains(event.target)){var menu=document.getElementById('language-menu');menu.hidden=true;document.getElementById('language-current').setAttribute('aria-expanded','false');}});
 cacheEn();
 (function(){
   var saved=null;try{saved=localStorage.getItem('lang');}catch(e){}
-  var initial=saved||(((navigator.language||navigator.userLanguage||'').toLowerCase().indexOf('ja')===0)?'ja':'en');
+  var locale=(navigator.language||navigator.userLanguage||'').toLowerCase();
+  var detected=locale.indexOf('ja')===0?'ja':locale.indexOf('es')===0?'es':locale.indexOf('pt')===0?'pt-BR':locale.indexOf('de')===0?'de':'en';
+  var initial=saved||detected;
   setLang(initial);
+})();
+</script>
+<script id="notebook-editor-renderer">
+(function(){
+  var originalNotebookSetLang = setLang;
+  var initialNotebookLang = curLang;
+  var notebookEditorSources = {};
+  var supportedEditorLanguages = ['en', 'ja', 'pt', 'es', 'de'];
+
+  function collectNotebookEditorSources(lang){
+    originalNotebookSetLang(lang);
+    notebookEditorSources[lang] = Array.prototype.map.call(
+      document.querySelectorAll('.code-body pre, .dbt-reveal pre'),
+      function(pre){
+        return {
+          language: pre.closest('.dbt-reveal') ? 'sql' : 'python',
+          source: pre.textContent.replace(/\n$/, '')
+        };
+      }
+    );
+  }
+
+  supportedEditorLanguages.forEach(collectNotebookEditorSources);
+  originalNotebookSetLang(initialNotebookLang);
+
+  function escapeNotebookEditorText(value){
+    return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function tokenClass(token, language){
+    if(/^In \[\d*\]:$/.test(token)) return 'tok-prompt';
+    if(token.charAt(0) === '#' || token.indexOf('--') === 0) return 'tok-comment';
+    if(token.charAt(0) === "'" || token.charAt(0) === '"') return 'tok-string';
+    if(token === '{{' || token === '}}' || token === '{%' || token === '%}') return 'tok-jinja';
+    if(/^\d+(?:\.\d+)?$/.test(token)) return 'tok-number';
+    if(/^(?:True|False|None)$/i.test(token)) return 'tok-constant';
+    if(language === 'sql' && /^(?:source|ref|config|var)$/i.test(token)) return 'tok-function';
+    if(language === 'python' && /^(?:print|len|str|int|float|list|dict|set|tuple|range|sum|min|max|abs|round|pd|sa|read_sql|create_engine|lower|upper|strip|fillna|notna|rename|groupby|agg|reset_index|merge|to_sql)$/i.test(token)) return 'tok-function';
+    return 'tok-keyword';
+  }
+
+  function highlightNotebookEditorLine(line, language){
+    var pythonPattern = /(In \[\d*\]:$|#.*$|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:True|False|None)\b|\b\d+(?:\.\d+)?\b|\b(?:and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield)\b|\b(?:print|len|str|int|float|list|dict|set|tuple|range|sum|min|max|abs|round|pd|sa|read_sql|create_engine|lower|upper|strip|fillna|notna|rename|groupby|agg|reset_index|merge|to_sql)\b(?=\s*\())/g;
+    var sqlPattern = /(--.*$|'(?:''|[^'])*'|\{\{|\}\}|\{%|%\}|\b(?:source|ref|config|var)\b(?=\s*\()|\b\d+(?:\.\d+)?\b|\b(?:select|from|where|with|as|join|left|right|inner|outer|on|and|or|case|when|then|else|end|group|by|order|having|union|all|distinct|create|table|temp|temporary|drop|insert|into|update|delete|merge|over|partition|qualify|null|is|not|in|exists|cast|coalesce|sum|count|avg|min|max)\b)/gi;
+    var tokenPattern = language === 'sql' ? sqlPattern : pythonPattern;
+    var output = '';
+    var cursor = 0;
+    line.replace(tokenPattern, function(token, _match, offset){
+      output += escapeNotebookEditorText(line.slice(cursor, offset));
+      output += '<span class="' + tokenClass(token, language) + '">' + escapeNotebookEditorText(token) + '</span>';
+      cursor = offset + token.length;
+      return token;
+    });
+    output += escapeNotebookEditorText(line.slice(cursor));
+    return output || '&nbsp;';
+  }
+
+  function notebookProblemDescription(line, language){
+    return line.replace(/\s+[⚠⚡]\s*/, language === 'sql' ? '  -- ' : '  # ');
+  }
+
+  function renderNotebookEditors(){
+    var languageSources = notebookEditorSources[curLang] || notebookEditorSources.en;
+    document.querySelectorAll('.code-body pre, .dbt-reveal pre').forEach(function(pre, index){
+      var entry = languageSources[index] || {language: pre.closest('.dbt-reveal') ? 'sql' : 'python', source: pre.textContent};
+      pre.classList.add('editor-rendered');
+      pre.setAttribute('data-code-language', entry.language);
+      pre.innerHTML = entry.source.split('\n').map(function(line, lineIndex){
+        var problem = /⚠|⚡|hardcoded|full overwrite|debug from scratch/i.test(line) ? ' is-problem' : '';
+        var displayLine = problem ? notebookProblemDescription(line, entry.language) : line;
+        return '<span class="editor-line' + problem + '"><span class="editor-gutter">' + (lineIndex + 1) + '</span><span class="editor-code">' + highlightNotebookEditorLine(displayLine, entry.language) + '</span></span>';
+      }).join('');
+    });
+  }
+
+  setLang = function(lang){
+    originalNotebookSetLang(lang);
+    renderNotebookEditors();
+  };
+
+  renderNotebookEditors();
 })();
 </script>
 </body>
