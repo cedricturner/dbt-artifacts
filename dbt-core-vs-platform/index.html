@@ -137,7 +137,9 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
 /* gut check */
 .gut{display:flex;flex-direction:column;gap:2px;margin-bottom:20px}
 .gq{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#161b22;border:1px solid #2d333b;border-radius:9px;padding:14px 16px;flex-wrap:wrap}
-.gq-text{font-size:13px;line-height:1.55;color:#e6edf3;flex:1;min-width:220px}
+.gq-textwrap{flex:1;min-width:220px;display:flex;flex-direction:column;gap:5px}
+.gq-text{font-size:13px;line-height:1.55;color:#e6edf3}
+.hardtag{display:inline-block;align-self:flex-start;font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#f85149;background:rgba(248,81,73,.12);border:1px solid rgba(248,81,73,.35);border-radius:4px;padding:2px 7px}
 .yn-btns{display:flex;gap:7px;flex-shrink:0}
 .yn-btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:7px 14px;border-radius:6px;border:1px solid #2d333b;background:#0d1117;color:#8b949e;cursor:pointer;transition:all .15s}
 .yn-btn:hover{border-color:#444c56;color:#e6edf3}
@@ -145,15 +147,17 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
 .yn-btn.no.active{background:#21262d;border-color:#444c56;color:#e6edf3}
 
 .gut-result{background:#161b22;border:1px solid #2d333b;border-radius:11px;padding:22px 24px;text-align:center;transition:border-color .2s}
-.gut-result.ok{border-color:rgba(63,185,80,.4)}
-.gut-result.warn{border-color:rgba(210,153,34,.4)}
-.gut-result.danger{border-color:rgba(248,81,73,.4)}
-.gut-tally-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#8b949e;margin-bottom:6px}
-.gut-tally{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;color:#fff;margin-bottom:10px}
+.gut-result.core{border-color:#30363d}
+.gut-result.platform{border-color:rgba(45,212,191,.45)}
+.gut-badge-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#8b949e;margin-bottom:8px}
+.gut-badge{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;letter-spacing:.5px;margin-bottom:10px;transition:color .2s}
+.gut-result.core .gut-badge{color:#8b949e}
+.gut-result.platform .gut-badge{color:#2dd4bf}
 .gut-verdict{font-size:14.5px;line-height:1.6;color:#e6edf3;max-width:520px;margin:0 auto}
 .gut-caps{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:14px}
 .gut-caps-label{width:100%;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:#8b949e;margin-bottom:2px}
 .gcap{font-family:'JetBrains Mono',monospace;font-size:10.5px;background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.35);color:#5eead4;border-radius:99px;padding:4px 11px}
+.gcap.hard{background:rgba(248,81,73,.12);border-color:rgba(248,81,73,.35);color:#ff8f88}
 
 /* closing */
 .closing{margin-top:44px;padding-top:24px;border-top:1px solid #2d333b}
@@ -194,11 +198,6 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
 <div class="thesis">
   <div class="tl" data-i18n="thesis_lbl">the short version</div>
   <p data-i18n-html="thesis_p">dbt Core is the real transformation engine, not a limited trial: models, tests, docs, <code>ref()</code>, <code>source()</code>, free and open source (Apache 2.0) forever, maintained by <b>Fivetran + dbt Labs</b>. The platform doesn't add more dbt. It adds the operational layer around it: scheduling, access control, discoverability, cross-project sharing. For a solo analyst or a small all-engineer team, Core alone can be genuinely enough. Below: the specific moments where that stops being true.</p>
-</div>
-
-<div class="flagbox">
-  <div class="fb-lbl" data-i18n="scope_lbl">⚠ scope note</div>
-  <p data-i18n-html="scope_p">This draft skips exact pricing and tier names on purpose, the pricing page changes too often to safely quote. Fusion, dbt's next-generation engine, gets its own flagged note further down.</p>
 </div>
 
 <section class="section" id="right-call">
@@ -324,40 +323,59 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
   <div class="tip" id="tip-4">
     <div class="tip-head">
       <span class="tip-eyebrow" data-i18n="e4">tipping point 4 of 8</span>
-      <div class="tip-title" data-i18n="t4">Nobody can find or trust the data</div>
+      <div class="tip-title" data-i18n="t4">The lineage graph exists, nobody fully trusts it</div>
     </div>
-    <p class="tip-moment" data-i18n="m4">A new dashboard leans on a table nobody remembers owning.</p>
+    <p class="tip-moment" data-i18n="m4">The graph is real. It's also three weeks stale, one project deep, and model-level only.</p>
     <div class="viz">
-      <svg viewBox="0 0 760 175" xmlns="http://www.w3.org/2000/svg">
-        <text x="10" y="14" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v4_lbl_core">SCATTERED, NO MAP</text>        <text x="402" y="14" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v4_lbl_plat">CONNECTED, OWNED</text>        <line x1="380" y1="8" x2="380" y2="168" stroke="#2d333b" stroke-width="1" stroke-dasharray="3,5"/>
+      <svg viewBox="0 0 760 195" xmlns="http://www.w3.org/2000/svg">
+        <text x="10" y="14" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9" font-weight="700" letter-spacing=".6" data-i18n="v4_lbl_core">STALE &middot; MODEL-LEVEL &middot; ONE PROJECT</text>
+        <text x="402" y="14" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="9" font-weight="700" letter-spacing=".6" data-i18n="v4_lbl_plat">LIVE &middot; COLUMN-LEVEL &middot; CROSS-PROJECT</text>
+        <line x1="380" y1="8" x2="380" y2="188" stroke="#2d333b" stroke-width="1" stroke-dasharray="3,5"/>
 
-        <rect x="20" y="28" width="88" height="30" rx="5" fill="#161b22" stroke="#444c56" stroke-width="1.3" stroke-dasharray="4,3"/>
-        <text x="64" y="47" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9.5" text-anchor="middle">stg_orders</text>
-        <rect x="152" y="98" width="88" height="30" rx="5" fill="#161b22" stroke="#444c56" stroke-width="1.3" stroke-dasharray="4,3"/>
-        <text x="196" y="117" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9.5" text-anchor="middle">int_orders</text>
-        <rect x="252" y="22" width="92" height="30" rx="5" fill="#161b22" stroke="#444c56" stroke-width="1.3" stroke-dasharray="4,3"/>
-        <text x="298" y="41" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9.5" text-anchor="middle">fct_revenue</text>
-        <text x="336" y="30" fill="#f85149" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700" text-anchor="middle">?</text>
-        <text x="298" y="66" fill="#f85149" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle" data-i18n="v4_owner_unknown">owner: ?</text>        <rect x="62" y="140" width="88" height="30" rx="5" fill="#161b22" stroke="#444c56" stroke-width="1.3" stroke-dasharray="4,3"/>
-        <text x="106" y="159" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9.5" text-anchor="middle">raw.orders</text>
+        <rect x="15" y="26" width="345" height="112" rx="6" fill="none" stroke="#444c56" stroke-width="1.3" stroke-dasharray="4,3"/>
+        <text x="25" y="40" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8.5" data-i18n="v4_proj_left">project: sales</text>
+
+        <defs><marker id="arr4m" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="7" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 3.5 L 0 7 z" fill="#8b949e"/></marker></defs>
+        <rect x="30" y="64" width="58" height="28" rx="5" fill="#161b22" stroke="#8b949e" stroke-width="1.3"/>
+        <text x="59" y="82" fill="#c9d1d9" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">raw</text>
+        <line x1="88" y1="78" x2="102" y2="78" stroke="#8b949e" stroke-width="1.4" marker-end="url(#arr4m)"/>
+        <rect x="104" y="64" width="76" height="28" rx="5" fill="#161b22" stroke="#8b949e" stroke-width="1.3"/>
+        <text x="142" y="82" fill="#c9d1d9" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">stg_orders</text>
+        <line x1="180" y1="78" x2="194" y2="78" stroke="#8b949e" stroke-width="1.4" marker-end="url(#arr4m)"/>
+        <rect x="196" y="64" width="74" height="28" rx="5" fill="#161b22" stroke="#8b949e" stroke-width="1.3"/>
+        <text x="233" y="82" fill="#c9d1d9" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">int_orders</text>
+        <line x1="270" y1="78" x2="284" y2="78" stroke="#8b949e" stroke-width="1.4" marker-end="url(#arr4m)"/>
+        <rect x="286" y="60" width="60" height="36" rx="5" fill="#1c2129" stroke="#8b949e" stroke-width="1.5"/>
+        <text x="316" y="82" fill="#c9d1d9" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">fct_rev</text>
+        <rect x="292" y="100" width="46" height="14" rx="4" fill="none" stroke="#444c56" stroke-width="1" stroke-dasharray="2,2"/>
+        <text x="315" y="110" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="6.5" text-anchor="middle" data-i18n="v4_no_cols">no cols</text>
+        <text x="187" y="128" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v4_stamp_left">generated 3 weeks ago</text>
+        <text x="187" y="164" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v4_note_left">model-level lineage only, self-hosted</text>
+
+        <rect x="405" y="26" width="345" height="112" rx="6" fill="rgba(45,212,191,.03)" stroke="#2dd4bf" stroke-width="1.4"/>
+        <text x="415" y="40" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" data-i18n="v4_proj_right">project: sales</text>
 
         <defs><marker id="arr4" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="7" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 3.5 L 0 7 z" fill="#2dd4bf"/></marker></defs>
-        <rect x="402" y="72" width="64" height="30" rx="5" fill="rgba(45,212,191,.06)" stroke="#2dd4bf" stroke-width="1.4"/>
-        <text x="434" y="91" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9.5" text-anchor="middle">raw</text>
-        <line x1="466" y1="87" x2="480" y2="87" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr4)"/>
-        <rect x="482" y="72" width="86" height="30" rx="5" fill="rgba(45,212,191,.06)" stroke="#2dd4bf" stroke-width="1.4"/>
-        <text x="525" y="91" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">stg_orders</text>
-        <line x1="568" y1="87" x2="582" y2="87" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr4)"/>
-        <rect x="584" y="72" width="82" height="30" rx="5" fill="rgba(45,212,191,.06)" stroke="#2dd4bf" stroke-width="1.4"/>
-        <text x="625" y="91" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">int_orders</text>
-        <line x1="666" y1="87" x2="680" y2="87" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr4)"/>
-        <rect x="682" y="66" width="70" height="42" rx="5" fill="rgba(45,212,191,.14)" stroke="#2dd4bf" stroke-width="1.8"/>
-        <text x="717" y="90" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">fct_rev</text>
-        <circle cx="692" cy="72" r="3.5" fill="#3fb950"/>
-        <text x="717" y="122" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v4_owner_known">owner: finance</text>      </svg>
+        <rect x="420" y="64" width="58" height="28" rx="5" fill="rgba(45,212,191,.06)" stroke="#2dd4bf" stroke-width="1.4"/>
+        <text x="449" y="82" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">raw</text>
+        <line x1="478" y1="78" x2="492" y2="78" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr4)"/>
+        <rect x="494" y="64" width="76" height="28" rx="5" fill="rgba(45,212,191,.06)" stroke="#2dd4bf" stroke-width="1.4"/>
+        <text x="532" y="82" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">stg_orders</text>
+        <line x1="570" y1="78" x2="584" y2="78" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr4)"/>
+        <rect x="586" y="64" width="74" height="28" rx="5" fill="rgba(45,212,191,.06)" stroke="#2dd4bf" stroke-width="1.4"/>
+        <text x="623" y="82" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">int_orders</text>
+        <line x1="660" y1="78" x2="674" y2="78" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr4)"/>
+        <rect x="676" y="58" width="64" height="40" rx="5" fill="rgba(45,212,191,.16)" stroke="#2dd4bf" stroke-width="1.8"/>
+        <text x="708" y="81" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle">fct_rev</text>
+        <circle cx="686" cy="64" r="3.5" fill="#3fb950"/>
+        <rect x="682" y="100" width="36" height="14" rx="4" fill="rgba(45,212,191,.15)" stroke="#2dd4bf" stroke-width="1"/>
+        <text x="700" y="110" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="6.5" text-anchor="middle" data-i18n="v4_cols">cols</text>
+        <text x="577" y="128" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v4_stamp_right">live &middot; owner: finance-team</text>
+        <text x="577" y="164" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v4_note_right">column-level + cross-project, always current</text>
+      </svg>
       <div class="viz-cap">
-        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c4">a static docs site, current only as of the last manual regenerate</span></div>
-        <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f4">dbt Catalog (formerly Explorer): always-current lineage and ownership</span></div>
+        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n-html="c4"><code>dbt docs generate</code> gives a real, model-level DAG, current only as of the last manual regenerate, scoped to one project</span></div>
+        <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f4">dbt Catalog (formerly Explorer) adds column-level lineage, cross-project visibility, and ownership/health signals, always current</span></div>
       </div>
     </div>
   </div>
@@ -455,7 +473,7 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
       <span class="tip-eyebrow" data-i18n="e7">tipping point 7 of 8</span>
       <div class="tip-title" data-i18n="t7">How many people does the open-source project actually serve</div>
     </div>
-    <p class="tip-moment" data-i18n="m7">A stakeholder asks to just look at the model himself instead of filing another ticket. He can't.</p>
+    <p class="tip-moment" data-i18n="m7">A stakeholder asks to just look at the model himself instead of filing another ticket. He can't, not on his own.</p>
     <div class="viz">
       <div class="viz-grid">
         <div class="viz-panel core">
@@ -545,39 +563,39 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
 
   <div class="gut">
     <div class="gq">
-      <span class="gq-text" data-i18n="q1">Are you babysitting a scheduler, cron, Airflow, GitHub Actions, whatever it is, just to make sure dbt actually runs?</span>
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q1">Are you babysitting a scheduler, cron, Airflow, GitHub Actions, whatever it is, just to make sure dbt actually runs?</span></span>
       <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q1',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q1',false,this)" data-i18n="yn_no">no</button></span>
     </div>
     <div class="gq">
-      <span class="gq-text" data-i18n="q2">Do people who aren't engineers need to build or review models, not just look at a finished dashboard?</span>
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q2">Do people who aren't engineers need to build or review models, not just look at a finished dashboard?</span></span>
       <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q2',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q2',false,this)" data-i18n="yn_no">no</button></span>
     </div>
     <div class="gq">
-      <span class="gq-text" data-i18n="q3">Would you struggle to prove who ran what against production if someone asked you to, right now?</span>
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q3">Would you struggle to prove who ran what against production if someone asked you to, right now?</span><span class="hardtag" data-i18n="hard_tag">hard requirement</span></span>
       <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q3',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q3',false,this)" data-i18n="yn_no">no</button></span>
     </div>
     <div class="gq">
-      <span class="gq-text" data-i18n="q4">Do people outside the immediate dbt team need to find or trust a model without filing a ticket to your team first?</span>
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q4">Do people outside the immediate dbt team need to find or trust a model without filing a ticket to your team first?</span></span>
       <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q4',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q4',false,this)" data-i18n="yn_no">no</button></span>
     </div>
     <div class="gq">
-      <span class="gq-text" data-i18n="q5">Do you have more than one dbt project that needs to reference another project's models?</span>
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q5">Do you have more than one dbt project that needs to reference another project's models?</span><span class="hardtag" data-i18n="hard_tag">hard requirement</span></span>
       <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q5',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q5',false,this)" data-i18n="yn_no">no</button></span>
     </div>
     <div class="gq">
-      <span class="gq-text" data-i18n="q6">Are more than two or three people trying to actively develop in the same dbt project at the same time?</span>
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q6">Are more than two or three people trying to actively develop in the same dbt project at the same time?</span></span>
       <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q6',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q6',false,this)" data-i18n="yn_no">no</button></span>
     </div>
     <div class="gq">
-      <span class="gq-text" data-i18n="q7">Does more than one tool, BI, a spreadsheet, an AI agent, need to query the same metric and land on the same number?</span>
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q7">Does more than one tool, BI, a spreadsheet, an AI agent, need to query the same metric and land on the same number?</span><span class="hardtag" data-i18n="hard_tag">hard requirement</span></span>
       <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q7',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q7',false,this)" data-i18n="yn_no">no</button></span>
     </div>
   </div>
 
-  <div class="gut-result" id="gutResult">
-    <div class="gut-tally-lbl" data-i18n="gut_tally_lbl">your tally</div>
-    <div class="gut-tally" id="gutTally">-- / 7</div>
-    <div class="gut-verdict" id="gutVerdict" data-i18n="gut_default">Answer the questions above to see where you land.</div>
+  <div class="gut-result core" id="gutResult">
+    <div class="gut-badge-lbl" data-i18n="gut_badge_lbl">recommendation</div>
+    <div class="gut-badge" id="gutBadge">Core</div>
+    <div class="gut-verdict" id="gutVerdict">Core is the default here. Nothing has pushed you off it yet.</div>
     <div class="gut-caps" id="gutCaps"></div>
   </div>
 </section>
@@ -598,8 +616,14 @@ function CvPToggleMesh(){
   b.classList.toggle('open',!open);
 }
 
-/* ---- gut-check tally logic ---- */
-var CvPQuestions=['q1','q2','q3','q4','q5','q6','q7'];
+/* ---- gut-check verdict logic ----
+   hard disqualifiers: Core has literally no mechanism for these, any single
+   "yes" flips the recommendation to Platform regardless of anything else.
+   soft signals: Core can technically still do these (DIY, with friction),
+   they only flip the call once enough of them stack up. */
+var CvPHard=['q3','q5','q7'];
+var CvPSoft=['q1','q2','q4','q6'];
+var CvPSoftThreshold=2;
 var CvPAnswers={};
 var CvPCapMap={
   q1:'orchestration, alerting & CI',
@@ -609,12 +633,6 @@ var CvPCapMap={
   q5:'dbt Mesh',
   q6:'hosted development environment',
   q7:'Semantic Layer'
-};
-var CvPVerdicts={
-  none:'Answer the questions above to see where you land.',
-  ok:"Core alone still covers you. None of the platform's usual tipping points are pulling on you right now.",
-  warn:"You're brushing up against the line. Not urgent, but worth watching as the team or the project grows.",
-  danger:"You're past the Core-only line. Multiple real costs are already piling up quietly, even if no single one feels urgent yet."
 };
 
 function CvPAnswer(q,val,el){
@@ -626,44 +644,48 @@ function CvPAnswer(q,val,el){
 }
 
 function CvPUpdateGut(){
-  var yesCaps=[];
-  var answered=0;
-  CvPQuestions.forEach(function(q){
-    if(CvPAnswers[q]!==undefined)answered++;
-    if(CvPAnswers[q]===true)yesCaps.push(CvPCapMap[q]);
-  });
-  var count=yesCaps.length;
-  var tallyEl=document.getElementById('gutTally');
+  var hardHits=CvPHard.filter(function(q){return CvPAnswers[q]===true;});
+  var softHits=CvPSoft.filter(function(q){return CvPAnswers[q]===true;});
+  var allHits=hardHits.concat(softHits);
+
+  var badgeEl=document.getElementById('gutBadge');
   var verdictEl=document.getElementById('gutVerdict');
   var capsEl=document.getElementById('gutCaps');
   var resultEl=document.getElementById('gutResult');
 
-  tallyEl.textContent=count+' / '+CvPQuestions.length;
-  resultEl.classList.remove('ok','warn','danger');
+  var isPlatform=hardHits.length>0||softHits.length>=CvPSoftThreshold;
+  resultEl.classList.remove('core','platform');
 
-  if(answered===0){
-    verdictEl.textContent=CvPVerdicts.none;
-    capsEl.innerHTML='';
-    return;
-  }
-  if(count===0){
-    verdictEl.textContent=CvPVerdicts.ok;
-    resultEl.classList.add('ok');
-  }else if(count<=2){
-    verdictEl.textContent=CvPVerdicts.warn;
-    resultEl.classList.add('warn');
+  if(isPlatform){
+    badgeEl.textContent='Platform';
+    resultEl.classList.add('platform');
+    if(hardHits.length>0){
+      var hardLabels=hardHits.map(function(q){return CvPCapMap[q];}).join(', ');
+      verdictEl.textContent='Hard requirement: '+hardLabels+'. Core has no built-in way to do this at all.';
+    }else{
+      verdictEl.textContent=softHits.length+' soft signals stacking up. No single one is a hard blocker, but together they are a real, ongoing tax.';
+    }
   }else{
-    verdictEl.textContent=CvPVerdicts.danger;
-    resultEl.classList.add('danger');
+    badgeEl.textContent='Core';
+    resultEl.classList.add('core');
+    if(softHits.length===0){
+      verdictEl.textContent='Core is the default here. Nothing has pushed you off it yet.';
+    }else{
+      verdictEl.textContent=softHits.length+' soft signal'+(softHits.length===1?'':'s')+' so far, not enough yet to flip the recommendation.';
+    }
   }
 
-  if(count>0){
-    var chips=yesCaps.map(function(c){return '<span class="gcap">'+c+'</span>';}).join('');
+  if(allHits.length>0){
+    var chips=allHits.map(function(q){
+      var isHard=CvPHard.indexOf(q)!==-1;
+      return '<span class="gcap'+(isHard?' hard':'')+'">'+CvPCapMap[q]+(isHard?' (hard)':'')+'</span>';
+    }).join('');
     capsEl.innerHTML='<div class="gut-caps-label">what\'s pulling on you</div>'+chips;
   }else{
     capsEl.innerHTML='';
   }
 }
+CvPUpdateGut();
 
 /* ---- i18n: language toggle (EN / 日本語) ---- */
 /* translation content comes in a later pass; scaffold only for now */
