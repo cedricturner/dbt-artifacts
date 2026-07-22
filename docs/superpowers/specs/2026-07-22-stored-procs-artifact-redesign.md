@@ -26,9 +26,18 @@ The live artifact remains unchanged. The preview is added as `dbt-vs-stored-proc
 
 - Match the verified `supercontext` context/compute callouts: white background, `1.5px solid #e8e5e0` border, `16px 18px` internal padding, and no shadow.
 - Use small lowercase Space Mono labels above code or comparison content.
-- Render code on a light neutral surface with dark ink and sufficient contrast.
+- Render code as a dbt-style light editor: white canvas, pale gutter, visible gray line numbers, faint indentation guides, and dark identifiers.
+- Apply syntax colors that mirror the provided dbt editor reference: blue SQL keywords and aliases, purple Jinja delimiters, teal-blue dbt functions, burnt-orange strings, and gray comments.
+- Use a thin filename/header rail instead of pills or decorative card chrome.
 - Keep error and warning annotations legible with restrained red and amber rules.
 - Use literal expand/collapse language: `open dbt version` and `close dbt version`.
+
+## Editorial cleanup
+
+- Remove emoji-led hints.
+- Remove pill-shaped badges and decorative state treatments.
+- Reduce nested full-border callouts; use spacing and a single left rule for explanatory summaries.
+- Keep all existing instructional content, but make its visual hierarchy quieter so the walkthrough reads as an authored technical note rather than a stack of generated UI cards.
 
 ## Responsive and accessibility requirements
 
