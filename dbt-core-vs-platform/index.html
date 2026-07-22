@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dbt Core vs. the platform, explained</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-height:100vh;overflow-x:hidden}
+.app{max-width:900px;margin:0 auto;padding:40px 20px 80px}
+
+/* topbar / lang toggle (shared house pattern) */
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
+.back{font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none}
+.back:hover{color:#8b949e}
+.lang-toggle{display:inline-flex;background:#161b22;border:1px solid #2d333b;border-radius:99px;padding:3px;gap:2px;flex-shrink:0}
+.lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#8b949e;background:transparent;border:none;border-radius:99px;padding:5px 12px;cursor:pointer;transition:all .2s;line-height:1}
+.lang-btn:hover{color:#e6edf3}
+.lang-btn.active{background:#2dd4bf;color:#00332e}
+
+/* header */
+.hdr{text-align:center;margin-bottom:34px}
+.hdr-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#2dd4bf;background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.28);padding:4px 13px;border-radius:99px;margin-bottom:14px}
+.hdr h1{font-size:clamp(24px,4.4vw,38px);font-weight:600;line-height:1.22;margin-bottom:12px;color:#fff}
+.hdr p{color:#8b949e;font-size:14.5px;max-width:600px;margin:0 auto;line-height:1.65}
+
+/* jump nav */
+.jump{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:34px}
+.jump a{font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b949e;background:#161b22;border:1px solid #2d333b;border-radius:99px;padding:6px 13px;text-decoration:none;transition:all .15s}
+.jump a:hover{border-color:#2dd4bf;color:#2dd4bf}
+
+/* thesis panel */
+.thesis{background:linear-gradient(180deg,rgba(45,212,191,.08),rgba(45,212,191,.02));border:1px solid rgba(45,212,191,.28);border-radius:12px;padding:22px 24px;margin-bottom:22px}
+.thesis .tl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#2dd4bf;margin-bottom:11px;font-weight:600}
+.thesis p{font-size:14.5px;line-height:1.75;color:#c9d1d9}
+.thesis p b{color:#fff;font-weight:600}
+.thesis code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(255,255,255,.07);padding:1px 5px;border-radius:3px;color:#e6edf3}
+
+/* flags: inline + block, deliberately loud so they're easy to spot */
+.flag{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#d29922;background:rgba(210,153,34,.12);border:1px solid rgba(210,153,34,.4);border-radius:5px;padding:2px 8px;white-space:normal}
+.flagbox{border:1px solid rgba(210,153,34,.4);background:rgba(210,153,34,.06);border-radius:10px;padding:16px 18px;margin-bottom:22px}
+.flagbox .fb-lbl{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#d29922;margin-bottom:9px}
+.flagbox p{font-size:13.5px;line-height:1.7;color:#c9d1d9}
+.flagbox p b{color:#e6edf3}
+
+/* sections */
+.section{margin:44px 0}
+.sec-h{font-size:clamp(19px,3vw,25px);font-weight:600;color:#fff;margin-bottom:9px}
+.sec-intro{font-size:14px;line-height:1.7;color:#8b949e;max-width:640px;margin-bottom:20px}
+
+/* right-call checklist */
+.rightcard{background:#161b22;border:1px solid #2d333b;border-radius:10px;padding:22px 24px}
+.rightlist{list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:16px}
+.rightlist li{position:relative;padding-left:26px;font-size:13.5px;line-height:1.6;color:#c9d1d9}
+.rightlist li::before{content:'✓';position:absolute;left:0;top:0;color:#3fb950;font-weight:700;font-size:13px}
+.sec-close{font-size:13.5px;line-height:1.7;color:#8b949e;padding-top:14px;border-top:1px dashed #2d333b}
+
+/* alt path card (snowflake native dbt) */
+.altpath{margin-top:18px;border-top:1px solid #2d333b;padding-top:18px}
+.altpath-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:#58a6ff;margin-bottom:9px;font-weight:700}
+.altpath p{font-size:13.5px;line-height:1.7;color:#c9d1d9;margin-bottom:10px}
+.altpath p:last-child{margin-bottom:0}
+
+/* tipping point cards */
+.tip{background:#161b22;border:1px solid #2d333b;border-radius:11px;overflow:hidden;margin-bottom:18px}
+.tip-head{padding:16px 20px 4px}
+.tip-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:#2dd4bf;font-weight:700;display:block;margin-bottom:6px}
+.tip-title{font-size:16.5px;font-weight:600;color:#fff}
+.tip-moment{font-size:14.5px;font-style:italic;line-height:1.6;color:#e6edf3;padding:6px 20px 16px;border-left:3px solid #2dd4bf;margin:6px 20px 0 20px;padding-left:14px;margin-left:20px}
+.tip-grid{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #2d333b}
+.tip-cost,.tip-fix{padding:15px 18px}
+.tip-cost{background:rgba(248,81,73,.035);border-right:1px solid #2d333b}
+.tip-fix{background:rgba(45,212,191,.045)}
+.tip-lbl{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;margin-bottom:8px}
+.tip-cost .tip-lbl{color:#f85149}
+.tip-fix .tip-lbl{color:#2dd4bf}
+.tip-cost p,.tip-fix p{font-size:12.5px;line-height:1.65;color:#c9d1d9}
+.tip-cost code,.tip-fix p code{font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px;color:#e6edf3}
+
+/* mesh example toggle block */
+.mesh-ex{margin:0 20px 18px;border-radius:8px;overflow:hidden;border:1px solid #2d333b;cursor:pointer}
+.mesh-ex .mh{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:#0d1117;border-bottom:1px solid #2d333b}
+.mesh-ex .mh .lbl{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;color:#58a6ff}
+.mesh-ex .mh .hint{font-family:'DM Sans',sans-serif;font-size:10px;color:#58a6ff;opacity:.65}
+.mesh-ex.open .mh .hint{opacity:.4}
+.mesh-body{display:none;background:#0d1117}
+.mesh-body.show{display:block}
+.mesh-body pre{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:#e6edf3;white-space:pre;overflow-x:auto;padding:13px 15px;margin:0}
+.mesh-file{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#8b949e;padding:9px 15px 0}
+.mesh-note{font-size:12px;line-height:1.6;color:#8b949e;padding:4px 15px 13px}
+.mesh-note code{font-family:'JetBrains Mono',monospace;font-size:10.5px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px;color:#e6edf3}
+
+/* engine note (core v2 light touch + fusion flagged) */
+.core-v2-note{font-size:13px;font-style:italic;line-height:1.7;color:#8b949e;max-width:680px;margin:0 auto 16px;text-align:center}
+
+/* gut check */
+.gut{display:flex;flex-direction:column;gap:2px;margin-bottom:20px}
+.gq{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#161b22;border:1px solid #2d333b;border-radius:9px;padding:14px 16px;flex-wrap:wrap}
+.gq-text{font-size:13px;line-height:1.55;color:#e6edf3;flex:1;min-width:220px}
+.yn-btns{display:flex;gap:7px;flex-shrink:0}
+.yn-btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:7px 14px;border-radius:6px;border:1px solid #2d333b;background:#0d1117;color:#8b949e;cursor:pointer;transition:all .15s}
+.yn-btn:hover{border-color:#444c56;color:#e6edf3}
+.yn-btn.yes.active{background:#2dd4bf;border-color:#2dd4bf;color:#00332e}
+.yn-btn.no.active{background:#21262d;border-color:#444c56;color:#e6edf3}
+
+.gut-result{background:#161b22;border:1px solid #2d333b;border-radius:11px;padding:22px 24px;text-align:center;transition:border-color .2s}
+.gut-result.ok{border-color:rgba(63,185,80,.4)}
+.gut-result.warn{border-color:rgba(210,153,34,.4)}
+.gut-result.danger{border-color:rgba(248,81,73,.4)}
+.gut-tally-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#8b949e;margin-bottom:6px}
+.gut-tally{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;color:#fff;margin-bottom:10px}
+.gut-verdict{font-size:14.5px;line-height:1.6;color:#e6edf3;max-width:520px;margin:0 auto}
+.gut-caps{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:14px}
+.gut-caps-label{width:100%;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:#8b949e;margin-bottom:2px}
+.gcap{font-family:'JetBrains Mono',monospace;font-size:10.5px;background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.35);color:#5eead4;border-radius:99px;padding:4px 11px}
+
+/* closing */
+.closing{margin-top:44px;padding-top:24px;border-top:1px solid #2d333b}
+.closing p{font-size:14px;line-height:1.75;color:#8b949e;max-width:680px}
+.closing p b{color:#e6edf3;font-weight:600}
+
+@media(max-width:640px){
+  .tip-grid{grid-template-columns:1fr}
+  .tip-cost{border-right:none;border-bottom:1px solid #2d333b}
+  .gq{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="topbar">
+  <a class="back" href="../" data-i18n="back_all">← all explainers</a>
+  <div class="lang-toggle" role="group" aria-label="Language / 日本語">
+    <button type="button" class="lang-btn active" data-lang="en" onclick="CvPSetLang('en')">EN</button>
+    <button type="button" class="lang-btn" data-lang="ja" onclick="CvPSetLang('ja')">日本語</button>
+  </div>
+</div>
+
+<div class="hdr">
+  <div class="hdr-tag" data-i18n="tag_kicker">core vs. platform</div>
+  <h1 data-i18n-html="h1">dbt Core vs. the platform: where the line actually is</h1>
+  <p data-i18n-html="hdr_sub">A practitioner's guide to the moment dbt Core alone stops being enough, and what you actually get when you start paying for the dbt platform.</p>
+</div>
+
+<div class="jump">
+  <a href="#right-call" data-i18n="jump1">where core is still right</a>
+  <a href="#tipping-points" data-i18n="jump2">the tipping points</a>
+  <a href="#gutcheck" data-i18n="jump3">gut-check</a>
+</div>
+
+<div class="thesis">
+  <div class="tl" data-i18n="thesis_lbl">the short version</div>
+  <p data-i18n-html="thesis_p">dbt Core is not a limited trial of the paid product. It is the real transformation engine: models, tests, docs, <code>ref()</code>, <code>source()</code>, all of it, and it is free and open source (Apache 2.0) forever. dbt Core is maintained by <b>Fivetran + dbt Labs</b>, following the 2025 merger of the two companies. The combined entity hasn't settled on a permanent name yet, so this page just says "dbt Labs" where it needs to refer to the maker. What the dbt platform adds is not more dbt. It is the operational layer around dbt: the part that runs it on a schedule, decides who can touch what, makes the output findable outside the CLI, and lets more than one project or more than one kind of person work in it at once. For a solo analyst, or a small team that's fine owning all of that itself, dbt Core alone can be genuinely enough. This page maps the specific moments where that stops being true, and what each one actually costs if you keep ignoring it.</p>
+</div>
+
+<div class="flagbox">
+  <div class="fb-lbl" data-i18n="scope_lbl">⚠ scope note</div>
+  <p data-i18n-html="scope_p">This draft skips exact pricing, tier names, and plan limits on purpose. The pricing page changes often enough that numbers written here today would likely be wrong by the time anyone reviews this. Fusion, dbt's next-generation engine, gets its own flagged note further down, since its licensing and architecture details are still unsettled as of this draft.</p>
+</div>
+
+<section class="section" id="right-call">
+  <h2 class="sec-h" data-i18n="rc_h">Where dbt Core alone is still the right call</h2>
+  <p class="sec-intro" data-i18n="rc_intro">Before any pitch, the honest version. None of the following is dbt Core "settling for less."</p>
+  <div class="rightcard">
+    <ul class="rightlist">
+      <li data-i18n="rc1">A solo analyst or a single analytics engineer running their own project against their own warehouse.</li>
+      <li data-i18n="rc2">A small, all-engineer team that's comfortable owning its own scheduler, cron, Airflow, GitHub Actions, whatever it is, and treats that as normal infrastructure work, not overhead.</li>
+      <li data-i18n="rc3">No governance, compliance, or audit requirement forcing a formal, provable record of who changed what and when.</li>
+      <li data-i18n="rc4">One dbt project. Nobody else's project needs to depend on your models, and you don't need anyone else's.</li>
+      <li data-i18n="rc5">Everyone who touches the project is comfortable installing dbt locally, holding warehouse credentials, and working from git and the command line.</li>
+    </ul>
+    <p class="sec-close" data-i18n="rc_close">If that's your team, nothing below is an argument that you're doing it wrong. It's a map of the specific moments where one of those conditions stops holding, and what quietly starts costing you when it does.</p>
+
+    <div class="altpath">
+      <div class="altpath-label" data-i18n="alt_lbl">another path worth knowing about</div>
+      <p data-i18n-html="alt_p1">Paying for the dbt platform is not the only way to run dbt somewhere other than your laptop. Snowflake now runs dbt projects natively inside the warehouse, using Snowflake's own compute, another way to get dbt Core's transformation engine working without adopting the dbt platform's operational layer. <span class="flag" data-i18n="alt_flag">⚠ verify before publish, exact feature scope not independently confirmed</span></p>
+      <p data-i18n="alt_p2">Other warehouses may offer similar native or embedded dbt execution paths, worth checking directly. If what you actually need is dbt Core running somewhere more convenient than a laptop, not the platform's scheduling, access control, Catalog, or Mesh, it's worth checking what your own warehouse already gives you before assuming the platform is the only door out.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="tipping-points">
+  <h2 class="sec-h" data-i18n="tp_h">Where the line starts moving</h2>
+  <p class="sec-intro" data-i18n="tp_intro">Each of these starts as a specific, ordinary moment, not a feature you were missing. The cost shows up quietly, in time, risk, or toil, before anyone names what's actually gone missing.</p>
+
+  <div class="tip" id="tip-1">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e1">tipping point 1 of 8</span>
+      <div class="tip-title" data-i18n="t1">Something has to run this on a schedule</div>
+    </div>
+    <p class="tip-moment" data-i18n="m1">It's 2am and nobody is fully sure whether last night's run actually happened.</p>
+    <div class="tip-grid">
+      <div class="tip-cost"><div class="tip-lbl" data-i18n="lbl_cost">what core-only costs you</div><p data-i18n-html="c1">dbt Core has no native scheduler, no native alerting, and no native CI. Someone bolts together cron, or stands up Airflow, or writes a GitHub Actions job to run <code>dbt build</code> on a timer, then owns the credentials, retries, failure handling, and alerting for that glue code themselves, on top of the actual dbt work. Every change to that scheduling layer is now a second codebase that has to stay in sync with the dbt project.</p></div>
+      <div class="tip-fix"><div class="tip-lbl" data-i18n="lbl_fix">what the platform changes</div><p data-i18n="f1">Hosted job scheduling, run history, and alerting on failure, plus CI checks that run against a pull request before it merges, all run by the platform instead of by whoever's laptop or personal Airflow instance you're currently trusting.</p></div>
+    </div>
+  </div>
+
+  <div class="tip" id="tip-2">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e2">tipping point 2 of 8</span>
+      <div class="tip-title" data-i18n="t2">More than engineers need to touch it</div>
+    </div>
+    <p class="tip-moment" data-i18n="m2">The one person who actually knows what "a valid order" means keeps sending you SQL over Slack instead of opening a pull request.</p>
+    <div class="tip-grid">
+      <div class="tip-cost"><div class="tip-lbl" data-i18n="lbl_cost">what core-only costs you</div><p data-i18n="c2">dbt Core is a CLI. Contributing means a local dbt install, warehouse credentials issued to that person's laptop, and enough comfort with git from a terminal to open a pull request. That's a real barrier for someone whose job isn't engineering, so their domain knowledge stays outside the project, translated secondhand by whoever does have access.</p></div>
+      <div class="tip-fix"><div class="tip-lbl" data-i18n="lbl_fix">what the platform changes</div><p data-i18n="f2">Studio IDE, a browser-based development environment: no local install, no warehouse credentials to manage on someone's laptop, edit and run models from a browser. It doesn't change who's allowed to approve a merge, but it lowers the barrier to actually contributing in the first place.</p></div>
+    </div>
+  </div>
+
+  <div class="tip" id="tip-3">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e3">tipping point 3 of 8</span>
+      <div class="tip-title" data-i18n="t3">Who can change what, and who touched this</div>
+    </div>
+    <p class="tip-moment" data-i18n="m3">Someone from compliance asks who can change the model that feeds the board deck, and how you'd prove it if asked.</p>
+    <div class="tip-grid">
+      <div class="tip-cost"><div class="tip-lbl" data-i18n="lbl_cost">what core-only costs you</div><p data-i18n-html="c3">dbt Core has no built-in role-based access control, no SSO, no audit log. Environments (dev, staging, prod) are handled manually through <code>targets</code> in <code>profiles.yml</code>, a convention someone has to maintain and enforce by hand, not something the tool itself enforces. "Who touched this" is whatever <code>git blame</code> happens to say, which tells you who edited a file, not who ran what against production.</p></div>
+      <div class="tip-fix"><div class="tip-lbl" data-i18n="lbl_fix">what the platform changes</div><p data-i18n-html="f3">On the platform's higher, Enterprise-tier plans specifically, not every paid tier, RBAC, SSO, and audit logs are available, along with managed dev, staging, and prod deployment environments configured through the platform instead of a hand-maintained <code>profiles.yml</code>.</p></div>
+    </div>
+  </div>
+
+  <div class="tip" id="tip-4">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e4">tipping point 4 of 8</span>
+      <div class="tip-title" data-i18n="t4">Nobody can find or trust the data</div>
+    </div>
+    <p class="tip-moment" data-i18n="m4">Someone builds a new dashboard on a table nobody remembers owning, and nobody can say with confidence whether it's still good.</p>
+    <div class="tip-grid">
+      <div class="tip-cost"><div class="tip-lbl" data-i18n="lbl_cost">what core-only costs you</div><p data-i18n-html="c4">dbt Core gives you docs and lineage as an artifact you generate and host yourself: a static site, current only as of whenever someone last ran <code>dbt docs generate</code> and pushed it somewhere. There's no ownership signal, no health status, and no always-current view for anyone outside the CLI to search and trust on their own.</p></div>
+      <div class="tip-fix"><div class="tip-lbl" data-i18n="lbl_fix">what the platform changes</div><p data-i18n="f4">dbt Catalog (formerly dbt Explorer): a governed, always-current lineage and ownership view that doesn't depend on someone remembering to regenerate and redeploy a static site.</p></div>
+    </div>
+  </div>
+
+  <div class="tip" id="tip-5">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e5">tipping point 5 of 8</span>
+      <div class="tip-title" data-i18n="t5">One repo, many teams</div>
+    </div>
+    <p class="tip-moment" data-i18n="m5">Another team's dbt project needs one of your models, and right now the only way to give it to them is to tell them to copy your SQL.</p>
+    <div class="tip-grid">
+      <div class="tip-cost"><div class="tip-lbl" data-i18n="lbl_cost">what core-only costs you</div><p data-i18n-html="c5">dbt Core has essentially nothing built in for one dbt project to safely depend on another. <code>ref()</code> only resolves inside a single project's own DAG. Teams that need to share models across projects end up copying SQL or duplicating a model into their own project, which quietly creates two definitions of "a valid order" that will eventually disagree with each other, silently, with nothing forcing them to reconcile.</p></div>
+      <div class="tip-fix"><div class="tip-lbl" data-i18n="lbl_fix">what the platform changes</div><p data-i18n-html="f5">dbt Mesh. A model gets marked <code>access: public</code> in its config, and other dbt projects can call it directly with a cross-project <code>ref()</code>, the same <code>ref()</code> syntax, now resolved across project boundaries instead of only within one. This requires the upstream project to have a Production deployment environment running on the platform, since cross-project <code>ref()</code> resolves against that project's production artifacts, not whatever happens to be on someone's branch.</p></div>
+    </div>
+    <div class="mesh-ex" id="meshEx" onclick="CvPToggleMesh()">
+      <div class="mh"><span class="lbl" data-i18n="mesh_lbl">see the mesh config →</span><span class="hint" data-i18n="mesh_hint">click to expand</span></div>
+      <div class="mesh-body" id="meshBody">
+        <div class="mesh-file" data-i18n="mesh_file1">upstream project · models/schema.yml</div>
+        <pre>models:
+  - name: fct_orders
+    config:
+      access: public</pre>
+        <div class="mesh-file" data-i18n="mesh_file2">downstream project · models/finance_summary.sql</div>
+        <pre>select ...
+from {{ ref('finance_project', 'fct_orders') }}</pre>
+        <div class="mesh-note" data-i18n-html="mesh_note"><code>access: public</code> isn't a suggestion, it's the switch that lets another project's <code>ref()</code> resolve to this model at all. Anything not marked public stays private to its own project by default.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip" id="tip-6">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e6">tipping point 6 of 8</span>
+      <div class="tip-title" data-i18n="t6">How many people can actually work in this at once</div>
+    </div>
+    <p class="tip-moment" data-i18n="m6">You hire a third analytics engineer, and the onboarding doc for "set up your laptop" is longer than the model they're trying to ship.</p>
+    <div class="tip-grid">
+      <div class="tip-cost"><div class="tip-lbl" data-i18n="lbl_cost">what core-only costs you</div><p data-i18n="c6">In a Core-only setup, development is local-only. Every contributor needs their own local dbt install, their own warehouse credentials, their own clone of the repo, and their own way of not stepping on a shared dev schema. There's no hosted place to develop, so how many people can work in the project at once scales with how much environment-setup pain the team is willing to absorb per person, not with how much work there actually is to do.</p></div>
+      <div class="tip-fix"><div class="tip-lbl" data-i18n="lbl_fix">what the platform changes</div><p data-i18n="f6">The platform's hosted development environment, Studio IDE again, gives every contributor a ready-to-go dev environment without local setup, so headcount on the project isn't bottlenecked by laptop configuration.</p></div>
+    </div>
+  </div>
+
+  <div class="tip" id="tip-7">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e7">tipping point 7 of 8</span>
+      <div class="tip-title" data-i18n="t7">How many people does the open-source project actually serve</div>
+    </div>
+    <p class="tip-moment" data-i18n="m7">A stakeholder asks to just look at the data model himself instead of filing another ticket, and the honest answer is he can't, not without someone standing up a website for him first.</p>
+    <div class="tip-grid">
+      <div class="tip-cost"><div class="tip-lbl" data-i18n="lbl_cost">what core-only costs you</div><p data-i18n="c7">dbt Core's value is largely confined to whoever is running the CLI, the engineer or engineers actually building the project. Non-engineers can only see the output at all if someone manually generates a static docs site and hosts it somewhere, S3, Netlify, wherever, and that site is only as current as the last person who remembered to regenerate and redeploy it. There's no governed, always-current, cross-project way for a broader org to self-serve.</p></div>
+      <div class="tip-fix"><div class="tip-lbl" data-i18n="lbl_fix">what the platform changes</div><p data-i18n="f7">The platform serves that same documentation and lineage as a governed, hosted, always-current product, dbt Catalog again, so the value of the dbt project reaches past the handful of people who can run a CLI.</p></div>
+    </div>
+  </div>
+
+  <div class="tip" id="tip-8">
+    <div class="tip-head">
+      <span class="tip-eyebrow" data-i18n="e8">tipping point 8 of 8</span>
+      <div class="tip-title" data-i18n="t8">A metric means three things in three tools</div>
+    </div>
+    <p class="tip-moment" data-i18n="m8">Finance says revenue is 4.2 million, the BI tool says 4.4 million, and both people are confident.</p>
+    <div class="tip-grid">
+      <div class="tip-cost"><div class="tip-lbl" data-i18n="lbl_cost">what core-only costs you</div><p data-i18n="c8">You can define metrics locally in dbt Core with MetricFlow, that part is free and works entirely in the CLI. What Core can't do is serve those definitions to anything else. There's no built-in way for a BI tool, a spreadsheet, or an AI agent to query a governed metric and get the same number every time, so every consuming tool ends up re-deriving "revenue" from the tables directly, which is exactly how three tools end up with three answers.</p></div>
+      <div class="tip-fix"><div class="tip-lbl" data-i18n="lbl_fix">what the platform changes</div><p data-i18n="f8">The platform's Semantic Layer makes MetricFlow-defined metrics queryable by other tools, so "revenue" gets computed once and served consistently everywhere it's asked for.</p></div>
+    </div>
+  </div>
+</section>
+
+<p class="core-v2-note" data-i18n="corev2">One more thing, lightly: dbt Labs has said a next generation of dbt Core, referred to as dbt Core v2, is coming. Specifics, timing, and exactly what changes are still emerging, so this page describes the dbt Core you can install today, not a future version of it.</p>
+
+<div class="flagbox">
+  <div class="fb-lbl" data-i18n="fusion_lbl">⚠ verify before publish</div>
+  <p data-i18n="fusion_p">dbt is also rolling out a next-generation engine called Fusion. How Fusion fits into the Core versus platform line, its licensing, its architecture, and its relationship, if any, to dbt Core v2 above, is still settling. Two of dbt's own docs pages currently disagree with each other on parts of this. Worth checking current docs directly before letting Fusion inform a decision here.</p>
+</div>
+
+<section class="section" id="gutcheck">
+  <h2 class="sec-h" data-i18n="gc_h">A quick gut-check</h2>
+  <p class="sec-intro" data-i18n="gc_intro">Seven honest yes-or-no questions. No question is a trick, and answering "no" to all of them is a perfectly good outcome.</p>
+
+  <div class="gut">
+    <div class="gq">
+      <span class="gq-text" data-i18n="q1">Are you babysitting a scheduler, cron, Airflow, GitHub Actions, whatever it is, just to make sure dbt actually runs?</span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q1',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q1',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+    <div class="gq">
+      <span class="gq-text" data-i18n="q2">Do people who aren't engineers need to build or review models, not just look at a finished dashboard?</span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q2',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q2',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+    <div class="gq">
+      <span class="gq-text" data-i18n="q3">Would you struggle to prove who ran what against production if someone asked you to, right now?</span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q3',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q3',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+    <div class="gq">
+      <span class="gq-text" data-i18n="q4">Do people outside the immediate dbt team need to find or trust a model without filing a ticket to your team first?</span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q4',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q4',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+    <div class="gq">
+      <span class="gq-text" data-i18n="q5">Do you have more than one dbt project that needs to reference another project's models?</span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q5',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q5',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+    <div class="gq">
+      <span class="gq-text" data-i18n="q6">Are more than two or three people trying to actively develop in the same dbt project at the same time?</span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q6',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q6',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+    <div class="gq">
+      <span class="gq-text" data-i18n="q7">Does more than one tool, BI, a spreadsheet, an AI agent, need to query the same metric and land on the same number?</span>
+      <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q7',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q7',false,this)" data-i18n="yn_no">no</button></span>
+    </div>
+  </div>
+
+  <div class="gut-result" id="gutResult">
+    <div class="gut-tally-lbl" data-i18n="gut_tally_lbl">your tally</div>
+    <div class="gut-tally" id="gutTally">-- / 7</div>
+    <div class="gut-verdict" id="gutVerdict" data-i18n="gut_default">Answer the questions above to see where you land.</div>
+    <div class="gut-caps" id="gutCaps"></div>
+  </div>
+</section>
+
+<div class="closing">
+  <p data-i18n-html="closing_p">None of this is about whether dbt Core is good. It clearly is, it's the reason any of this works at all. The question this page is actually trying to help answer is narrower: <b>are you currently paying the operational cost of running dbt yourself</b>, scheduling, access control, discoverability, cross-project sharing, concurrency, metric consistency, in time and risk instead of in a subscription. Sometimes that trade is the right one. This is meant to make it a conscious trade instead of an accidental one.</p>
+</div>
+
+<div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #21262d"><a href="https://github.com/cedricturner/dbt-artifacts" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'"><svg height="13" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span data-i18n-html="gh_src">view source on github</span></a></div>
+
+</div>
+<script>
+/* ---- mesh example toggle ---- */
+function CvPToggleMesh(){
+  var b=document.getElementById('meshEx'),r=document.getElementById('meshBody');
+  var open=r.classList.contains('show');
+  r.classList.toggle('show',!open);
+  b.classList.toggle('open',!open);
+}
+
+/* ---- gut-check tally logic ---- */
+var CvPQuestions=['q1','q2','q3','q4','q5','q6','q7'];
+var CvPAnswers={};
+var CvPCapMap={
+  q1:'orchestration, alerting & CI',
+  q2:'Studio IDE',
+  q3:'RBAC, SSO & audit logs',
+  q4:'dbt Catalog',
+  q5:'dbt Mesh',
+  q6:'hosted development environment',
+  q7:'Semantic Layer'
+};
+var CvPVerdicts={
+  none:'Answer the questions above to see where you land.',
+  ok:"Core alone still covers you. None of the platform's usual tipping points are pulling on you right now.",
+  warn:"You're brushing up against the line. Not urgent, but worth watching as the team or the project grows.",
+  danger:"You're past the Core-only line. Multiple real costs are already piling up quietly, even if no single one feels urgent yet."
+};
+
+function CvPAnswer(q,val,el){
+  CvPAnswers[q]=val;
+  var row=el.parentElement;
+  row.querySelectorAll('.yn-btn').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+  CvPUpdateGut();
+}
+
+function CvPUpdateGut(){
+  var yesCaps=[];
+  var answered=0;
+  CvPQuestions.forEach(function(q){
+    if(CvPAnswers[q]!==undefined)answered++;
+    if(CvPAnswers[q]===true)yesCaps.push(CvPCapMap[q]);
+  });
+  var count=yesCaps.length;
+  var tallyEl=document.getElementById('gutTally');
+  var verdictEl=document.getElementById('gutVerdict');
+  var capsEl=document.getElementById('gutCaps');
+  var resultEl=document.getElementById('gutResult');
+
+  tallyEl.textContent=count+' / '+CvPQuestions.length;
+  resultEl.classList.remove('ok','warn','danger');
+
+  if(answered===0){
+    verdictEl.textContent=CvPVerdicts.none;
+    capsEl.innerHTML='';
+    return;
+  }
+  if(count===0){
+    verdictEl.textContent=CvPVerdicts.ok;
+    resultEl.classList.add('ok');
+  }else if(count<=2){
+    verdictEl.textContent=CvPVerdicts.warn;
+    resultEl.classList.add('warn');
+  }else{
+    verdictEl.textContent=CvPVerdicts.danger;
+    resultEl.classList.add('danger');
+  }
+
+  if(count>0){
+    var chips=yesCaps.map(function(c){return '<span class="gcap">'+c+'</span>';}).join('');
+    capsEl.innerHTML='<div class="gut-caps-label">what\'s pulling on you</div>'+chips;
+  }else{
+    capsEl.innerHTML='';
+  }
+}
+
+/* ---- i18n: language toggle (EN / 日本語) ---- */
+/* translation content comes in a later pass; scaffold only for now */
+var CvPCurLang='en';
+var CvPTranslations={};
+function CvPCacheEn(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){el.dataset.en=el.textContent;});
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){el.dataset.enHtml=el.innerHTML;});
+}
+function CvPSetLang(lang){
+  CvPCurLang=lang;
+  var dict=CvPTranslations[lang]||{};
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k=el.getAttribute('data-i18n');
+    if(lang==='en'){if(el.dataset.en!==undefined)el.textContent=el.dataset.en;}
+    else if(dict[k]!==undefined){el.textContent=dict[k];}
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+    var k=el.getAttribute('data-i18n-html');
+    if(lang==='en'){if(el.dataset.enHtml!==undefined)el.innerHTML=el.dataset.enHtml;}
+    else if(dict[k]!==undefined){el.innerHTML=dict[k];}
+  });
+  document.documentElement.lang=lang;
+  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-lang')===lang);});
+  try{localStorage.setItem('lang',lang);}catch(e){}
+}
+CvPCacheEn();
+(function(){
+  var saved=null;try{saved=localStorage.getItem('lang');}catch(e){}
+  var initial=saved||(((navigator.language||navigator.userLanguage||'').toLowerCase().indexOf('ja')===0)?'ja':'en');
+  CvPSetLang(initial);
+})();
+</script>
+</body>
+</html>
