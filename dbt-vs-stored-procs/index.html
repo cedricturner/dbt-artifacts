@@ -1,9 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="field-notes">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>From stored procedures to dbt, Interactive Walkthrough</title>
+<title>from stored procedures to dbt — interactive walkthrough</title>
+<script src="translations.js"></script>
+<script>
+if (new URLSearchParams(location.search).get('theme') === 'field-notes') {
+  document.documentElement.classList.add('field-notes');
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@500;700&family=Bricolage+Grotesque:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@500;600&family=Noto+Sans+JP:wght@500;600&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 
@@ -170,41 +178,1010 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
 .lang-btn.active{background:#ff6b35;color:#fff}
 :lang(ja) .code-body pre,:lang(ja) .dbt-reveal pre{white-space:pre-wrap}
 </style>
+
+<style id="redesign-preview-styles">
+:root {
+  --paper: #fafaf9;
+  --ink: #1c1c1c;
+  --text: #2a2a2a;
+  --muted-light: #777;
+  --faint-light: #aaa;
+  --rule-light: #e8e5e0;
+  --surface: #fff;
+  --soft: #f9f8f6;
+  --danger-light: #991b1b;
+  --danger-bg: #fff1f2;
+  --success-light: #166534;
+  --success-bg: #f0fdf4;
+  --warning-light: #92400e;
+  --code-font: "Space Mono", "SFMono-Regular", Consolas, monospace;
+  --body-font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+* { box-shadow: none !important; }
+body {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  font-family: var(--body-font) !important;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.app {
+  max-width: 980px;
+  padding: 32px 24px 100px;
+}
+.app > div:first-child {
+  margin-bottom: 48px !important;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ink);
+}
+.app > div:first-child > a {
+  color: var(--muted-light) !important;
+  font-family: var(--body-font) !important;
+  font-size: 12px !important;
+}
+.hdr {
+  text-align: left;
+  margin-bottom: 48px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--rule-light);
+}
+.hdr-tag {
+  margin: 0 0 18px;
+  padding: 0;
+  color: var(--faint-light);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-family: var(--code-font);
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: lowercase;
+}
+.hdr h1 {
+  max-width: 720px;
+  margin-bottom: 12px;
+  color: var(--ink);
+  font-size: clamp(34px, 6vw, 64px);
+  font-weight: 600;
+  letter-spacing: -.05em;
+  line-height: 1;
+}
+.hdr p {
+  max-width: 620px;
+  margin: 0;
+  color: #555;
+  font-size: 16px;
+  line-height: 1.7;
+}
+.lang-toggle {
+  padding: 0;
+  gap: 0;
+  background: transparent;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+}
+.lang-btn {
+  padding: 7px 11px;
+  color: var(--muted-light);
+  border-radius: 0;
+  font-family: var(--code-font);
+  font-size: 10px;
+}
+.lang-btn + .lang-btn { border-left: 1px solid var(--ink); }
+.lang-btn:hover { color: var(--ink); }
+.lang-btn.active { color: var(--paper); background: var(--ink); }
+.nav {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin-bottom: 40px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--ink);
+  border-radius: 0;
+}
+.nav-step {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  align-items: center;
+  justify-items: start;
+  gap: 0;
+  padding: 11px 12px;
+  color: var(--muted-light);
+  background: transparent;
+  border-bottom: 1px solid var(--rule-light);
+  border-radius: 0;
+  font-family: var(--body-font);
+  text-align: left;
+}
+.nav-step:hover { color: var(--ink); background: var(--surface); }
+.nav-step.active {
+  color: var(--paper);
+  background: var(--ink);
+}
+.step-num,
+.nav-step.active .step-num,
+.nav-step.done .step-num {
+  width: auto;
+  height: auto;
+  color: inherit;
+  background: transparent;
+  border-radius: 0;
+  font-family: var(--code-font);
+  font-size: 10px;
+}
+.step-lbl {
+  color: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+}
+.panel { animation: none; }
+.hint,
+.define,
+.naming-card,
+.src-box,
+.par-block,
+.cmp-col,
+.legend,
+.debug-scenario,
+.ann,
+.what-changed {
+  color: var(--text);
+  background: var(--surface) !important;
+  border: 1.5px solid #e8e5e0 !important;
+  border-radius: 0 !important;
+}
+.hint {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  padding: 16px 18px;
+  margin-bottom: 28px;
+  color: var(--text);
+  font-size: 14px;
+}
+.hint strong,
+.define .dq,
+.debug-note strong,
+.cmp-col h4,
+.naming-card .meaning strong {
+  color: var(--ink) !important;
+}
+.define {
+  padding: 16px 18px;
+  text-align: left;
+}
+.define .dq {
+  margin: 0;
+  font-size: 18px;
+}
+.define .dq b { color: var(--ink); }
+.define .dsub { color: var(--muted-light); }
+.code-wrap {
+  margin-bottom: 14px;
+  overflow: hidden;
+  background: #fff;
+  border: 1.5px solid #e8e5e0 !important;
+  border-radius: 0;
+}
+.code-head {
+  padding: 12px 18px;
+  color: var(--ink);
+  background: #fff !important;
+  border-bottom: 1px solid var(--rule-light);
+}
+.lbl,
+.badge,
+.code-body pre,
+.dbt-reveal pre,
+code,
+.bar-lbl,
+.step-ind,
+.dag-cap,
+.raw-s,
+.fn-s,
+.ref-s,
+.chip,
+.legend .li {
+  font-family: var(--code-font) !important;
+}
+.lbl { color: var(--ink) !important; font-size: 10px; }
+.badge {
+  color: var(--muted-light) !important;
+  background: var(--soft) !important;
+  border: 1px solid var(--rule-light);
+  border-radius: 0;
+  text-transform: lowercase;
+}
+.code-body,
+.dbt-reveal {
+  padding: 16px 18px;
+  color: var(--ink);
+  background: var(--soft) !important;
+}
+.code-body pre,
+.dbt-reveal pre {
+  color: var(--ink) !important;
+  font-size: 11px;
+  line-height: 1.75;
+}
+.code-body pre span,
+.dbt-reveal pre span { color: inherit !important; }
+.code-body .il,
+.dbt-reveal .il {
+  background: var(--danger-bg) !important;
+  border-left-color: var(--danger-light) !important;
+}
+.code-body .wl,
+.dbt-reveal .wl {
+  background: #fffbeb !important;
+  border-left-color: var(--warning-light) !important;
+}
+.code-body .in,
+.dbt-reveal .in { color: var(--danger-light) !important; }
+.code-body .wn,
+.dbt-reveal .wn { color: var(--warning-light) !important; }
+.tmp-block .code-head::after {
+  content: "open dbt version";
+  color: var(--ink);
+  font-family: var(--code-font);
+  opacity: .65;
+}
+.tmp-block.expanded .code-head::after {
+  content: "close dbt version";
+  opacity: .65;
+}
+.tmp-block:hover,
+.tmp-block.expanded { border-color: var(--ink) !important; }
+.transform-reveal { border-top-color: var(--rule-light); }
+.t-arrow {
+  padding: 10px 18px;
+  background: var(--success-bg);
+  border-bottom-color: #bbf7d0;
+}
+.t-arrow span { color: var(--muted-light); font-family: var(--code-font); }
+.t-arrow .arr { color: var(--success-light); }
+.what-changed {
+  margin: 0;
+  padding: 16px 18px;
+  color: var(--muted-light);
+  border-top: 0 !important;
+}
+.what-changed strong { color: var(--success-light); }
+.naming-row { gap: 10px; }
+.naming-card,
+.src-box,
+.par-block,
+.cmp-col,
+.legend { padding: 16px 18px; }
+.naming-card .meaning,
+.src-row,
+.cmp-col > p,
+.cmp-col li,
+.legend .lt,
+.legend .ln,
+.par-block {
+  color: var(--muted-light);
+}
+.naming-card .prefix { font-family: var(--code-font); color: var(--ink) !important; }
+.src-box h4,
+.par-block h4,
+.dc .ch,
+.dag-cap {
+  color: var(--faint-light) !important;
+  font-family: var(--code-font);
+  text-transform: lowercase;
+  letter-spacing: .06em;
+}
+.chips { gap: 6px; }
+.chip {
+  color: var(--ink);
+  background: var(--surface);
+  border-color: var(--rule-light);
+  border-radius: 0;
+}
+.chip b,
+.chip.pkg b { color: var(--ink); }
+.legend .ld { border-radius: 0; }
+.dag-wrap {
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1.5px solid var(--rule-light);
+}
+#p0 .dag-wrap {
+  background: var(--surface);
+  border-color: var(--rule-light);
+}
+#p0 .dag-wrap rect[stroke="#f85149"] {
+  fill: #fff0ee !important;
+  stroke: #d92d20 !important;
+}
+#p0 .dag-wrap rect[stroke="#58a6ff"] {
+  fill: #eef6ff !important;
+  stroke: #2f6fcc !important;
+}
+#p0 .dag-wrap rect[stroke="#3fb950"] {
+  fill: #effaf1 !important;
+  stroke: #27843f !important;
+}
+#p0 .dag-wrap rect[stroke="#ff6b35"] {
+  fill: #fff3ed !important;
+  stroke: #d95721 !important;
+}
+#p0 .dag-wrap rect[stroke="#d68fe0"] {
+  fill: #faf0fc !important;
+  stroke: #9b51aa !important;
+}
+#p0 .dag-wrap rect[stroke="#444c56"],
+#p0 .dag-wrap rect[stroke="#8b949e"] {
+  fill: #f5f6f7 !important;
+  stroke: #7a8491 !important;
+}
+#p0 .dag-wrap text[fill="#e6edf3"] { fill: #111827 !important; }
+#p0 .dag-wrap text[fill="#8b949e"] { fill: #465260 !important; }
+#p0 .dag-wrap text[fill="#f0a392"] { fill: #7f251d !important; }
+#p0 .dag-wrap text[fill="#58a6ff"] { fill: #174a7e !important; }
+#p0 .dag-wrap text[fill="#3fb950"] { fill: #175b2a !important; }
+#p0 .dag-wrap text[fill="#ff6b35"] { fill: #843213 !important; }
+#p0 .dag-wrap text[fill="#e3a9ee"] { fill: #62306c !important; }
+.panel:not(#p0) .dag-wrap svg rect {
+  fill: var(--soft) !important;
+  stroke: var(--muted-light) !important;
+}
+.panel:not(#p0) .dag-wrap svg text { fill: var(--ink) !important; }
+.panel:not(#p0) .dag-wrap svg line { stroke: var(--faint-light) !important; }
+.panel:not(#p0) .dag-wrap svg path { stroke: var(--muted-light) !important; }
+.debug-scenario { overflow: hidden; }
+.debug-trigger {
+  padding: 14px 16px;
+  color: var(--ink);
+  background: var(--surface);
+}
+.debug-trigger:hover { background: var(--soft); }
+.debug-split { border-top-color: var(--rule-light); }
+.dc { background: var(--surface) !important; }
+.dc:first-child {
+  border-right-color: var(--rule-light);
+  background: var(--danger-bg) !important;
+}
+.dc:last-child { background: var(--success-bg) !important; }
+.dc p { color: var(--muted-light); }
+.dc code,
+.debug-note code,
+.cmp-col code,
+.src-box code {
+  color: var(--ink);
+  background: var(--soft);
+  border-radius: 0;
+}
+.dc:first-child .ch { color: var(--danger-light) !important; }
+.dc:last-child .ch { color: var(--success-light) !important; }
+.debug-note {
+  color: var(--muted-light);
+  background: var(--surface);
+  border-top-color: var(--rule-light);
+}
+.ann {
+  padding: 16px 18px;
+  color: var(--muted-light);
+}
+.ann strong,
+.ann.ok strong,
+.ann.danger strong { color: var(--ink); }
+.bar-track { background: var(--soft); border-radius: 0; }
+.bar-fill { border-radius: 0; }
+.bottom-nav {
+  margin-top: 40px;
+  border-top-color: var(--ink);
+}
+.btn-nav {
+  padding: 8px 0;
+  color: var(--muted-light);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-family: var(--body-font);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.btn-nav:hover:not(:disabled) {
+  color: var(--ink);
+  background: transparent;
+}
+.btn-nav.primary {
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+}
+.step-ind { color: var(--faint-light); }
+footer,
+.app > div:last-of-type { border-color: var(--rule-light) !important; }
+@media (max-width: 680px) {
+  .app { padding-inline: 14px; }
+  .hdr { margin-bottom: 32px; }
+  .hint { grid-template-columns: 1fr; }
+  .cmp,
+  .par-wrap,
+  .debug-split { grid-template-columns: 1fr; }
+  .dc:first-child {
+    border-right: 0;
+    border-bottom: 1px solid var(--rule-light);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+<style id="dbt-editor-cleanup-styles">
+.hint-icon { display: none !important; }
+.hint {
+  display: block;
+  padding: 0 0 0 18px;
+  background: transparent !important;
+  border: 0 !important;
+  border-left: 2px solid var(--ink) !important;
+}
+.code-wrap {
+  background: #fff !important;
+  border-color: #e5e5e5 !important;
+}
+.code-head {
+  min-height: 42px;
+  padding: 11px 14px 11px 58px;
+  background: #fafafa !important;
+  border-bottom-color: #e5e5e5;
+}
+.badge {
+  padding: 0;
+  color: #777 !important;
+  background: transparent !important;
+  border: 0;
+  font-weight: 400;
+}
+.code-body,
+.dbt-reveal {
+  padding: 0 !important;
+  background: #fff !important;
+}
+pre.editor-rendered {
+  min-width: max-content;
+  margin: 0;
+  padding: 8px 0 12px !important;
+  color: #1c1c1c !important;
+  background: #fff !important;
+  font-family: var(--code-font) !important;
+  font-size: 11.5px !important;
+  line-height: 1.72 !important;
+}
+.editor-line {
+  display: grid;
+  grid-template-columns: 48px minmax(640px, 1fr);
+  min-height: 20px;
+}
+.editor-gutter {
+  display: block;
+  padding-right: 13px;
+  color: #777;
+  background: #fafafa;
+  border-right: 1px solid #eeeeee;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  user-select: none;
+}
+.editor-code {
+  display: block;
+  min-height: 20px;
+  padding: 0 18px;
+  color: #1c1c1c;
+  white-space: pre;
+  background-color: #fff;
+  background-image: linear-gradient(90deg, transparent 0, transparent 3.95ch, #f3f3f3 4ch, transparent 4.05ch);
+  background-size: 4ch 100%;
+}
+.editor-line.is-problem .editor-gutter {
+  color: #8f1712;
+  background-color: #ffd6d6;
+  border-right-color: #d92d20;
+  font-weight: 700;
+}
+.editor-line.is-problem .editor-code {
+  background-color: #ffe8e8 !important;
+  background-image: none;
+  box-shadow: inset 3px 0 0 #d92d20;
+}
+.editor-code .tok-keyword { color: #2f6fcc !important; }
+.editor-code .tok-jinja { color: #5b35ff !important; }
+.editor-code .tok-function { color: #287da8 !important; }
+.editor-code .tok-string { color: #ad3f16 !important; }
+.editor-code .tok-comment { color: #536577 !important; }
+.editor-line.is-problem .tok-comment { color: #704040 !important; }
+.ann,
+.ann.ok,
+.ann.danger,
+.what-changed {
+  margin-top: 18px;
+  padding: 5px 0 5px 16px;
+  color: #666;
+  background: transparent !important;
+  border: 0 !important;
+  border-left: 2px solid #d6d3d1 !important;
+}
+.ann strong,
+.ann.ok strong,
+.ann.danger strong,
+.what-changed strong { color: #1c1c1c !important; }
+.debug-note {
+  padding-left: 16px;
+  background: transparent;
+  border-left: 2px solid #d6d3d1;
+}
+@media (max-width: 680px) {
+  .editor-line { grid-template-columns: 38px minmax(560px, 1fr); }
+  .editor-gutter { padding-right: 10px; }
+  .editor-code { padding-inline: 12px; }
+}
+</style>
+<style id="field-notes-theme">
+.field-notes body {
+  background: #fff;
+  color: #171717;
+  font-family: var(--body-font);
+}
+.field-notes .app {
+  max-width: 1100px;
+  padding: 68px 28px 110px;
+}
+.field-notes .topbar { border-bottom-color: #171717; }
+.field-notes .language-picker { position: relative; z-index: 20; }
+.field-notes .language-current {
+  min-width: 154px;
+  padding: 9px 14px;
+  color: var(--language-ink, #1f5b8f);
+  background: #fff;
+  border: 1.5px solid currentColor;
+  border-radius: 48% 4px 45% 3px / 10% 45% 8% 42%;
+  cursor: pointer;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+}
+.field-notes .language-current::after {
+  float: right;
+  content: "+";
+  font-family: var(--code-font);
+  font-weight: 400;
+}
+.field-notes .language-current[aria-expanded="true"]::after { content: "−"; }
+.field-notes .language-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 218px;
+  padding: 8px;
+  background: #fff;
+  border: 1.5px solid #171717;
+}
+.field-notes .language-menu[hidden] { display: none; }
+.field-notes .language-option {
+  display: block;
+  width: 100%;
+  margin: 0 0 5px;
+  padding: 10px 13px;
+  color: var(--option-ink);
+  background: #fff;
+  border: 1.5px solid currentColor;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+  transform: rotate(var(--option-turn));
+}
+.field-notes .language-option:last-child { margin-bottom: 0; }
+.field-notes .language-option:hover,
+.field-notes .language-option:focus-visible,
+.field-notes .language-option[aria-selected="true"] {
+  color: #fff;
+  background: var(--option-ink);
+  outline: 0;
+}
+.field-notes .language-en { --option-ink: #1f5b8f; --option-turn: -.4deg; font-family: Inter, sans-serif; }
+.field-notes .language-ja { --option-ink: #c43b2f; --option-turn: .7deg; font-family: "Noto Sans JP", sans-serif; }
+.field-notes .language-es { --option-ink: #a9432f; --option-turn: -.8deg; border-bottom-color: #c89118; font-family: "Alegreya Sans", sans-serif; }
+.field-notes .language-pt-br { --option-ink: #267044; --option-turn: .5deg; border-bottom-color: #b48a19; font-family: "Bricolage Grotesque", sans-serif; }
+.field-notes .language-de { --option-ink: #2f3032; --option-turn: -.3deg; border-bottom-color: #b52f35; font-family: "IBM Plex Sans Condensed", sans-serif; }
+.field-notes .brand,
+.field-notes .hdr-tag,
+.field-notes .step-ind { color: #4a4a4a; }
+.field-notes .hdr {
+  max-width: none;
+  margin: 72px 0 78px;
+  text-align: left;
+}
+.field-notes .hdr-tag {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-family: var(--code-font);
+  letter-spacing: .08em;
+}
+.field-notes .hdr h1 {
+  max-width: none;
+  color: #171717;
+  font-size: clamp(42px, 6vw, 66px);
+  font-weight: 500;
+  line-height: .98;
+  letter-spacing: -.055em;
+  white-space: nowrap;
+}
+.field-notes .hdr p {
+  max-width: 560px;
+  margin: 28px 0 0;
+  color: #4a4a4a;
+  font-size: 15px;
+  line-height: 1.75;
+}
+.field-notes .nav {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(90px, 1fr));
+  gap: 0;
+  margin: 0 0 96px;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.field-notes .nav::before {
+  position: absolute;
+  z-index: 0;
+  top: 23px;
+  right: 4.5%;
+  left: 4.5%;
+  height: 7px;
+  border-top: 1.5px solid #171717;
+  border-bottom: 1px solid #d8d8d4;
+  content: "";
+  display: none;
+  transform: rotate(-.35deg) skewX(-8deg);
+  transform-origin: left center;
+}
+.field-notes .field-notes-route {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 52px;
+  overflow: visible;
+  pointer-events: none;
+}
+.field-notes .route-segment {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 2.6;
+  vector-effect: non-scaling-stroke;
+}
+.field-notes .route-1 { color: #1f5b8f; }
+.field-notes .route-2 { color: #16807a; }
+.field-notes .route-3 { color: #3f7c49; }
+.field-notes .route-4 { color: #b07226; }
+.field-notes .route-5 { color: #b8512e; }
+.field-notes .route-6 { color: #aa4b73; }
+.field-notes .nav-step {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  padding: 0 5px;
+  gap: 12px;
+  color: #8a8a84;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-family: var(--body-font);
+  min-height: 46px;
+}
+.field-notes .nav-step:nth-of-type(1) { --step-ink: #1f5b8f; }
+.field-notes .nav-step:nth-of-type(2) { --step-ink: #16807a; }
+.field-notes .nav-step:nth-of-type(3) { --step-ink: #3f7c49; }
+.field-notes .nav-step:nth-of-type(4) { --step-ink: #b07226; }
+.field-notes .nav-step:nth-of-type(5) { --step-ink: #b8512e; }
+.field-notes .nav-step:nth-of-type(6) { --step-ink: #aa4b73; }
+.field-notes .nav-step:nth-of-type(7) { --step-ink: #6e4b8b; }
+.field-notes .nav-step:hover,
+.field-notes .nav-step.active {
+  color: #171717;
+  background: transparent;
+}
+.field-notes .nav-step .step-num {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  color: color-mix(in srgb, var(--step-ink) 58%, white);
+  background: #fff;
+  border: 1.7px solid color-mix(in srgb, var(--step-ink) 48%, white);
+  border-radius: 50% 47% 52% 45%;
+  font-family: var(--code-font);
+  font-weight: 400;
+  transform: rotate(var(--step-turn, 0deg));
+}
+.field-notes .nav-step .step-num::after {
+  position: absolute;
+  inset: -4px -3px -3px -4px;
+  border: 1px solid var(--step-ink);
+  border-radius: 47% 53% 45% 55%;
+  content: "";
+  opacity: .34;
+  pointer-events: none;
+  transform: rotate(4deg) translate(1px, -1px);
+}
+.field-notes .nav-step:nth-of-type(2n) { --step-turn: 2deg; }
+.field-notes .nav-step:nth-of-type(3n) { --step-turn: -2deg; }
+.field-notes .nav-step.active .step-num {
+  color: #fff;
+  background: var(--step-ink);
+  border-color: var(--step-ink);
+}
+.field-notes .nav-step.done .step-num {
+  color: var(--step-ink);
+  background: #fff;
+  border-color: var(--step-ink);
+}
+.field-notes .nav-step.active .step-num::after,
+.field-notes .nav-step.done .step-num::after { opacity: .82; }
+.field-notes .step-lbl {
+  position: absolute;
+  top: 60px;
+  max-width: 108px;
+  padding: 2px 4px;
+  color: inherit;
+  background: #fff;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.field-notes .nav-step:nth-of-type(even) .step-lbl {
+  top: auto;
+  bottom: 60px;
+}
+.field-notes .panel.active { animation: field-notes-in 160ms ease-out; }
+@keyframes field-notes-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.field-notes .hint,
+.field-notes .ann,
+.field-notes .ann.ok,
+.field-notes .ann.danger,
+.field-notes .what-changed {
+  max-width: 760px;
+  margin: 0 0 54px;
+  padding: 2px 0 2px 22px;
+  color: #353535;
+  background: transparent !important;
+  border: 0;
+  border-left: 1.5px solid #171717;
+  border-radius: 0;
+  font-size: 14px;
+  line-height: 1.75;
+}
+.field-notes .ann.ok { border-left-color: #176a3a; }
+.field-notes .ann.danger { border-left-color: #8b2922; }
+.field-notes .dag-cap {
+  margin-bottom: 14px;
+  color: #4a4a4a !important;
+}
+.field-notes .dag-wrap {
+  margin-bottom: 68px;
+  padding: 8px 0 18px;
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid #d8d8d4;
+}
+.field-notes .code-wrap {
+  margin-bottom: 48px;
+  background: #fff;
+  border: 1.5px solid #171717 !important;
+  border-radius: 1px 3px 2px 0;
+}
+.field-notes .code-head {
+  background: #fff !important;
+  border-bottom: 1px solid #d8d8d4;
+}
+.field-notes pre.editor-rendered {
+  background: #fff !important;
+  border-radius: 0;
+}
+.field-notes .cmp {
+  gap: 0;
+  margin: 72px 0;
+  border-top: 1px solid #171717;
+  border-bottom: 1px solid #171717;
+}
+.field-notes .cmp-col {
+  padding: 28px 30px 34px 0;
+  background: #fff;
+  border: 0;
+  border-radius: 0;
+}
+.field-notes .cmp-col + .cmp-col {
+  padding-right: 0;
+  padding-left: 30px;
+  border-left: 1px solid #d8d8d4;
+}
+.field-notes .cmp-col li code,
+.field-notes .cmp-col p code {
+  color: #252525 !important;
+  background: #f3f3ef !important;
+  font-family: var(--code-font);
+  font-weight: 500;
+}
+.field-notes [data-i18n-html="box_par"] {
+  max-width: 760px;
+  margin: 54px 0;
+  padding: 2px 0 2px 22px !important;
+  color: #353535 !important;
+  background: #fff !important;
+  border: 0 !important;
+  border-left: 1.5px solid #16807a !important;
+  border-radius: 0 !important;
+  font-size: 14px !important;
+  line-height: 1.75 !important;
+}
+.field-notes [data-i18n-html="box_par"] strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #171717 !important;
+  font-weight: 600;
+}
+.field-notes [data-i18n-html="box_par"] code {
+  color: #252525 !important;
+  background: #f3f3ef !important;
+  font-family: var(--code-font) !important;
+  font-weight: 500;
+}
+.field-notes .debug-scenario {
+  margin: 0;
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid #d8d8d4;
+  border-radius: 0;
+}
+.field-notes .debug-scenario:first-child { border-top: 1px solid #171717; }
+.field-notes .debug-trigger {
+  padding: 19px 0;
+  color: #171717;
+  background: #fff;
+}
+.field-notes .debug-trigger .chevron {
+  color: transparent;
+  font-size: 0;
+}
+.field-notes .debug-trigger .chevron::after {
+  color: #171717;
+  content: "+";
+  font-family: var(--code-font);
+  font-size: 18px;
+}
+.field-notes .debug-trigger.open .chevron::after { content: "−"; }
+.field-notes .debug-body,
+.field-notes .debug-split,
+.field-notes .dc,
+.field-notes .debug-note {
+  background: #fff !important;
+  border-color: #d8d8d4 !important;
+}
+.field-notes .naming-row,
+.field-notes .src-box,
+.field-notes .legend,
+.field-notes .par-box,
+.field-notes .yaml-wrap {
+  background: #fff !important;
+  border-color: #d8d8d4 !important;
+  border-radius: 0;
+}
+.field-notes .bottom-nav { margin-top: 84px; }
+.field-notes .btn-nav { color: #4a4a4a; }
+.field-notes .btn-nav.primary { color: #171717; }
+@media(max-width:700px) {
+  .field-notes .app { padding: 42px 20px 82px; }
+  .field-notes .hdr { margin: 56px 0 64px; }
+  .field-notes .hdr h1 { font-size: clamp(42px, 15vw, 66px); }
+  .field-notes .hdr h1 { white-space: normal; }
+  .field-notes .nav { grid-template-columns: 1fr 1fr; gap: 28px 0; margin-bottom: 76px; }
+  .field-notes .nav::before {
+    top: 20px;
+    right: auto;
+    bottom: 20px;
+    left: 50%;
+    width: 6px;
+    height: auto;
+    border-top: 0;
+    border-right: 1px solid #d8d8d4;
+    border-bottom: 0;
+    border-left: 1.5px solid #171717;
+    transform: skewY(-4deg);
+    display: block;
+  }
+  .field-notes .field-notes-route { display: none; }
+  .field-notes .nav-step:nth-of-type(odd) { grid-column: 1; }
+  .field-notes .nav-step:nth-of-type(even) { grid-column: 2; }
+  .field-notes .nav-step:nth-of-type(2) { grid-row: 2; }
+  .field-notes .nav-step:nth-of-type(3) { grid-row: 3; }
+  .field-notes .nav-step:nth-of-type(4) { grid-row: 4; }
+  .field-notes .nav-step:nth-of-type(5) { grid-row: 5; }
+  .field-notes .nav-step:nth-of-type(6) { grid-row: 6; }
+  .field-notes .nav-step:nth-of-type(7) { grid-row: 7; }
+  .field-notes .step-lbl,
+  .field-notes .nav-step:nth-of-type(even) .step-lbl {
+    position: static;
+    padding: 0;
+    background: transparent;
+  }
+  .field-notes .cmp { grid-template-columns: 1fr; }
+  .field-notes .cmp-col,
+  .field-notes .cmp-col + .cmp-col { padding: 26px 0; border-left: 0; }
+  .field-notes .cmp-col + .cmp-col { border-top: 1px solid #d8d8d4; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .field-notes .panel.active { animation: none; }
+}
+</style>
 </head>
 <body>
 <div class="app">
 
 <div style="margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:12px">
   <a href="../" data-i18n-html="back_all" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'">← all explainers</a>
-  <div class="lang-toggle" role="group" aria-label="Language / 言語">
-    <button type="button" class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
-    <button type="button" class="lang-btn" data-lang="ja" onclick="setLang('ja')">日本語</button>
+  <div class="language-picker">
+    <button type="button" class="language-current" id="language-current" aria-haspopup="listbox" aria-expanded="false" aria-controls="language-menu" onclick="toggleLanguageMenu()" onkeydown="handleLanguageKeydown(event)">English</button>
+    <div class="language-menu" id="language-menu" role="listbox" aria-label="language" hidden>
+      <button type="button" class="language-option language-en" role="option" aria-selected="true" data-lang="en" onclick="selectLanguage('en')">English</button>
+      <button type="button" class="language-option language-ja" role="option" aria-selected="false" data-lang="ja" onclick="selectLanguage('ja')">日本語</button>
+      <button type="button" class="language-option language-es" role="option" aria-selected="false" data-lang="es" onclick="selectLanguage('es')">Español</button>
+      <button type="button" class="language-option language-pt-br" role="option" aria-selected="false" data-lang="pt-BR" onclick="selectLanguage('pt-BR')">Português (Brasil)</button>
+      <button type="button" class="language-option language-de" role="option" aria-selected="false" data-lang="de" onclick="selectLanguage('de')">Deutsch</button>
+    </div>
   </div>
 </div>
 <div class="hdr">
   <div class="hdr-tag">dbt 101</div>
-  <h1 data-i18n-html="h1">From stored procedures to dbt</h1>
+  <h1 data-i18n-html="h1">from stored procedures to dbt</h1>
   <p data-i18n-html="intro">An interactive walkthrough: where dbt fits, how it turns stored-procedure SQL into tested, connected models, and what that gives you.</p>
 </div>
 
 <div class="nav">
-  <button class="nav-step active" onclick="go(0)"><span class="step-num">1</span><span class="step-lbl" data-i18n-html="nav1">Before &amp; after</span></button>
-  <button class="nav-step" onclick="go(1)"><span class="step-num">2</span><span class="step-lbl" data-i18n-html="nav2">The full proc</span></button>
-  <button class="nav-step" onclick="go(2)"><span class="step-num">3</span><span class="step-lbl" data-i18n-html="nav3">Breaking it apart</span></button>
-  <button class="nav-step" onclick="go(3)"><span class="step-num">4</span><span class="step-lbl" data-i18n-html="nav4">Where data comes from</span></button>
-  <button class="nav-step" onclick="go(4)"><span class="step-num">5</span><span class="step-lbl" data-i18n-html="nav5">Sources &amp; tests</span></button>
-  <button class="nav-step" onclick="go(5)"><span class="step-num">6</span><span class="step-lbl" data-i18n-html="nav6">What runs &amp; when</span></button>
-  <button class="nav-step" onclick="go(6)"><span class="step-num">7</span><span class="step-lbl" data-i18n-html="nav7">When things break</span></button>
+  <svg class="field-notes-route" viewBox="0 0 1000 52" preserveAspectRatio="none" aria-hidden="true">
+    <path class="route-segment route-1" d="M 70 24 Q 142 17 214 25"/>
+    <path class="route-segment route-2" d="M 214 25 Q 286 32 357 22"/>
+    <path class="route-segment route-3" d="M 357 22 Q 429 14 500 25"/>
+    <path class="route-segment route-4" d="M 500 25 Q 571 34 643 23"/>
+    <path class="route-segment route-5" d="M 643 23 Q 714 16 786 26"/>
+    <path class="route-segment route-6" d="M 786 26 Q 858 32 930 22"/>
+  </svg>
+  <button class="nav-step active" onclick="go(0)"><span class="step-num">1</span><span class="step-lbl" data-i18n-html="nav1">before &amp; after</span></button>
+  <button class="nav-step" onclick="go(1)"><span class="step-num">2</span><span class="step-lbl" data-i18n-html="nav2">the full procedure</span></button>
+  <button class="nav-step" onclick="go(2)"><span class="step-num">3</span><span class="step-lbl" data-i18n-html="nav3">breaking it apart</span></button>
+  <button class="nav-step" onclick="go(3)"><span class="step-num">4</span><span class="step-lbl" data-i18n-html="nav4">where data comes from</span></button>
+  <button class="nav-step" onclick="go(4)"><span class="step-num">5</span><span class="step-lbl" data-i18n-html="nav5">sources &amp; tests</span></button>
+  <button class="nav-step" onclick="go(5)"><span class="step-num">6</span><span class="step-lbl" data-i18n-html="nav6">what runs &amp; when</span></button>
+  <button class="nav-step" onclick="go(6)"><span class="step-num">7</span><span class="step-lbl" data-i18n-html="nav7">when things break</span></button>
 </div>
 
 <!-- TAB 0: BEFORE & AFTER -->
 <div class="panel active" id="p0">
   <div class="hint">
     <span class="hint-icon">🏗️</span>
-    <div data-i18n-html="h_t0">Before any code, here is where dbt fits. On top, a typical stack today: an ETL tool and stored procedures transform data on a server before it lands in the warehouse. Below, the same stack with dbt: raw data lands first, and dbt transforms it <strong>inside</strong> the warehouse, in SQL.</div>
+    <div data-i18n-html="ann_t0">in a typical stack without dbt, an ETL tool and stored procedures transform data on a server before it lands in the warehouse.</div>
   </div>
 
-  <div class="dag-cap" data-i18n-html="cap_t0a">A TYPICAL STACK TODAY</div>
+  <div class="dag-cap" data-i18n-html="cap_t0a">example tech stack <strong>without</strong> dbt</div>
   <div class="dag-wrap">
     <svg viewBox="0 0 860 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:580px">
       <defs><marker id="arrT" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="7" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 3.5 L 0 7 z" fill="#8b949e"/></marker></defs>
@@ -233,11 +1210,12 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
     </svg>
   </div>
 
-  <div class="ann" data-i18n-html="ann_t0">
-    <strong>The thing to notice:</strong> the transformation logic lives in an ETL tool and stored procedures, outside the warehouse, where it is hard to see into, test, and change. That middle box is exactly what dbt reshapes.
+  <div class="hint" style="margin-top:24px">
+    <span class="hint-icon">🏗️</span>
+    <div data-i18n-html="ann_t0ok">in a tech stack with dbt, raw data lands first, and dbt transforms it inside the warehouse.</div>
   </div>
 
-  <div class="dag-cap" style="margin-top:24px" data-i18n-html="cap_t0b">THE SAME STACK, WITH dbt</div>
+  <div class="dag-cap" data-i18n-html="cap_t0b">example tech stack <strong>with</strong> dbt</div>
   <div class="dag-wrap">
     <svg viewBox="0 0 860 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:580px">
       <defs><marker id="arrF" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="7" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 3.5 L 0 7 z" fill="#8b949e"/></marker></defs>
@@ -269,17 +1247,13 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
       <g><rect x="726" y="140" width="120" height="72" rx="6" fill="rgba(63,185,80,.07)" stroke="#3fb950" stroke-width="2"/><text x="786" y="166" fill="#3fb950" font-family="JetBrains Mono,monospace" font-size="11" font-weight="600" text-anchor="middle" data-i18n="s_bitools">BI tools</text><text x="786" y="183" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="10" text-anchor="middle" data-i18n="s_dashboards">dashboards</text><text x="786" y="201" fill="#8b949e" font-family="DM Sans,sans-serif" font-size="9" font-style="italic" text-anchor="middle" data-i18n="s_aiapps">+ AI &amp; apps</text></g>
     </svg>
   </div>
-
-  <div class="ann ok" data-i18n-html="ann_t0ok">
-    <strong>Before and after:</strong> the raw data lands first, and the transform moves inside your cloud warehouse, written in the same SQL but now visible, tested, and documented instead of a black box. The rest of this walkthrough zooms into that dbt box.
-  </div>
 </div>
 
 <!-- TAB 1: FULL STORED PROCEDURE -->
 <div class="panel" id="p1">
   <div class="hint">
     <span class="hint-icon">💡</span>
-    <div data-i18n-html="h_t1">This is a complete stored procedure, the kind you'd find in production today. It builds a customer order summary. <strong>Highlighted lines</strong> are the things that create problems at scale. Read the inline labels, then move to the next tab to see how dbt solves each one.</div>
+    <div data-i18n-html="h_t1">below is an example of a stored procedure. it builds a customer order summary. <strong>highlighted lines</strong> are the things that create problems at scale. read the inline labels, then move to the next tab to see how dbt solves each one.</div>
   </div>
 
   <div class="code-wrap" style="border-color:#f85149">
@@ -355,7 +1329,7 @@ $$ <span style="color:#ff7b72">LANGUAGE</span> plpgsql;</pre>
   </div>
 
   <div class="ann danger" data-i18n-html="ann_t1">
-    <strong>What you're looking at:</strong> One file, 5 logical steps, no visibility into intermediate state, serial execution only, hardcoded schema names, and a full overwrite on every run. It works, until it doesn't. The next tab shows what dbt does differently.
+    this stored procedure has five steps in one file. each step runs in order, schema names are hardcoded, and every run overwrites the full table. if it fails, the temporary tables are gone, so there is no intermediate state to inspect. the next tab shows how dbt handles the same work.
   </div>
 </div>
 
@@ -487,7 +1461,7 @@ $$ <span style="color:#ff7b72">LANGUAGE</span> plpgsql;</pre>
   </div>
 
   <div class="ann danger" data-i18n-html="ann_t2">
-    <strong>The pattern:</strong> Same SQL logic throughout. What dbt changes is the wrapper, <code>CREATE TEMP TABLE</code> becomes a file, <code>raw.x</code> becomes <code>source()</code>, <code>tmp_x</code> becomes <code>ref()</code>. Those three substitutions unlock everything else.
+    the SQL stays the same. dbt changes how each step is represented: <code>CREATE TEMP TABLE</code> becomes a model file, <code>raw.x</code> becomes <code>source()</code>, and <code>tmp_x</code> becomes <code>ref()</code>. these changes let dbt track dependencies, run models separately, and preserve intermediate results.
   </div>
 </div>
 
@@ -495,7 +1469,7 @@ $$ <span style="color:#ff7b72">LANGUAGE</span> plpgsql;</pre>
 <div class="panel" id="p3">
   <div class="hint">
     <span class="hint-icon">📂</span>
-    <div data-i18n-html="h_t3">Before the lineage graph makes sense, it helps to understand what the prefixes mean and how dbt tracks where data enters and flows through the pipeline.</div>
+    <div data-i18n-html="h_t3">the prefixes show where each model sits in the pipeline. they also make the lineage graph easier to read by showing where data enters and how it moves through dbt.</div>
   </div>
 
   <div class="naming-row">
@@ -595,7 +1569,7 @@ $$ <span style="color:#ff7b72">LANGUAGE</span> plpgsql;</pre>
   </div>
 
   <div class="ann" data-i18n-html="ann_t3">
-    <strong>This graph is the stored proc made visible.</strong> The stored procedure had this same structure, it just wasn't visible. You had to read 60 lines of SQL to understand that step 4 depended on steps 2 and 3. dbt makes it explicit, queryable, and documented automatically.
+    the graph shows the structure that was buried in the stored procedure. step 4 depends on steps 2 and 3, but you had to find that relationship by reading 60 lines of SQL. dbt records the dependency through <code>ref()</code>, which makes it visible in the graph and available in generated documentation.
   </div>
 </div>
 
@@ -704,17 +1678,17 @@ $$ <span style="color:#ff7b72">LANGUAGE</span> plpgsql;</pre>
 <div class="panel" id="p6">
   <div class="hint">
     <span class="hint-icon">🔬</span>
-    <div data-i18n-html="h_t6">The stored proc works until it doesn't. When it breaks, the debugging experience is fundamentally different. <strong>Click each scenario</strong> to compare.</div>
+    <div data-i18n-html="h_t6">The stored proc works until it doesn't. When it breaks, dbt leaves you with more to inspect and less to rerun. <strong>Click each scenario</strong> to compare.</div>
   </div>
 
   <div class="debug-scenario">
     <div class="debug-trigger" onclick="toggleDebug(this)"><span class="sname" data-i18n-html="ds1">Pipeline fails at the join step (step 4)</span><span class="chevron">▼</span></div>
     <div class="debug-body">
       <div class="debug-split">
-        <div class="dc"><div class="ch" data-i18n-html="ch_proc">stored procedure</div><p data-i18n-html="dp1a">Step 4 failed. The temp tables from steps 1–3 are gone, they died with the session. Re-run the entire procedure from the top to reproduce the failure. Every debug cycle = full re-run.</p></div>
+        <div class="dc"><div class="ch" data-i18n-html="ch_proc">stored procedure</div><p data-i18n-html="dp1a">Step 4 failed. The temp tables from steps 1–3 died with the session. To reproduce the failure, run the entire procedure again from the top.</p></div>
         <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp1b">Step 4 failed. <code>stg_orders</code> and <code>stg_payments</code> are still in the warehouse. Run <code>dbt run -s int_orders_with_payments</code> to re-execute only that model. Upstream work stays intact.</p></div>
       </div>
-      <div class="debug-note" data-i18n-html="dn1">The difference comes from one thing: dbt models are real tables in your warehouse. Stored proc temp tables aren't. That's the whole game.</div>
+      <div class="debug-note" data-i18n-html="dn1">dbt models remain in your warehouse after a failed run. Stored proc temp tables disappear with the session.</div>
     </div>
   </div>
 
@@ -723,7 +1697,7 @@ $$ <span style="color:#ff7b72">LANGUAGE</span> plpgsql;</pre>
     <div class="debug-body">
       <div class="debug-split">
         <div class="dc"><div class="ch" data-i18n-html="ch_proc">stored procedure</div><p data-i18n-html="dp2a">Fan-out in the join? Bad filter in step 2? You add temp debug tables mid-proc, re-run everything, and manually query each one. Multiple cycles to isolate.</p></div>
-        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp2b">Query <code>stg_orders</code>, how many rows? Query <code>int_orders_with_payments</code>, how many? The difference shows exactly where the fan-out happened. No re-run needed.</p></div>
+        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp2b">Count the rows in <code>stg_orders</code>, then count them in <code>int_orders_with_payments</code>. The difference shows where the fan-out happened. You don't need to rerun either model.</p></div>
       </div>
       <div class="debug-note" data-i18n-html="dn2">Because every intermediate model is a real table, you can bisect a row count problem the same way you'd bisect a bug in code, without re-running anything.</div>
     </div>
@@ -747,7 +1721,7 @@ $$ <span style="color:#ff7b72">LANGUAGE</span> plpgsql;</pre>
         <div class="dc"><div class="ch" data-i18n-html="ch_proc">stored procedure</div><p data-i18n-html="dp4a">Connect to the DB. No intermediate state anywhere. Re-run the full proc to reproduce. Add <code>RAISE NOTICE</code> statements. Re-run again. 45 minutes of archaeology before you even start fixing.</p></div>
         <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp4b">dbt run logs show the exact model that failed and the exact error. Intermediate models are still in the warehouse. Run only the failed model, fix, run downstream only.</p></div>
       </div>
-      <div class="debug-note" data-i18n-html="dn4">This is where the value becomes visceral. The engineer on-call at 3am cares a lot about whether the intermediate state survived.</div>
+      <div class="debug-note" data-i18n-html="dn4">At 3am, saved intermediate tables give the on-call engineer somewhere useful to start.</div>
     </div>
   </div>
 
@@ -756,14 +1730,14 @@ $$ <span style="color:#ff7b72">LANGUAGE</span> plpgsql;</pre>
     <div class="debug-body">
       <div class="debug-split">
         <div class="dc"><div class="ch" data-i18n-html="ch_proc">stored procedure</div><p data-i18n-html="dp5a">Grep the codebase and hope nothing uses <code>tmp_orders</code> in another proc you don't know about. No system-of-record for dependencies.</p></div>
-        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp5b">The lineage graph shows every downstream model that references <code>stg_orders</code>. Click on it in the dbt DAG and see the full impact of any change instantly.</p></div>
+        <div class="dc"><div class="ch">dbt</div><p data-i18n-html="dp5b">The lineage graph lists every downstream model that references <code>stg_orders</code>. Click the model in the dbt DAG to see what a change could affect.</p></div>
       </div>
       <div class="debug-note" data-i18n-html="dn5">A new engineer can answer "what depends on this?" in 5 seconds with the DAG instead of 30 minutes of codebase archaeology.</div>
     </div>
   </div>
 
   <div class="ann ok" data-i18n-html="ann_t6">
-    <strong>The root cause of every dbt debugging advantage:</strong> Intermediate models are real, persistent, queryable tables. Stored proc temp tables aren't. Every other difference flows from that one fact.
+    <strong>The practical difference:</strong> dbt leaves intermediate models in the warehouse as queryable tables. Stored proc temp tables disappear when the session ends.
   </div>
 </div>
 
@@ -806,8 +1780,26 @@ function toggleDebug(t){
 
 /* ---- i18n: language toggle (EN / 日本語) ---- */
 var curLang='en';
-var NAV={en:{back:'← back',next:'next →',done:'done ✓'},ja:{back:'← 戻る',next:'次へ →',done:'完了 ✓'}};
+var NAV={
+  en:{back:'← back',next:'next →',done:'done ✓'},
+  ja:{back:'← 戻る',next:'次へ →',done:'完了 ✓'},
+  es:{back:'← atrás',next:'siguiente →',done:'listo ✓'},
+  'pt-BR':{back:'← voltar',next:'próximo →',done:'pronto ✓'},
+  de:{back:'← zurück',next:'weiter →',done:'fertig ✓'}
+};
+var LANGUAGE_META={
+  en:{label:'English',ink:'#1f5b8f'},
+  ja:{label:'日本語',ink:'#c43b2f'},
+  es:{label:'Español',ink:'#a9432f'},
+  'pt-BR':{label:'Português (Brasil)',ink:'#267044'},
+  de:{label:'Deutsch',ink:'#2f3032'}
+};
 var translations={"ja": {"s_sources": "ソース", "s_etlprocs": "ETL＋プロシージャ", "s_warehouse": "ウェアハウス", "s_reporting": "レポーティング", "s_appdb": "アプリのDB", "s_files": "ファイル", "s_etltool": "ETLツール", "s_plusprocs": "＋ストアドプロシージャ", "s_xformserver": "サーバー上で変換", "s_datawh": "データウェアハウス", "s_olap": "OLAPキューブ", "s_bidash": "BI・ダッシュボード", "s_logichidden": "ロジックはここに隠れている", "s_loadel": "ロード・EL", "s_analytics": "分析", "s_extract": "生データを抽出してロード", "s_loadfirst": "まず生データをロード", "s_cloudwh": "クラウドウェアハウス", "s_landed": "（着地済み）", "s_staging_arr": "ステージング →", "s_intermediate_arr": "中間 →", "s_marts_lc": "マート", "s_mtd": "モデル・テスト・ドキュメント", "s_semantic": "セマンティック", "s_layer": "レイヤー", "s_xforminside": "変換はウェアハウスの中で実行", "s_bitools": "BIツール", "s_dashboards": "ダッシュボード", "s_aiapps": "＋AI・アプリ", "s_STAGING": "ステージング", "s_INTERMEDIATE": "中間", "s_MARTS": "マート", "s_parallel": "すべて並列で実行", "s_waits": "stg_orders と stg_payments を待つ", "s_final": "最終アウトプット", "h1": "ストアドプロシージャから dbt へ", "intro": "インタラクティブな解説です。dbt がどこに収まるのか、ストアドプロシージャの SQL をどうやってテスト済みでつながったモデルに変えるのか、そしてそれで何が手に入るのかを見ていきます。", "nav1": "導入前と導入後", "nav2": "プロシージャ全体", "nav3": "分解する", "nav4": "データの出どころ", "nav5": "ソースとテスト", "nav6": "何がいつ実行されるか", "nav7": "問題が起きたとき", "cap_t0a": "今よくある構成", "cap_t0b": "同じ構成に dbt を組み込むと", "h_t0": "コードを見る前に、まず dbt がどこに収まるのかを押さえましょう。上は、今よくある構成です。ETL ツールとストアドプロシージャが、データがウェアハウスに入る前にサーバー上で変換をかけます。下は、同じ構成に dbt を組み込んだものです。生データがまず入り、dbt はウェアハウスの<strong>中</strong>で、SQL のまま変換します。", "h_t1": "これは本番環境にありそうな、完全なストアドプロシージャです。顧客の注文サマリーを作成します。<strong>ハイライトされた行</strong>が、規模が大きくなると問題になる箇所です。行内のラベルを読んでから、次のタブで dbt がそれぞれをどう解決するか見てみましょう。", "h_t2": "ストアドプロシージャは1つのファイルです。dbt はこれを論理ステップごとに5つのファイルへ分割します。<strong>各ブロックをクリック</strong>すると、そのステップが dbt でどう表現され、何が変わるのかがわかります。", "h_t3": "リネージュ（データの系統）グラフを理解する前に、接頭辞が何を意味するのか、そして dbt がデータの入り口とパイプライン内の流れをどう追跡するのかを押さえておくと役立ちます。", "h_t4": "1つのセットアップで <code>source()</code>・リネージュ・テストが動き出します。生データがどこにあるかを、小さな YAML ファイルに一度だけ書き、その場に<strong>テスト</strong>を添えます。これ以降、プロシージャが読んでいたテーブルは、宣言されテストされた入り口になります。", "h_t5": "ストアドプロシージャは5つのステップをすべて直列で実行します。それしか選べません。dbt は依存関係グラフを読み取り、独立したモデルを複数スレッドで同時に実行します。", "h_t6": "ストアドプロシージャは、壊れるまでは動きます。いざ壊れると、デバッグの体験が根本的に違います。<strong>各シナリオをクリック</strong>して比べてみましょう。", "ann_t0": "<strong>ここで気づいてほしいこと:</strong> 変換のロジックは、ETL ツールとストアドプロシージャの中、つまりウェアハウスの外にあります。そこは中身が見えにくく、テストしづらく、変えづらい場所です。その真ん中の箱こそ、dbt が作り替えるものです。", "ann_t3": "<strong>このグラフは、ストアドプロシージャを目に見えるようにしたものです。</strong> プロシージャにも同じ構造はありました。ただ見えなかっただけです。ステップ4がステップ2と3に依存していると理解するには、60行の SQL を読む必要がありました。dbt はそれを明示的にし、クエリでき、自動でドキュメント化します。", "ann_t5": "<strong>スケールすると:</strong> この例はモデルが5つですが、実際のプロジェクトでは数百に及びます。独立したステージングモデルが40個あるパイプラインでも、スレッドさえ十分あれば、ほぼ1個分の時間で実行が終わります。", "ann_t0ok": "<strong>導入前と導入後:</strong> 生データがまず着地し、変換はクラウドウェアハウスの中へ移ります。同じ SQL で書かれていますが、もうブラックボックスではなく、見えて、テストされ、ドキュメント化されています。この解説の残りでは、その dbt の箱の中を詳しく見ていきます。", "ann_t4": "<strong>これで <code>raw</code> は、定義されテストされたソースになりました。</strong> 次のタブでは、ビルド時に実際に何が実行されるのか、そして dbt がこれらの <code>ref()</code> の依存関係を使って独立したモデルをどう並列実行するのかを見ていきます。", "ann_t6": "<strong>dbt のデバッグ上の強みの、すべての根っこ:</strong> 中間モデルは本物の、残る、クエリできるテーブルです。ストアドプロシージャの一時テーブルはそうではありません。ほかのあらゆる違いは、この1つの事実から生まれます。", "ann_t1": "<strong>今見ているもの:</strong> 1つのファイル、5つの論理ステップ、中間状態は一切見えず、直列実行のみ、スキーマ名は直書き、そして毎回全件を上書き。動くうちはいい。壊れるまでは。次のタブでは dbt が何を変えるのかを見ていきます。", "ann_t2": "<strong>パターン:</strong> 全体を通して SQL のロジックは同じです。dbt が変えるのは外側の入れ物です。<code>CREATE TEMP TABLE</code> はファイルに、<code>raw.x</code> は <code>source()</code> に、<code>tmp_x</code> は <code>ref()</code> になります。この3つの置き換えが、ほかのすべてを解き放ちます。", "wc1": "<strong>変わった点:</strong> SQL のロジックは同じです。<code>CREATE TEMP TABLE</code> はなくなり、テーブルとして作るかビューとして作るかは dbt が設定に基づいて判断します。<code>raw.customers</code> は <code>source('raw','customers')</code> になり、dbt はここが生データの入り口だと理解できます。だからテストをかけ、鮮度を監視し、データが届かなくなればアラートを出せます。でき上がるのは、消えてしまうセッション限りの一時テーブルではなく、ウェアハウスに残る本物の、クエリできるテーブルです。", "wc2": "<strong>変わった点:</strong> ロジックは同じで、独立したファイルになりました。別のチームが売上パイプラインを作っていてきれいな注文データが必要なら、<code>ref('stg_orders')</code> を直接参照します。ストアドプロシージャの世界では、<code>tmp_orders</code> を自分のプロシージャにコピペするしかなく、「有効な注文とは何か」の定義が2か所に増えてしまいます。", "wc3": "<strong>変わった点:</strong> 変換は同じです。3つのステージングモデルはお互いに依存していないので、dbt は3つを同時に実行できます。プロシージャは、単にそういう仕組みだからという理由だけで、これらを1つずつ順番に実行するしかありませんでした。", "wc4": "<strong>変わった点:</strong> <code>tmp_orders</code> と <code>tmp_payments</code> は <code>ref('stg_orders')</code> と <code>ref('stg_payments')</code> になります。この <code>ref()</code> が依存関係を宣言するので、dbt はステージングを先に実行すべきだとわかり、さらに dev・staging・prod のどの環境でも正しいテーブル名を自動で解決します。", "wc5": "<strong>これで5つのステップすべてを見ました。</strong> SQL は実質的に変わっていません。変わったのは構造です。各ステップが独立し、単体で実行でき、中身を確認できます。次のタブでは、命名規則の意味と、dbt がデータの出どころをどう追跡するのかを説明します。", "t_arr1": "<strong style=\"color:#3fb950\">models/staging/stg_customers.sql</strong> になる", "t_arr2": "<strong style=\"color:#3fb950\">models/staging/stg_orders.sql</strong> になる", "t_arr3": "<strong style=\"color:#3fb950\">models/staging/stg_payments.sql</strong> になる", "t_arr4": "<strong style=\"color:#3fb950\">models/intermediate/int_orders_with_payments.sql</strong> になる", "t_arr5": "<strong style=\"color:#3fb950\">models/marts/fct_customer_order_summary.sql</strong> になる", "cmt_hdr": "-- ============================================================\n-- ストアドプロシージャ: build_customer_order_summary\n-- 毎晩実行されます。変更は慎重に。\n-- ============================================================", "cmt_s1": "-- ステップ1: 顧客データを整える", "cmt_s2": "-- ステップ2: 注文データを整える", "cmt_s3": "-- ステップ3: 支払いデータを整える", "cmt_s4": "-- ステップ4: 注文と支払いを結合", "cmt_s5": "-- ステップ5: 最終アウトプット", "cmt_nocreate": "-- CREATE も TEMP もなし。SELECT だけ。", "cmt_matz": "-- マテリアライズの方法（table・incremental・view）は SQL ではなく設定で決める。", "cmt_procend": "-- プロシージャ終了。4つの一時テーブルは自動的に破棄される。\n  -- ステップ5が失敗しても、確認できる中間状態は何も残らない。  <span class=\"in\">⚠ 一からデバッグ</span>", "cmt_sessend": "-- セッション終了。4つの一時テーブルは破棄。確認できるものは何もない。  <span class=\"in\">⚠ 一からデバッグ</span>", "in_full": "⚠ 一時テーブル。セッション終了で消え、失敗しても中身を確認できない", "in_hard1": "⚠ スキーマ名が直書き。名前が変わると気づかないうちに壊れる", "in_same": "⚠ 一時テーブル。同じ問題", "wn_step": "⚡ ステップ2と3を待つ必要があり、並列化できない", "in_over1": "⚠ 毎回全件を上書き。差分更新の選択肢がない", "in_gone": "⚠ 一時テーブル。セッション終了で消える", "in_hard2": "⚠ スキーマ名が直書き", "wn_step2": "⚡ ステップ2と3を待つ必要がある。システムではなく人が管理", "in_over2": "⚠ 毎回全件を上書き", "badge_60": "1ファイル・約60行", "badge_temp": "一時テーブル", "badge_join": "結合ステップ", "badge_over": "全件上書き", "badge_src": "生データを一度だけ定義", "lbl_full": "build_customer_order_summary（ストアドプロシージャ全体）", "nm_stg": "<strong style=\"color:#e6edf3\">ステージング</strong>。ソーステーブル1つにつき1ファイル。整形・リネーム・型変換を行います。生データが入り、使える列が出てきます。ここでは結合はしません。", "nm_int": "<strong style=\"color:#e6edf3\">中間（intermediate）</strong>。最終アウトプットではない結合や変換。マートモデル間で共有する部品です。", "nm_mart": "<strong style=\"color:#e6edf3\">マート</strong>。BI ツールやビジネスユーザーが実際にクエリする層。1つのビジネス上の問いにつき1テーブルです。", "sb1_h": "source() ― 生データの入り口", "sb2_h": "ref() ― モデル同士の依存関係", "sb1_p": "ストアドプロシージャでは <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">raw.customers</code> を直書きしていました。そのスキーマ名が変わると、プロシージャは何も言わずに壊れます。<code>source()</code> はこれらを正式な入り口として登録するので、dbt はテストをかけ、鮮度を確認し、データの不調がダッシュボードの不調になる前にアラートを出せます。", "sb2_p": "すべての <code>ref()</code> が宣言された依存関係です。dbt はそれらをすべて読み取り、実行順序を自動で組み立てます。オーケストレーションのコードを書く必要はありません。<code>ref()</code> の呼び出しそのものがオーケストレーションなのです。", "chip1": "テストを追加: <b>unique</b>", "chip2": "テストを追加: <b>not_null</b>", "chip3": "テストを追加: <b>relationships</b>", "chip4": "テストを追加: <b>accepted_values</b>", "chip5": "パッケージを追加: <b>dbt_expectations</b>", "lg_t": "YAML で宣言したテストは、このグラフのソースとモデルに紐づきます:", "lg_n": "例: キー（<code>order_id</code>, <code>customer_id</code>）に <b style=\"color:#3fb950\">unique</b> ＋ <b style=\"color:#58a6ff\">not_null</b>、注文を顧客に結びつける <b style=\"color:#d2a8ff\">relationships</b>、注文ステータスに <b style=\"color:#d29922\">accepted_values</b>。もっと踏み込んだチェック（行数・範囲・鮮度）には <b style=\"color:#d2a8ff\">dbt_expectations</b> パッケージを追加します。", "y1": "# 生データを宣言し、テストする。", "y2": "# これで source('raw', ...) として使える", "y3": "# データが古くなったら警告", "cmp1_h": "この1ファイルで手に入るもの", "cmp2_h": "同じ考え方を、自分のモデルにも", "cmp1_li1": "<b>名前で参照:</b> <code>raw.orders</code> を直書きする代わりに <code>source('raw','orders')</code> と書きます。", "cmp1_li2": "<b>毎回のビルドで走るテスト:</b> <code>unique</code>・<code>not_null</code>・<code>accepted_values</code>。悪いデータが広がる前に、早い段階で失敗させます。", "cmp1_li3": "<b>ドキュメントと鮮度:</b> description と freshness の設定が、ドキュメントとリネージュに自動で反映されます。", "cmp2_li1": "モデルには、同じ種類のテストを持つ <code>schema.yml</code> を用意します。", "cmp2_li2": "つまりテストは <b>ソースとモデルの両方</b>に、SQL のすぐそばに置かれます。", "cmp2_li3": "すべてコードなので、ほかのものと同じように git でレビューされ、バージョン管理されます。", "pb1_h": "❌ ストアドプロシージャ（直列のみ）", "pb2_h": "✅ dbt（並列・3スレッド）", "bl_s1": "ステップ1", "bl_s2": "ステップ2", "bl_s3": "ステップ3", "bl_s4": "ステップ4", "bl_s5": "ステップ5", "bl_t1": "スレッド1", "bl_t2": "スレッド2", "bl_t3": "スレッド3", "et1": "実行時間: <strong style=\"color:#f85149\">5単位</strong>", "et2": "実行時間: <strong style=\"color:#3fb950\">3単位</strong>", "box_par": "<strong style=\"color:#e6edf3;display:block;margin-bottom:5px\">dbt はなぜ並列化できるとわかるのか？</strong>\n    <code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_customers</code>・<code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_orders</code>・<code style=\"font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px\">stg_payments</code> はどれも <code>source()</code> しか参照しておらず、互いの間に <code>ref()</code> のつながりがありません。dbt はグラフを読み、依存がないと判断し、3つを一度に実行します。タブ2で出てきた <code>ref()</code> の宣言がオーケストレーションそのものであり、これを動かすために追加の設定は一切書いていません。", "ds1": "結合ステップ（ステップ4）でパイプラインが失敗", "ds2": "最終アウトプットの行数がおかしい", "ds3": "上流のスキーマ変更 ― 列名が変わった", "ds4": "深夜3時、オンコールのアラートが鳴る", "ds5": "ほかに注文データへ依存しているものは？", "ch_proc": "ストアドプロシージャ", "dp1a": "ステップ4が失敗。ステップ1〜3の一時テーブルは、セッションと一緒に消えています。失敗を再現するには、プロシージャを最初から丸ごと再実行するしかありません。デバッグのたびに全体を再実行です。", "dp1b": "ステップ4が失敗。<code>stg_orders</code> と <code>stg_payments</code> はウェアハウスに残っています。<code>dbt run -s int_orders_with_payments</code> を実行すれば、そのモデルだけを再実行できます。上流の成果はそのまま残ります。", "dp2a": "結合でファンアウト？ ステップ2のフィルターが悪い？ プロシージャの途中にデバッグ用の一時テーブルを足し、全体を再実行して、1つずつ手でクエリします。原因を切り分けるのに何度も繰り返します。", "dp2b": "<code>stg_orders</code> をクエリして行数は？ <code>int_orders_with_payments</code> をクエリして行数は？ その差が、ファンアウトの発生場所をぴたりと示します。再実行は不要です。", "dp3a": "プロシージャは何も言わずに NULL を返すか、エラーを投げます。気づくのは BI ダッシュボードが壊れたときです。どの一時テーブルが影響を受けたのか、プロシージャをさかのぼって探します。", "dp3b": "<code>raw.payments</code> に触れるモデルは <code>stg_payments</code> だけです。そこを直せば、下流のモデルは次の実行ですべて自動的に修正が反映されます。修正箇所は5つではなく1つです。", "dp4a": "DB に接続。中間状態はどこにもなし。再現のためプロシージャを丸ごと再実行。<code>RAISE NOTICE</code> を仕込む。もう一度再実行。修正に取りかかる前に、45分の発掘作業です。", "dp4b": "dbt の実行ログには、失敗したモデルとエラーが正確に出ます。中間モデルはウェアハウスに残っています。失敗したモデルだけを実行し、直して、下流だけを実行します。", "dp5a": "コードベースを grep して、自分の知らない別のプロシージャが <code>tmp_orders</code> を使っていないことを祈ります。依存関係の正式な記録はどこにもありません。", "dp5b": "リネージュグラフが、<code>stg_orders</code> を参照する下流モデルをすべて表示します。dbt の DAG 上でクリックすれば、変更の影響範囲がその場で全部わかります。", "dn1": "違いはただ1点です。dbt のモデルはウェアハウス上の本物のテーブルで、ストアドプロシージャの一時テーブルはそうではありません。要はそれがすべてです。", "dn2": "中間モデルがどれも本物のテーブルなので、行数の問題も、コードのバグを二分探索するのと同じ要領で、何も再実行せずに切り分けられます。", "dn3": "<code>stg_</code> の層が隔離の境界になります。生データのスキーマ変更が影響するのは1ファイル、そのソースのステージングモデルだけです。", "dn4": "ここで価値が身にしみます。深夜3時にオンコール対応するエンジニアにとって、中間状態が残っているかどうかは大きな問題です。", "dn5": "新しく入ったエンジニアも、「これに依存しているのは何か」を、コードベースを30分掘り返す代わりに、DAG で5秒で答えられます。", "gh_src": "GitHub でソースを見る", "back_all": "← すべての解説へ"}};
+if(window.additionalTranslations){
+  Object.keys(window.additionalTranslations).forEach(function(lang){
+    translations[lang]=window.additionalTranslations[lang];
+  });
+}
 function navText(){
   var p=document.getElementById('btn-prev'),nx=document.getElementById('btn-next');
   if(p)p.textContent=NAV[curLang].back;
@@ -817,7 +1809,53 @@ function cacheEn(){
   document.querySelectorAll('[data-i18n]').forEach(function(el){el.dataset.en=el.textContent;});
   document.querySelectorAll('[data-i18n-html]').forEach(function(el){el.dataset.enHtml=el.innerHTML;});
 }
+function closeLanguageMenu(returnFocus){
+  var menu=document.getElementById('language-menu');
+  var button=document.getElementById('language-current');
+  if(!menu||!button)return;
+  menu.hidden=true;
+  button.setAttribute('aria-expanded','false');
+  if(returnFocus)button.focus();
+}
+function toggleLanguageMenu(){
+  var menu=document.getElementById('language-menu');
+  var button=document.getElementById('language-current');
+  var opening=menu.hidden;
+  menu.hidden=!opening;
+  button.setAttribute('aria-expanded',String(opening));
+  if(opening){
+    var selected=menu.querySelector('[aria-selected="true"]');
+    if(selected)selected.focus();
+  }
+}
+function selectLanguage(lang){
+  if(!LANGUAGE_META[lang])return;
+  setLang(lang);
+  closeLanguageMenu(true);
+}
+function handleLanguageKeydown(event){
+  var menu=document.getElementById('language-menu');
+  var options=Array.prototype.slice.call(document.querySelectorAll('.language-option'));
+  if(event.key==='Escape'){
+    event.preventDefault();
+    closeLanguageMenu(true);
+    return;
+  }
+  if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+    event.preventDefault();
+    if(menu.hidden){toggleLanguageMenu();return;}
+    var index=options.indexOf(document.activeElement);
+    var delta=event.key==='ArrowDown'?1:-1;
+    options[(index+delta+options.length)%options.length].focus();
+    return;
+  }
+  if((event.key==='Enter'||event.key===' ')&&document.activeElement.classList.contains('language-option')){
+    event.preventDefault();
+    selectLanguage(document.activeElement.getAttribute('data-lang'));
+  }
+}
 function setLang(lang){
+  if(!LANGUAGE_META[lang])lang='en';
   curLang=lang;
   var dict=translations[lang]||{};
   document.querySelectorAll('[data-i18n]').forEach(function(el){
@@ -831,15 +1869,97 @@ function setLang(lang){
     else if(dict[k]!==undefined){el.innerHTML=dict[k];}
   });
   document.documentElement.lang=lang;
-  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-lang')===lang);});
+  var current=document.getElementById('language-current');
+  if(current){
+    current.textContent=LANGUAGE_META[lang].label;
+    current.style.setProperty('--language-ink',LANGUAGE_META[lang].ink);
+  }
+  document.querySelectorAll('.language-option').forEach(function(option){
+    option.setAttribute('aria-selected',String(option.getAttribute('data-lang')===lang));
+  });
   navText();
   try{localStorage.setItem('lang',lang);}catch(e){}
 }
 cacheEn();
+document.addEventListener('keydown',function(event){
+  if(!document.getElementById('language-menu').hidden)handleLanguageKeydown(event);
+});
+document.addEventListener('click',function(event){
+  var picker=document.querySelector('.language-picker');
+  if(picker&&!picker.contains(event.target))closeLanguageMenu(false);
+});
 (function(){
   var saved=null;try{saved=localStorage.getItem('lang');}catch(e){}
-  var initial=saved||(((navigator.language||navigator.userLanguage||'').toLowerCase().indexOf('ja')===0)?'ja':'en');
+  var locale=(navigator.language||navigator.userLanguage||'').toLowerCase();
+  var detected=locale.indexOf('ja')===0?'ja':locale.indexOf('es')===0?'es':locale.indexOf('pt')===0?'pt-BR':locale.indexOf('de')===0?'de':'en';
+  var initial=LANGUAGE_META[saved]?saved:detected;
   setLang(initial);
+})();
+</script>
+<script id="dbt-editor-renderer">
+(function(){
+  var originalPreviewSetLang = setLang;
+  var initialPreviewLang = curLang;
+  var editorSources = {en: [], ja: []};
+
+  function collectEditorSources(lang){
+    originalPreviewSetLang(lang);
+    editorSources[lang] = Array.prototype.map.call(
+      document.querySelectorAll('.code-body pre, .dbt-reveal pre'),
+      function(pre){ return pre.textContent.replace(/\n$/, ''); }
+    );
+  }
+
+  collectEditorSources('en');
+  collectEditorSources('ja');
+  originalPreviewSetLang(initialPreviewLang);
+
+  function escapeEditorText(value){
+    return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function highlightEditorLine(line){
+    var tokenPattern = /(--.*$|'(?:''|[^'])*'|\{\{|\}\}|\{%|%\}|\b(?:source|ref|config|var)\b(?=\s*\()|\b(?:select|from|where|with|as|join|left|right|inner|outer|on|and|or|case|when|then|else|end|group|by|order|having|union|all|distinct|create|table|temp|temporary|drop|insert|into|update|delete|merge|over|partition|qualify|null|is|not|in|exists|cast|coalesce|sum|count|avg|min|max)\b)/gi;
+    var output = '';
+    var cursor = 0;
+    line.replace(tokenPattern, function(token, _match, offset){
+      output += escapeEditorText(line.slice(cursor, offset));
+      var className = 'tok-keyword';
+      if(token.indexOf('--') === 0) className = 'tok-comment';
+      else if(token.charAt(0) === "'") className = 'tok-string';
+      else if(token === '{{' || token === '}}' || token === '{%' || token === '%}') className = 'tok-jinja';
+      else if(/^(source|ref|config|var)$/i.test(token)) className = 'tok-function';
+      output += '<span class="' + className + '">' + escapeEditorText(token) + '</span>';
+      cursor = offset + token.length;
+      return token;
+    });
+    output += escapeEditorText(line.slice(cursor));
+    return output || '&nbsp;';
+  }
+
+  function commentProblemDescription(line){
+    return line.replace(/\s+[⚠⚡]\s*/, '  -- ');
+  }
+
+  function renderDbtEditors(){
+    var languageSources = editorSources[curLang] || editorSources.en;
+    document.querySelectorAll('.code-body pre, .dbt-reveal pre').forEach(function(pre, index){
+      var source = languageSources[index] || pre.textContent;
+      pre.classList.add('editor-rendered');
+      pre.innerHTML = source.split('\n').map(function(line, lineIndex){
+        var problem = /⚠|⚡|hardcoded|temp table/i.test(line) ? ' is-problem' : '';
+        var displayLine = problem ? commentProblemDescription(line) : line;
+        return '<span class="editor-line' + problem + '"><span class="editor-gutter">' + (lineIndex + 1) + '</span><span class="editor-code">' + highlightEditorLine(displayLine) + '</span></span>';
+      }).join('');
+    });
+  }
+
+  setLang = function(lang){
+    originalPreviewSetLang(lang);
+    renderDbtEditors();
+  };
+
+  renderDbtEditors();
 })();
 </script>
 </body>
