@@ -386,188 +386,195 @@
   .foot a{color:var(--faint);text-decoration:none;display:inline-flex;align-items:center;gap:7px}
   .foot a:hover{color:var(--ink-2)}
 </style>
+<style>
+  .lang-toggle{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px;gap:2px;flex-shrink:0}
+  .lang-btn{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--muted);background:transparent;border:none;border-radius:99px;padding:5px 12px;cursor:pointer;transition:all .2s;line-height:1}
+  .lang-btn:hover{color:var(--ink)}
+  .lang-btn.active{background:var(--dbt);color:#fff}
+  :lang(ja) .code pre,:lang(ja) .prompt{white-space:pre-wrap}
+</style>
 </head>
 <body>
 <div class="wrap">
-  <div class="topbar"><a class="back" href="../">← all explainers</a></div>
+  <div class="topbar" style="display:flex;justify-content:space-between;align-items:center;gap:12px"><a class="back" href="../" data-i18n="back_all">← all explainers</a><div class="lang-toggle" role="group" aria-label="Language / 言語"><button type="button" class="lang-btn active" data-lang="en" onclick="setLangW('en')">EN</button><button type="button" class="lang-btn" data-lang="ja" onclick="setLangW('ja')">日本語</button></div></div>
 
 <section class="panel" data-c="wiz" id="p1">
     <header class="phead">
-      <div class="kicker"><span class="rule"></span><span>dbt's AI agent</span></div>
-      <h1>dbt <span class="kc">Wizard</span>, explained</h1>
+      <div class="kicker"><span class="rule"></span><span data-i18n="kicker">dbt's AI agent</span></div>
+      <h1 data-i18n-html="h1">dbt <span class="kc">Wizard</span>, explained</h1>
       <div class="tldr">
         <div class="tag">TL;DR</div>
-        <p><b>dbt Wizard is dbt's AI agent that knows your project natively</b>: its models, tests, lineage, and metrics. So it answers from your certified definitions instead of guessing. And it does not stop at the answer. <b>You give it intent, and it does the work and verifies it</b> before you ever see it.</p>
+        <p data-i18n-html="tldr"><b>dbt Wizard is dbt's AI agent that knows your project natively</b>: its models, tests, lineage, and metrics. So it answers from your certified definitions instead of guessing. And it does not stop at the answer. <b>You give it intent, and it does the work and verifies it</b> before you ever see it.</p>
       </div>
-      <p class="lede">Think of your dbt project as a library. An AI can read every book on every shelf faster than any person ever could. But reading fast was never the hard part.</p>
-      <p class="lede">The hard part is trust and action: knowing which of two disagreeing books is right, and then actually doing something with the answer. Having every shelf in reach <span class="hl">does not tell you which one holds the truth, and it never does the work for you</span>.</p>
-      <p class="lede pivot"><em>dbt Wizard</em> is the librarian. It knows the catalog, checks its own answers at the reference desk, and acts on what you ask: <em>from question and answer, to intent and action.</em></p>
+      <p class="lede" data-i18n="lede1">Think of your dbt project as a library. An AI can read every book on every shelf faster than any person ever could. But reading fast was never the hard part.</p>
+      <p class="lede" data-i18n-html="lede2">The hard part is trust and action: knowing which of two disagreeing books is right, and then actually doing something with the answer. Having every shelf in reach <span class="hl">does not tell you which one holds the truth, and it never does the work for you</span>.</p>
+      <p class="lede pivot" data-i18n-html="lede_pivot"><em>dbt Wizard</em> is the librarian. It knows the catalog, checks its own answers at the reference desk, and acts on what you ask: <em>from question and answer, to intent and action.</em></p>
     </header>
 
     <section class="lvl reveal">
-      <div class="eyebrow">THE PROBLEM</div>
-      <div class="lvl-head"><div class="lvl-titles"><div class="lvl-name">Two things were always hard</div><div class="lvl-sum">Trusting the number, and getting started.</div></div></div>
+      <div class="eyebrow" data-i18n="eb_problem">THE PROBLEM</div>
+      <div class="lvl-head"><div class="lvl-titles"><div class="lvl-name" data-i18n="p1_name">Two things were always hard</div><div class="lvl-sum" data-i18n="p1_sum">Trusting the number, and getting started.</div></div></div>
       <div class="probs">
         <div class="prob">
-          <div class="prob-h">01 · trusting the number</div>
-          <div class="prob-viz trust"><span class="big">$11.4M</span><span class="q">&#9888; is this right?</span></div>
-          <div class="prob-cap">AI made this scarier, not safer. A confident, wrong number still reaches the stakeholder.</div>
+          <div class="prob-h" data-i18n="prob1_h">01 · trusting the number</div>
+          <div class="prob-viz trust"><span class="big">$11.4M</span><span class="q" data-i18n-html="prob1_q">&#9888; is this right?</span></div>
+          <div class="prob-cap" data-i18n="prob1_cap">AI made this scarier, not safer. A confident, wrong number still reaches the stakeholder.</div>
         </div>
         <div class="prob">
-          <div class="prob-h">02 · getting started</div>
-          <div class="prob-viz start"><div class="editor"><span class="ln"></span><span class="ln short"></span><span class="ln cur"></span></div><span class="q">where do I even begin?</span></div>
-          <div class="prob-cap">Powerful once it runs, hard to get going. AI can help, if it actually knows your project.</div>
+          <div class="prob-h" data-i18n="prob2_h">02 · getting started</div>
+          <div class="prob-viz start"><div class="editor"><span class="ln"></span><span class="ln short"></span><span class="ln cur"></span></div><span class="q" data-i18n="prob2_q">where do I even begin?</span></div>
+          <div class="prob-cap" data-i18n="prob2_cap">Powerful once it runs, hard to get going. AI can help, if it actually knows your project.</div>
         </div>
       </div>
-      <p class="bridge">dbt Wizard is built for both: an AI agent that knows your project natively, the way a senior teammate would, and checks its own work. To see how, here is the whole idea as <em>a library</em>.</p>
+      <p class="bridge" data-i18n-html="bridge">dbt Wizard is built for both: an AI agent that knows your project natively, the way a senior teammate would, and checks its own work. To see how, here is the whole idea as <em>a library</em>.</p>
     </section>
 
     <section class="lvl reveal">
-      <div class="eyebrow">WITH ONLY YOUR PROJECT</div>
+      <div class="eyebrow" data-i18n="eb_only">WITH ONLY YOUR PROJECT</div>
       <div class="rail" data-level="0"></div>
       <div class="lvl-head">
         <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="5" x2="5" y2="19"/><line x1="8.5" y1="5" x2="8.5" y2="19"/><path d="M12 5.4l3.4-.6 3.6 13.4-3.4.6z"/><line x1="3.2" y1="20.4" x2="20.8" y2="20.4"/></svg>
-        <div class="lvl-titles"><div class="lvl-name">The books</div><div class="lvl-sum">Access to everything is not an answer.</div></div>
+        <div class="lvl-titles"><div class="lvl-name" data-i18n="l2_name">The books</div><div class="lvl-sum" data-i18n="l2_sum">Access to everything is not an answer.</div></div>
       </div>
       <div class="demo" data-tone="warn">
-        <div class="demo-head"><span class="dot"></span><span>agent · reading raw files</span></div>
+        <div class="demo-head"><span class="dot"></span><span data-i18n="dh_reading">agent · reading raw files</span></div>
         <div class="demo-body chat">
-          <div class="q">What was revenue by region last quarter?</div>
+          <div class="q" data-i18n="q_rev">What was revenue by region last quarter?</div>
           <div class="a">
-            <span class="proc">$ grep -ri "revenue" models/ <span class="c">· no catalog, just search the files</span></span>
-            <span class="proc warn">&#9888; 14 matches across 9 models · grain unclear · guessing one row per order</span>
-            <span class="ans">My best guess is around <b>$11.4M</b>, but I cannot tell which model is the source of truth, and this may double-count refunds.</span>
-            <span class="res warn">&#8776; $11.4M &nbsp;·&nbsp; unverified</span>
+            <span class="proc" data-i18n-html="proc_grep">$ grep -ri "revenue" models/ <span class="c">· no catalog, just search the files</span></span>
+            <span class="proc warn" data-i18n-html="proc_warn1">&#9888; 14 matches across 9 models · grain unclear · guessing one row per order</span>
+            <span class="ans" data-i18n-html="ans_guess">My best guess is around <b>$11.4M</b>, but I cannot tell which model is the source of truth, and this may double-count refunds.</span>
+            <span class="res warn" data-i18n-html="res_unv">&#8776; $11.4M &nbsp;·&nbsp; unverified</span>
           </div>
         </div>
       </div>
-      <div class="lib"><div class="label">IN THE LIBRARY</div><p><b>This is the library before anyone organized it.</b> An AI can read every shelf far faster than a human, so access was never the problem. But access is not an answer. Having every book in reach does not mean you can find the right one quickly, or know which of two disagreeing books to trust. As agents start acting on what they read, that gap between a question and a trustworthy answer is the real cost.</p></div>
-      <div class="missing"><b>Missing</b><span>A fast path from a question to the right answer, not just access to all of it.</span></div>
+      <div class="lib"><div class="label" data-i18n="lib_label">IN THE LIBRARY</div><p data-i18n-html="lib_p1"><b>This is the library before anyone organized it.</b> An AI can read every shelf far faster than a human, so access was never the problem. But access is not an answer. Having every book in reach does not mean you can find the right one quickly, or know which of two disagreeing books to trust. As agents start acting on what they read, that gap between a question and a trustworthy answer is the real cost.</p></div>
+      <div class="missing"><b data-i18n="lib_missing">Missing</b><span data-i18n="miss1">A fast path from a question to the right answer, not just access to all of it.</span></div>
     </section>
 
     <section class="lvl reveal">
-      <div class="eyebrow">ADD THE CARD CATALOG</div>
+      <div class="eyebrow" data-i18n="eb_catalog">ADD THE CARD CATALOG</div>
       <div class="rail" data-level="1"></div>
       <div class="lvl-head">
         <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4" width="17" height="16" rx="1.4"/><line x1="3.5" y1="9.3" x2="20.5" y2="9.3"/><line x1="3.5" y1="14.6" x2="20.5" y2="14.6"/><circle cx="12" cy="6.6" r=".7" fill="currentColor"/><circle cx="12" cy="11.9" r=".7" fill="currentColor"/><circle cx="12" cy="17.2" r=".7" fill="currentColor"/></svg>
-        <div class="lvl-titles"><div class="lvl-name">The index</div><div class="lvl-sum">Faster to an answer, not a trusted one.</div></div>
+        <div class="lvl-titles"><div class="lvl-name" data-i18n="l3_name">The index</div><div class="lvl-sum" data-i18n="l3_sum">Faster to an answer, not a trusted one.</div></div>
       </div>
       <div class="demo" data-tone="ai">
-        <div class="demo-head"><span class="dot"></span><span>agent · querying the index</span></div>
+        <div class="demo-head"><span class="dot"></span><span data-i18n="dh_index">agent · querying the index</span></div>
         <div class="demo-body chat">
-          <div class="q">What was revenue by region last quarter?</div>
+          <div class="q" data-i18n="q_rev">What was revenue by region last quarter?</div>
           <div class="a">
             <span class="proc"><span class="ar">&#8594;</span>index.search("revenue") · index.lineage("revenue")</span>
-            <span class="proc">&#8592; metric:revenue on fct_orders <span class="c">(grain: order_id, refunds excluded)</span></span>
-            <span class="ans">Revenue was <b>$12.0M</b> last quarter. By region: North $4.2M, West $3.1M, South $2.8M, East $1.9M.</span>
+            <span class="proc" data-i18n-html="proc_metric">&#8592; metric:revenue on fct_orders <span class="c">(grain: order_id, refunds excluded)</span></span>
+            <span class="ans" data-i18n-html="ans_region1">Revenue was <b>$12.0M</b> last quarter. By region: North $4.2M, West $3.1M, South $2.8M, East $1.9M.</span>
           </div>
         </div>
       </div>
-      <div class="lib"><div class="label">IN THE LIBRARY</div><p><b>Now the library has a card catalog.</b> Every book gets a card with its subject, its shelf, and what it references, so the agent skips the wandering and answers faster. But a catalog only points. It does not proofread, it does not compare one source against another, and it never tells you which answer is right. So you get there quicker, then spend the time you saved checking the work yourself.</p></div>
-      <div class="missing"><b>Missing</b><span>Someone to confirm the answer is right, so you are not the proofreader.</span></div>
+      <div class="lib"><div class="label" data-i18n="lib_label">IN THE LIBRARY</div><p data-i18n-html="lib_p2"><b>Now the library has a card catalog.</b> Every book gets a card with its subject, its shelf, and what it references, so the agent skips the wandering and answers faster. But a catalog only points. It does not proofread, it does not compare one source against another, and it never tells you which answer is right. So you get there quicker, then spend the time you saved checking the work yourself.</p></div>
+      <div class="missing"><b data-i18n="lib_missing">Missing</b><span data-i18n="miss2">Someone to confirm the answer is right, so you are not the proofreader.</span></div>
     </section>
 
     <section class="lvl reveal">
-      <div class="eyebrow">ADD THE REFERENCE DESK</div>
+      <div class="eyebrow" data-i18n="eb_desk">ADD THE REFERENCE DESK</div>
       <div class="rail" data-level="2"></div>
       <div class="lvl-head">
         <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12.2l2.3 2.3 4.7-4.9"/></svg>
-        <div class="lvl-titles"><div class="lvl-name">The reasoning &amp; trust layer</div><div class="lvl-sum">Now you can trust the answer.</div></div>
+        <div class="lvl-titles"><div class="lvl-name" data-i18n="l4_name">The reasoning &amp; trust layer</div><div class="lvl-sum" data-i18n="l4_sum">Now you can trust the answer.</div></div>
       </div>
       <div class="demo" data-tone="ok">
-        <div class="demo-head"><span class="dot"></span><span>agent · trust layer</span></div>
+        <div class="demo-head"><span class="dot"></span><span data-i18n="dh_trust">agent · trust layer</span></div>
         <div class="demo-body chat">
-          <div class="q">What was revenue by region last quarter?</div>
+          <div class="q" data-i18n="q_rev">What was revenue by region last quarter?</div>
           <div class="a">
-            <span class="proc"><span class="ar">&#8594;</span>resolved via the catalog, then verified against the certified definition</span>
-            <span class="ans">Revenue was <b>$12.0M</b> last quarter. North $4.2M, West $3.1M, South $2.8M, East $1.9M.</span>
-            <span class="res ok">&#10003; verified <span class="meta" style="display:block;margin-top:6px;font-size:9.5px;color:var(--muted)">confidence high &nbsp;·&nbsp; source: metric:revenue@v3 &nbsp;·&nbsp; matches BI &nbsp;·&nbsp; logged</span></span>
+            <span class="proc" data-i18n-html="proc_resolved"><span class="ar">&#8594;</span>resolved via the catalog, then verified against the certified definition</span>
+            <span class="ans" data-i18n-html="ans_region2">Revenue was <b>$12.0M</b> last quarter. North $4.2M, West $3.1M, South $2.8M, East $1.9M.</span>
+            <span class="res ok" data-i18n-html="res_ver">&#10003; verified <span class="meta" style="display:block;margin-top:6px;font-size:9.5px;color:var(--muted)">confidence high &nbsp;·&nbsp; source: metric:revenue@v3 &nbsp;·&nbsp; matches BI &nbsp;·&nbsp; logged</span></span>
           </div>
         </div>
       </div>
-      <div class="lib"><div class="label">IN THE LIBRARY</div><p><b>Now there is a reference desk.</b> Hand over any answer and it is checked against the catalog, scored for confidence, and stamped with its source, so you can finally trust what you carry out. But you are still the one asking and fetching. This is the search-engine model we have lived in for years: books, then Google, then AI to help us find the answer, and then we go act on it. In an era where agents act for us, being the one who still does the acting is what leaves you behind.</p></div>
-      <div class="missing"><b>Missing</b><span>The library still only finds. You are still the one who acts.</span></div>
+      <div class="lib"><div class="label" data-i18n="lib_label">IN THE LIBRARY</div><p data-i18n-html="lib_p3"><b>Now there is a reference desk.</b> Hand over any answer and it is checked against the catalog, scored for confidence, and stamped with its source, so you can finally trust what you carry out. But you are still the one asking and fetching. This is the search-engine model we have lived in for years: books, then Google, then AI to help us find the answer, and then we go act on it. In an era where agents act for us, being the one who still does the acting is what leaves you behind.</p></div>
+      <div class="missing"><b data-i18n="lib_missing">Missing</b><span data-i18n="miss3">The library still only finds. You are still the one who acts.</span></div>
     </section>
 
     <section class="lvl reveal">
-      <div class="eyebrow">ADD THE LIBRARIAN</div>
+      <div class="eyebrow" data-i18n="eb_librarian">ADD THE LIBRARIAN</div>
       <div class="rail" data-level="3"></div>
       <div class="lvl-head">
         <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3.2"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>
-        <div class="lvl-titles"><div class="lvl-name">dbt Wizard</div><div class="lvl-sum">You give intent. It acts.</div></div>
+        <div class="lvl-titles"><div class="lvl-name">dbt Wizard</div><div class="lvl-sum" data-i18n="l5_sum">You give intent. It acts.</div></div>
       </div>
       <div class="demo" data-tone="ult">
         <div class="demo-head"><span class="dot"></span><span>dbt Wizard</span></div>
         <div class="demo-body chat">
-          <div class="q">What was revenue by region last quarter? And save it as a model.</div>
-          <div class="a"><b>$12.0M last quarter.</b> North led at $4.2M, then West ($3.1M), South ($2.8M), and East ($1.9M). Pulled from the certified revenue metric, refunds excluded.</div>
-          <div class="a act">Created <b>fct_revenue_by_region</b> · compiled · 4 tests passed &#10003; · ready for your review</div>
+          <div class="q" data-i18n="q_rev_save">What was revenue by region last quarter? And save it as a model.</div>
+          <div class="a" data-i18n-html="ans_wizard"><b>$12.0M last quarter.</b> North led at $4.2M, then West ($3.1M), South ($2.8M), and East ($1.9M). Pulled from the certified revenue metric, refunds excluded.</div>
+          <div class="a act" data-i18n-html="act_created">Created <b>fct_revenue_by_region</b> · compiled · 4 tests passed &#10003; · ready for your review</div>
         </div>
       </div>
-      <div class="lib"><div class="label">IN THE LIBRARY</div><p><b>Now the librarian works for you.</b> You say what you want, and it does the lookup, checks the answer at the desk, and then takes the action and iterates, instead of handing you a stack to work through yourself. That is the shift this whole page builds to: the first three layers close the gap between a question and an answer; the librarian closes the gap between your intent and the action. You describe what you need, and the work comes back done and verified.</p></div>
-      <blockquote class="anchor" style="border-color:var(--shu)">The shift: from question and answer, to intent and action.</blockquote>
+      <div class="lib"><div class="label" data-i18n="lib_label">IN THE LIBRARY</div><p data-i18n-html="lib_p4"><b>Now the librarian works for you.</b> You say what you want, and it does the lookup, checks the answer at the desk, and then takes the action and iterates, instead of handing you a stack to work through yourself. That is the shift this whole page builds to: the first three layers close the gap between a question and an answer; the librarian closes the gap between your intent and the action. You describe what you need, and the work comes back done and verified.</p></div>
+      <blockquote class="anchor" style="border-color:var(--shu)" data-i18n="anchor5">The shift: from question and answer, to intent and action.</blockquote>
     </section>
 
     <section class="lvl reveal">
-      <div class="eyebrow">THE OLD AI WORKAROUND</div>
-      <div class="lvl-head"><div class="lvl-titles"><div class="lvl-name">Copy, paste, and hope</div><div class="lvl-sum">Your project's context never makes the trip.</div></div></div>
+      <div class="eyebrow" data-i18n="eb_workaround">THE OLD AI WORKAROUND</div>
+      <div class="lvl-head"><div class="lvl-titles"><div class="lvl-name" data-i18n="l6_name">Copy, paste, and hope</div><div class="lvl-sum" data-i18n="l6_sum">Your project's context never makes the trip.</div></div></div>
       <div class="flow">
-        <div class="fbox">your dbt<br>project</div>
-        <div class="farr">copy &#9656;</div>
-        <div class="fbox blind">generic LLM<span class="bt">&#10007; lineage&nbsp;&nbsp;&#10007; tests&nbsp;&nbsp;&#10007; metrics</span></div>
-        <div class="farr">&#9666; paste</div>
-        <div class="fbox warnbox">looks plausible?<br><b>you verify by hand</b></div>
+        <div class="fbox" data-i18n-html="fbox_proj">your dbt<br>project</div>
+        <div class="farr" data-i18n-html="farr_copy">copy &#9656;</div>
+        <div class="fbox blind" data-i18n-html="fbox_llm">generic LLM<span class="bt">&#10007; lineage&nbsp;&nbsp;&#10007; tests&nbsp;&nbsp;&#10007; metrics</span></div>
+        <div class="farr" data-i18n-html="farr_paste">&#9666; paste</div>
+        <div class="fbox warnbox" data-i18n-html="fbox_verify">looks plausible?<br><b>you verify by hand</b></div>
       </div>
-      <p class="cap">The moment your code leaves the project, the context is gone. You get something that looks right, and the checking lands back on you.</p>
+      <p class="cap" data-i18n="cap6">The moment your code leaves the project, the context is gone. You get something that looks right, and the checking lands back on you.</p>
     </section>
 
     <section class="lvl reveal">
-      <div class="eyebrow">WHAT DBT WIZARD DOES</div>
-      <div class="lvl-head"><div class="lvl-titles"><div class="lvl-name">The agent lives in your project</div><div class="lvl-sum">Your personal dbt agent, wherever you work.</div></div></div>
+      <div class="eyebrow" data-i18n="eb_does">WHAT DBT WIZARD DOES</div>
+      <div class="lvl-head"><div class="lvl-titles"><div class="lvl-name" data-i18n="l7_name">The agent lives in your project</div><div class="lvl-sum" data-i18n="l7_sum">Your personal dbt agent, wherever you work.</div></div></div>
       <div class="loop-box">
-        <div class="loop-title">&#8635; your dbt project + dbt Wizard</div>
+        <div class="loop-title" data-i18n-html="loop_title">&#8635; your dbt project + dbt Wizard</div>
         <div class="loop-tags">
-          <span>&#10003; reads your lineage, tests, and metrics</span>
-          <span>&#10003; makes the change across every file</span>
-          <span>&#10003; validates before you ever see it</span>
+          <span data-i18n-html="loop1">&#10003; reads your lineage, tests, and metrics</span>
+          <span data-i18n-html="loop2">&#10003; makes the change across every file</span>
+          <span data-i18n-html="loop3">&#10003; validates before you ever see it</span>
         </div>
       </div>
       <div class="solves">
-        <div class="solve"><span class="chk">&#10003;</span> Trust the number</div>
-        <div class="solve"><span class="chk">&#10003;</span> No copy-paste, full context</div>
+        <div class="solve" data-i18n-html="solve1"><span class="chk">&#10003;</span> Trust the number</div>
+        <div class="solve" data-i18n-html="solve2"><span class="chk">&#10003;</span> No copy-paste, full context</div>
       </div>
     </section>
 
     <section class="lvl reveal">
-      <div class="eyebrow">UNDER THE HOOD</div>
-      <div class="lvl-head"><div class="lvl-titles"><div class="lvl-name">Where Wizard is genuinely different</div><div class="lvl-sum">Not "an agent could do that too" — the parts a generic agent doesn't have for free.</div></div></div>
+      <div class="eyebrow" data-i18n="eb_hood">UNDER THE HOOD</div>
+      <div class="lvl-head"><div class="lvl-titles"><div class="lvl-name" data-i18n="l8_name">Where Wizard is genuinely different</div><div class="lvl-sum" data-i18n="l8_sum">Not "an agent could do that too" — the parts a generic agent doesn't have for free.</div></div></div>
       <div class="bens">
-        <div class="ben"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><div class="bl">Lower token cost</div><div class="bc">Reads your project from the dbt Index instead of re-scanning files and calling tools every turn.</div></div>
-        <div class="ben"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg><div class="bl">dbt best practices built in</div><div class="bc">Ships with dbt agent skills that encode how good dbt work is done, no prompting required.</div></div>
-        <div class="ben"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.3"/><circle cx="12" cy="12" r="6" opacity=".55"/><circle cx="12" cy="12" r="9.6" opacity=".28"/></svg><div class="bl">Native lineage &amp; impact</div><div class="bc">Knows the blast radius from the project graph, so it sees what a change breaks.</div></div>
-        <div class="ben"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 1.9"/></svg><div class="bl">Answers from governed metrics</div><div class="bc">Resolves to your certified Semantic Layer definitions, not improvised SQL.</div></div>
-        <div class="ben"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg><div class="bl">Built into the workflow</div><div class="bc">Operates where the project, catalog, and lineage already live. No copy-paste.</div></div>
-        <div class="ben"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l3.4 3.4L13 9.4"/><path d="M11.2 16.2l1.4 1.4L21 9.2"/></svg><div class="bl">Bring your own key</div><div class="bc">Plug in your own model and provider. The flexibility stays yours.</div></div>
+        <div class="ben"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><div class="bl" data-i18n="ben1_l">Lower token cost</div><div class="bc" data-i18n="ben1_c">Reads your project from the dbt Index instead of re-scanning files and calling tools every turn.</div></div>
+        <div class="ben"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg><div class="bl" data-i18n="ben2_l">dbt best practices built in</div><div class="bc" data-i18n="ben2_c">Ships with dbt agent skills that encode how good dbt work is done, no prompting required.</div></div>
+        <div class="ben"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.3"/><circle cx="12" cy="12" r="6" opacity=".55"/><circle cx="12" cy="12" r="9.6" opacity=".28"/></svg><div class="bl" data-i18n="ben3_l">Native lineage &amp; impact</div><div class="bc" data-i18n="ben3_c">Knows the blast radius from the project graph, so it sees what a change breaks.</div></div>
+        <div class="ben"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 1.9"/></svg><div class="bl" data-i18n="ben4_l">Answers from governed metrics</div><div class="bc" data-i18n="ben4_c">Resolves to your certified Semantic Layer definitions, not improvised SQL.</div></div>
+        <div class="ben"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg><div class="bl" data-i18n="ben5_l">Built into the workflow</div><div class="bc" data-i18n="ben5_c">Operates where the project, catalog, and lineage already live. No copy-paste.</div></div>
+        <div class="ben"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l3.4 3.4L13 9.4"/><path d="M11.2 16.2l1.4 1.4L21 9.2"/></svg><div class="bl" data-i18n="ben6_l">Bring your own key</div><div class="bc" data-i18n="ben6_c">Plug in your own model and provider. The flexibility stays yours.</div></div>
       </div>
     </section>
 
     <div class="close reveal">
-      <div class="seq"><span>Find</span><span class="arr">&#8594;</span><span>Trust</span><span class="arr">&#8594;</span><span>Act</span></div>
-      <p>Same library, four ways to walk in. The books hold the knowledge, the catalog makes it findable, the desk makes it trustworthy, and the librarian acts on your behalf. The first three close the gap between a question and an answer. Wizard closes the one that matters most in the agent era: the gap between your intent and the action. You describe what you want, and the work gets done, verified, in your project.</p>
+      <div class="seq"><span data-i18n="seq1">Find</span><span class="arr">&#8594;</span><span data-i18n="seq2">Trust</span><span class="arr">&#8594;</span><span data-i18n="seq3">Act</span></div>
+      <p data-i18n="close_p">Same library, four ways to walk in. The books hold the knowledge, the catalog makes it findable, the desk makes it trustworthy, and the librarian acts on your behalf. The first three close the gap between a question and an answer. Wizard closes the one that matters most in the agent era: the gap between your intent and the action. You describe what you want, and the work gets done, verified, in your project.</p>
     </div>
 
     <div class="live">
-      <div class="live-h"><span class="ld"></span>try it in Wizard</div>
+      <div class="live-h" data-i18n-html="live_h"><span class="ld"></span>try it in Wizard</div>
       <div class="live-b">
-        <p>Open Wizard in the dbt platform and give it a request like this. It pulls from your project's lineage and metrics, writes the tests, and shows you the change before anything is saved.</p>
-        <div class="prompt">Build a model that reports monthly gross sales by region for the last 12 months, using your certified gross sales metric. Add unique and not_null tests on the keys, document the columns, and show me the lineage before you save it.</div>
+        <p data-i18n="live_p">Open Wizard in the dbt platform and give it a request like this. It pulls from your project's lineage and metrics, writes the tests, and shows you the change before anything is saved.</p>
+        <div class="prompt" data-i18n="prompt">Build a model that reports monthly gross sales by region for the last 12 months, using your certified gross sales metric. Add unique and not_null tests on the keys, document the columns, and show me the lineage before you save it.</div>
       </div>
     </div>
   </section>
 
   <div class="foot">
-    <a href="../">← all explainers</a>
-    <a href="https://github.com/cedricturner/dbt-artifacts" target="_blank" rel="noopener noreferrer"><svg height="13" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> source</a>
+    <a href="../" data-i18n="back_all">← all explainers</a>
+    <a href="https://github.com/cedricturner/dbt-artifacts" target="_blank" rel="noopener noreferrer"><svg height="13" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> <span data-i18n="foot_src">source</span></a>
   </div>
 
 </div>
@@ -585,6 +592,43 @@
   });
   var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});
   document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+</script>
+<script>
+/* i18n language toggle (EN / 日本語) — namespaced to avoid collisions */
+var curLangW='en';
+var translationsW={"ja": {"kicker": "dbt の AI エージェント", "h1": "dbt <span class=\"kc\">Wizard</span> を解説", "tldr": "<b>dbt Wizard は、あなたのプロジェクトをネイティブに理解する dbt の AI エージェントです</b>。モデル、テスト、リネージュ、メトリクスまで把握しているので、推測ではなく認証済みの定義から答えます。しかも答えを返すだけでは終わりません。<b>意図を伝えれば、作業を実行し、あなたが見る前に自ら検証します</b>。", "lede1": "あなたの dbt プロジェクトを図書館だと考えてみてください。AI は、どの棚のどの本も、人間よりはるかに速く読めます。でも、速く読むことは、そもそも難しい部分ではありませんでした。", "lede2": "難しいのは、信頼と行動です。食い違う 2 冊のうちどちらが正しいのかを見極め、そのうえでその答えを使って実際に何かをすること。すべての棚が手の届く範囲にあっても、<span class=\"hl\">どれが真実を持っているかは教えてくれないし、代わりに作業をしてくれることも決してありません</span>。", "lede_pivot": "<em>dbt Wizard</em> は司書です。蔵書目録を把握し、レファレンスデスクで自分の答えを確かめ、あなたが頼んだことを実行します。<em>問いと答えから、意図と行動へ。</em>", "eb_problem": "課題", "p1_name": "ずっと難しかったことが 2 つ", "p1_sum": "数字を信頼すること、そして着手すること。", "prob1_h": "01 · 数字を信頼する", "prob1_q": "&#9888; これは合ってる？", "prob1_cap": "AI はこれを、安全にするどころか怖くしました。自信ありげな間違った数字も、そのままステークホルダーに届いてしまいます。", "prob2_h": "02 · 着手する", "prob2_q": "どこから手をつければ？", "prob2_cap": "動き出せば強力、でも動かし始めるのが大変。AI は助けになります。ただし、本当にあなたのプロジェクトを理解していれば。", "bridge": "dbt Wizard はその両方のために作られています。シニアの同僚のように、あなたのプロジェクトをネイティブに理解し、自分の仕事を自ら確かめる AI エージェントです。その仕組みを、<em>図書館</em>にたとえて見ていきましょう。", "eb_only": "プロジェクトだけがある状態", "l2_name": "蔵書", "l2_sum": "すべてにアクセスできることは、答えではない。", "dh_reading": "エージェント · 生ファイルを読む", "q_rev": "先四半期の地域別の売上は？", "proc_grep": "$ grep -ri \"revenue\" models/ <span class=\"c\">· カタログなし、ただファイルを検索するだけ</span>", "proc_warn1": "&#9888; 9 個のモデルにまたがって 14 件ヒット · グレインが不明 · 注文 1 件につき 1 行と推測", "ans_guess": "だいたい <b>$11.4M</b> くらいだと思いますが、どのモデルが信頼できる出どころなのかは分からず、返金を二重にカウントしている可能性があります。", "res_unv": "&#8776; $11.4M &nbsp;·&nbsp; 未検証", "lib_label": "図書館でいうと", "lib_p1": "<b>これは、まだ誰も整理していない図書館です。</b> AI はどの棚も人間よりはるかに速く読めるので、アクセスはもともと問題ではありませんでした。でも、アクセスは答えではありません。すべての本が手の届く範囲にあっても、正しい 1 冊をすばやく見つけられるとは限らないし、食い違う 2 冊のどちらを信頼すべきかも分かりません。エージェントが読んだ内容をもとに行動し始める今、問いと信頼できる答えのあいだのこのギャップこそが、本当のコストです。", "lib_missing": "不足", "miss1": "問いから正しい答えへの速い道筋。すべてにアクセスできることではなく。", "eb_catalog": "蔵書目録を足す", "l3_name": "索引", "l3_sum": "答えは速くなる。ただし信頼できる答えではない。", "dh_index": "エージェント · 索引を引く", "proc_metric": "&#8592; metric:revenue（fct_orders 上）<span class=\"c\">（グレイン: order_id、返金は除外）</span>", "ans_region1": "先四半期の売上は <b>$12.0M</b>。地域別では、北 $4.2M、西 $3.1M、南 $2.8M、東 $1.9M。", "lib_p2": "<b>今度は図書館に蔵書目録ができました。</b> どの本にも、主題、置かれた棚、参照先を記したカードが付くので、エージェントはさまよわずに、より速く答えます。でも目録は場所を指し示すだけ。校正はしないし、ある出どころを別の出どころと突き合わせることもなく、どの答えが正しいかを教えてくれることも決してありません。だから速くたどり着けるようになった分、浮いた時間を、自分で答えを確かめることに使うことになります。", "miss2": "答えが正しいと確かめてくれる誰か。あなたが校正係にならずに済むように。", "eb_desk": "レファレンスデスクを足す", "l4_name": "推論と信頼のレイヤー", "l4_sum": "これで答えを信頼できる。", "dh_trust": "エージェント · 信頼レイヤー", "proc_resolved": "<span class=\"ar\">&#8594;</span>カタログ経由で解決し、認証済みの定義と照合して検証", "ans_region2": "先四半期の売上は <b>$12.0M</b>。北 $4.2M、西 $3.1M、南 $2.8M、東 $1.9M。", "res_ver": "&#10003; 検証済み <span class=\"meta\" style=\"display:block;margin-top:6px;font-size:9.5px;color:var(--muted)\">確信度: 高 &nbsp;·&nbsp; ソース: metric:revenue@v3 &nbsp;·&nbsp; BI と一致 &nbsp;·&nbsp; ログ記録済み</span>", "lib_p3": "<b>今度はレファレンスデスクができました。</b> どんな答えでも渡せば、目録と照合され、確信度でスコアづけされ、出どころのスタンプが押されます。だからようやく、持ち出すものを信頼できます。でも、問い、そして取りに行くのは、まだあなたです。これは私たちが何年も生きてきた検索エンジンのモデルそのものです。本、次に Google、次に答えを見つけるのを助ける AI、そして私たちがそれをもとに行動しに行く。エージェントが私たちの代わりに行動する時代に、行動する側であり続けることこそ、取り残される理由になります。", "miss3": "図書館は今も「見つける」だけ。行動するのは、まだあなた。", "eb_librarian": "司書を足す", "l5_sum": "あなたが意図を伝える。実行するのは Wizard。", "q_rev_save": "先四半期の地域別の売上は？ そして、それをモデルとして保存して。", "ans_wizard": "<b>先四半期は $12.0M。</b> 北が $4.2M で最多、次いで西（$3.1M）、南（$2.8M）、東（$1.9M）。認証済みの売上メトリクスから取得、返金は除外。", "act_created": "<b>fct_revenue_by_region</b> を作成 · コンパイル済み · テスト 4 件が合格 &#10003; · レビューの準備完了", "lib_p4": "<b>今度は司書があなたのために働きます。</b> 望むことを伝えれば、調べ物をし、デスクで答えを確かめ、そのうえで行動を起こして繰り返します。自分で片づけるための本の山を渡してくることはありません。それこそ、このページ全体がたどり着く転換です。最初の 3 つのレイヤーは問いと答えのギャップを埋め、司書はあなたの意図と行動のギャップを埋めます。必要なことを説明すれば、仕事は完了し、検証された状態で戻ってきます。", "anchor5": "この転換: 問いと答えから、意図と行動へ。", "eb_workaround": "これまでの AI の間に合わせ", "l6_name": "コピーして、貼って、祈る", "l6_sum": "プロジェクトのコンテキストは、旅に持っていけない。", "fbox_proj": "あなたの dbt<br>プロジェクト", "farr_copy": "コピー &#9656;", "fbox_llm": "汎用 LLM<span class=\"bt\">&#10007; リネージュ&nbsp;&nbsp;&#10007; テスト&nbsp;&nbsp;&#10007; メトリクス</span>", "farr_paste": "&#9666; 貼り付け", "fbox_verify": "それっぽく見える？<br><b>あなたが手作業で検証</b>", "cap6": "コードがプロジェクトを離れた瞬間、コンテキストは消えます。正しそうに見えるものが戻ってきて、確認の仕事はあなたのところに戻ってきます。", "eb_does": "dbt Wizard がすること", "l7_name": "エージェントがプロジェクトの中で動く", "l7_sum": "あなた専用の dbt エージェントを、どこで作業していても。", "loop_title": "&#8635; あなたの dbt プロジェクト ＋ dbt Wizard", "loop1": "&#10003; リネージュ、テスト、メトリクスを読み取る", "loop2": "&#10003; すべてのファイルにまたがって変更を加える", "loop3": "&#10003; あなたが見る前に検証する", "solve1": "<span class=\"chk\">&#10003;</span> 数字を信頼できる", "solve2": "<span class=\"chk\">&#10003;</span> コピペ不要、フルコンテキスト", "eb_hood": "内部の仕組み", "l8_name": "Wizard が本当に違うところ", "l8_sum": "「エージェントならそれもできる」ではなく、汎用エージェントには最初から備わっていない部分。", "ben1_l": "トークンコストが低い", "ben1_c": "毎ターン、ファイルを読み直しツールを呼ぶ代わりに、dbt Index からプロジェクトを読み取ります。", "ben2_l": "dbt のベストプラクティスを内蔵", "ben2_c": "良い dbt の仕事の進め方を体系化した dbt エージェントスキルを標準搭載。プロンプトは要りません。", "ben3_l": "ネイティブなリネージュと影響範囲", "ben3_c": "プロジェクトグラフから影響範囲（ブラストラジアス）を把握するので、変更が何を壊すのかが見えます。", "ben4_l": "ガバナンスされたメトリクスから回答", "ben4_c": "即興の SQL ではなく、認証済みの Semantic Layer の定義に解決します。", "ben5_l": "ワークフローに組み込み済み", "ben5_c": "プロジェクト、カタログ、リネージュがすでにある場所で動きます。コピペなし。", "ben6_l": "自分の API キーを持ち込める", "ben6_c": "自分のモデルとプロバイダーを差し込めます。柔軟性はあなたの手の中に。", "seq1": "見つける", "seq2": "信頼する", "seq3": "実行する", "close_p": "同じ図書館に、入り方が 4 通り。本は知識を持ち、目録はそれを見つけやすくし、デスクはそれを信頼できるものにし、司書はあなたに代わって行動します。最初の 3 つは問いと答えのギャップを埋めます。Wizard は、エージェント時代に最も重要なギャップ、つまりあなたの意図と行動のギャップを埋めます。望むことを説明すれば、仕事は検証された状態で、あなたのプロジェクトの中で片づきます。", "live_h": "<span class=\"ld\"></span>Wizard で試す", "live_p": "dbt プラットフォームで Wizard を開き、こんなふうにリクエストしてみてください。プロジェクトのリネージュとメトリクスから引き出し、テストを書き、何も保存する前に変更内容を見せてくれます。", "prompt": "直近 12 か月の、地域別の月次グロス売上をレポートするモデルを作って。認証済みのグロス売上メトリクスを使うこと。キーに unique と not_null のテストを追加し、カラムをドキュメント化して、保存する前にリネージュを見せて。", "back_all": "← すべての解説へ", "foot_src": "ソース", "rail_books": "蔵書", "rail_catalog": "目録", "rail_desk": "デスク", "rail_librarian": "司書", "rail_project": "あなたのプロジェクト", "rail_index": "索引", "rail_trust": "信頼レイヤー"}};
+function cacheEnW(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){el.dataset.enW=el.textContent;});
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){el.dataset.enHtmlW=el.innerHTML;});
+}
+function setLangW(lang){
+  curLangW=lang;
+  var dict=translationsW[lang]||{};
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k=el.getAttribute('data-i18n');
+    if(lang==='en'){if(el.dataset.enW!==undefined)el.textContent=el.dataset.enW;}
+    else if(dict[k]!==undefined){el.textContent=dict[k];}
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+    var k=el.getAttribute('data-i18n-html');
+    if(lang==='en'){if(el.dataset.enHtmlW!==undefined)el.innerHTML=el.dataset.enHtmlW;}
+    else if(dict[k]!==undefined){el.innerHTML=dict[k];}
+  });
+  document.documentElement.lang=lang;
+  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-lang')===lang);});
+  try{localStorage.setItem('lang',lang);}catch(e){}
+}
+/* tag the JS-generated progression rail labels so they translate too */
+(function(){
+  var RM={'Books':'rail_books','Catalog':'rail_catalog','Desk':'rail_desk','Librarian':'rail_librarian','your project':'rail_project','the index':'rail_index','trust layer':'rail_trust'};
+  document.querySelectorAll('.rlab,.rsub').forEach(function(el){var k=RM[(el.textContent||'').trim()];if(k){el.setAttribute('data-i18n',k);}});
+})();
+cacheEnW();
+(function(){
+  var saved=null;try{saved=localStorage.getItem('lang');}catch(e){}
+  var initial=saved||(((navigator.language||navigator.userLanguage||'').toLowerCase().indexOf('ja')===0)?'ja':'en');
+  setLangW(initial);
+})();
 </script>
 </body>
 </html>
