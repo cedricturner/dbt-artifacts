@@ -65,6 +65,7 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
 
 /* visual comparison block: svg or box-grid + short caption strip */
 .viz{border:1px solid #2d333b;border-radius:9px;background:#0d1117;padding:14px 16px 4px;margin:14px 20px 18px}
+.viz-svg-wrap{overflow-x:auto}
 .viz svg{width:100%;min-width:520px;height:auto;display:block}
 .viz-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .viz-panel{background:#161b22;border:1px solid #2d333b;border-radius:8px;padding:12px 14px}
@@ -321,6 +322,7 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
     </div>
     <p class="tip-moment" data-i18n="m4">The graph is real. It's also three weeks stale, one project deep, and model-level only.</p>
     <div class="viz">
+      <div class="viz-svg-wrap">
       <svg viewBox="0 0 760 195" xmlns="http://www.w3.org/2000/svg">
         <text x="10" y="14" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9" font-weight="700" letter-spacing=".6" data-i18n="v4_lbl_core">STALE &middot; MODEL-LEVEL &middot; ONE PROJECT</text>
         <text x="402" y="14" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="9" font-weight="700" letter-spacing=".6" data-i18n="v4_lbl_plat">LIVE &middot; COLUMN-LEVEL &middot; CROSS-PROJECT</text>
@@ -367,6 +369,7 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
         <text x="577" y="128" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v4_stamp_right">live &middot; owner: finance-team</text>
         <text x="577" y="164" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v4_note_right">column-level + cross-project, always current</text>
       </svg>
+      </div>
       <div class="viz-cap">
         <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n-html="c4"><code>dbt docs generate</code> gives a real, model-level DAG, current only as of the last manual regenerate, scoped to one project</span></div>
         <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f4">dbt Catalog (formerly Explorer) adds column-level lineage, cross-project visibility, and ownership/health signals, always current</span></div>
@@ -382,6 +385,7 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
     </div>
     <p class="tip-moment" data-i18n="m5">Another team's project needs one of your models. Right now that means "copy my SQL."</p>
     <div class="viz">
+      <div class="viz-svg-wrap">
       <svg viewBox="0 0 760 150" xmlns="http://www.w3.org/2000/svg">
         <text x="10" y="14" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v5_lbl_core">MANUAL, NO CONTRACT</text>        <text x="402" y="14" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v5_lbl_plat">SHARED VIA ref()</text>        <line x1="380" y1="8" x2="380" y2="142" stroke="#2d333b" stroke-width="1" stroke-dasharray="3,5"/>
 
@@ -401,6 +405,7 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
         <rect x="605" y="52" width="130" height="48" rx="6" fill="rgba(45,212,191,.08)" stroke="#2dd4bf" stroke-width="1.6"/>
         <text x="670" y="80" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="10.5" text-anchor="middle">project: finance</text>
       </svg>
+      </div>
       <div class="viz-cap">
         <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c5"><code>ref()</code> only resolves inside one project, sharing means duplicating logic</span></div>
         <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n-html="f5">dbt Mesh: <code>access: public</code> plus a cross-project <code>ref()</code>, resolved against a Production environment</span></div>
@@ -430,6 +435,7 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
     </div>
     <p class="tip-moment" data-i18n="m6">You hire a third analytics engineer. The "set up your laptop" doc outgrows the model they're shipping.</p>
     <div class="viz">
+      <div class="viz-svg-wrap">
       <svg viewBox="0 0 760 160" xmlns="http://www.w3.org/2000/svg">
         <text x="10" y="14" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v6_lbl_core">MANY PEOPLE, ONE ENV</text>        <text x="402" y="14" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v6_lbl_plat">ONE ISOLATED ENV EACH</text>        <line x1="380" y1="8" x2="380" y2="152" stroke="#2d333b" stroke-width="1" stroke-dasharray="3,5"/>
 
@@ -454,6 +460,7 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
         <line x1="432" y1="127" x2="466" y2="127" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr6)"/>
         <rect x="468" y="114" width="140" height="26" rx="5" fill="rgba(45,212,191,.08)" stroke="#2dd4bf" stroke-width="1.3"/>
         <text x="538" y="131" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v6_plat_box3">hosted env #3</text>      </svg>
+      </div>
       <div class="viz-cap">
         <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c6">development is local-only, headcount scales with setup pain per person</span></div>
         <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f6">Studio IDE gives every contributor a ready-to-go hosted dev environment</span></div>
@@ -504,6 +511,7 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
     </div>
     <p class="tip-moment" data-i18n="m8">Finance says revenue is 4.2 million. The BI tool says 4.4. Both people are confident.</p>
     <div class="viz">
+      <div class="viz-svg-wrap">
       <svg viewBox="0 0 760 182" xmlns="http://www.w3.org/2000/svg">
         <text x="10" y="14" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v8_lbl_core">THREE TOOLS, THREE ANSWERS</text>        <text x="402" y="14" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="9.5" font-weight="700" letter-spacing="1" data-i18n="v8_lbl_plat">ONE DEFINITION, EVERYWHERE</text>        <line x1="380" y1="8" x2="380" y2="176" stroke="#2d333b" stroke-width="1" stroke-dasharray="3,5"/>
 
@@ -536,6 +544,7 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
         <rect x="602" y="136" width="150" height="36" rx="5" fill="rgba(45,212,191,.06)" stroke="#2dd4bf" stroke-width="1.3"/>
         <text x="677" y="151" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle" data-i18n="v8_ai">AI agent</text>        <text x="677" y="166" fill="#3fb950" font-family="JetBrains Mono,monospace" font-size="10.5" font-weight="700" text-anchor="middle">$4.2M</text>
       </svg>
+      </div>
       <div class="viz-cap">
         <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c8">MetricFlow definitions work in the CLI, but nothing outside it can query them</span></div>
         <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f8">the Semantic Layer serves one metric definition to every consuming tool</span></div>
