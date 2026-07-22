@@ -385,57 +385,63 @@
   .foot{margin-top:84px;padding-top:22px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;font-family:var(--mono);font-size:11px;color:var(--faint)}
   .foot a{color:var(--faint);text-decoration:none;display:inline-flex;align-items:center;gap:7px}
   .foot a:hover{color:var(--ink-2)}
+
+  /* --- language toggle (EN / 日本語) --- */
+  .lang-toggle{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px;gap:2px;flex:none}
+  .lang-btn{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--muted);background:transparent;border:none;border-radius:99px;padding:5px 12px;cursor:pointer;transition:all .18s;line-height:1}
+  .lang-btn:hover{color:var(--ink)}
+  .lang-btn.active{background:var(--ink);color:#fff}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="topbar"><a class="back" href="../">← all explainers</a></div>
+  <div class="topbar" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap"><a class="back" href="../" data-i18n-html="back_all">← all explainers</a><div class="lang-toggle" role="group" aria-label="Language / 言語"><button type="button" class="lang-btn active" data-lang="en" onclick="stSetLang('en')">EN</button><button type="button" class="lang-btn" data-lang="ja" onclick="stSetLang('ja')">日本語</button></div></div>
 
 <section class="panel" data-c="state" id="p2">
     <header class="phead">
-      <div class="kicker"><span class="rule"></span><span>state-aware orchestration, and what it saves</span></div>
-      <h1>dbt <span class="kc">State</span>, explained</h1>
+      <div class="kicker"><span class="rule"></span><span data-i18n="kicker">state-aware orchestration, and what it saves</span></div>
+      <h1 data-i18n-html="h1">dbt <span class="kc">State</span>, explained</h1>
       <div class="tldr">
         <div class="tag">TL;DR</div>
-        <p><b>By default, dbt rebuilds every model on every run</b>, even the ones whose data did not change. dbt State rebuilds only what changed and skips the rest, so you get the same correct tables for a fraction of the compute. <b>The more often you run, the more you save.</b></p>
+        <p data-i18n-html="tldr_p"><b>By default, dbt rebuilds every model on every run</b>, even the ones whose data did not change. dbt State rebuilds only what changed and skips the rest, so you get the same correct tables for a fraction of the compute. <b>The more often you run, the more you save.</b></p>
       </div>
-      <p class="lede">You would not pay to reprint a 400-page report that has not changed one word, just because someone reopened the file. You print again when the pages have <em>actually changed</em>.</p>
-      <p class="lede">By default, dbt does not work that way. Every time it runs, it rebuilds every model, whether or not anything upstream actually changed. At scale, with jobs running many times a day to keep dashboards fresh, that is a lot of <span class="hl">money spent reprinting pages that never changed</span>.</p>
-      <p class="lede pivot"><em>dbt State</em> fixes that. Its whole idea fits in six words: <em>build what's changed, skip what hasn't</em>.</p>
+      <p class="lede" data-i18n-html="lede1">You would not pay to reprint a 400-page report that has not changed one word, just because someone reopened the file. You print again when the pages have <em>actually changed</em>.</p>
+      <p class="lede" data-i18n-html="lede2">By default, dbt does not work that way. Every time it runs, it rebuilds every model, whether or not anything upstream actually changed. At scale, with jobs running many times a day to keep dashboards fresh, that is a lot of <span class="hl">money spent reprinting pages that never changed</span>.</p>
+      <p class="lede pivot" data-i18n-html="lede3"><em>dbt State</em> fixes that. Its whole idea fits in six words: <em>build what's changed, skip what hasn't</em>.</p>
     </header>
 
     <section class="lvl reveal">
-      <div class="eyebrow">THE WASTE</div>
+      <div class="eyebrow" data-i18n="eb_waste">THE WASTE</div>
       <div class="lvl-head">
         <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3.5h12V9"/><path d="M6 17H4.5A1.5 1.5 0 0 1 3 15.5v-4A1.5 1.5 0 0 1 4.5 10h15a1.5 1.5 0 0 1 1.5 1.5v4a1.5 1.5 0 0 1-1.5 1.5H18"/><rect x="6" y="14.5" width="12" height="6" rx="1"/><path d="M16.5 12.5h1.5"/></svg>
-        <div class="lvl-titles"><div class="lvl-name">You already printed this one</div><div class="lvl-sum">Most runs rebuild things that did not change.</div></div>
+        <div class="lvl-titles"><div class="lvl-name" data-i18n="ln_waste">You already printed this one</div><div class="lvl-sum" data-i18n="ls_waste">Most runs rebuild things that did not change.</div></div>
       </div>
-      <p class="body-p">Picture a week of scheduled runs. The pipeline fires on a timer, but new data only lands now and then. On the days when nothing upstream changed, rebuilding the models produces the exact same tables you already have. You paid the compute anyway.</p>
+      <p class="body-p" data-i18n-html="waste_p">Picture a week of scheduled runs. The pipeline fires on a timer, but new data only lands now and then. On the days when nothing upstream changed, rebuilding the models produces the exact same tables you already have. You paid the compute anyway.</p>
       <div class="days">
-        <div class="day skip"><div class="dow">Mon</div><div class="glyph">&#10547;</div><div class="st">nothing new<br>skip</div></div>
-        <div class="day build"><div class="dow">Tue</div><div class="glyph">&#9679;</div><div class="st">new orders<br>build</div></div>
-        <div class="day skip"><div class="dow">Wed</div><div class="glyph">&#10547;</div><div class="st">nothing new<br>skip</div></div>
-        <div class="day skip"><div class="dow">Thu</div><div class="glyph">&#10547;</div><div class="st">nothing new<br>skip</div></div>
-        <div class="day build"><div class="dow">Fri</div><div class="glyph">&#9679;</div><div class="st">new orders<br>build</div></div>
-        <div class="day skip"><div class="dow">Sat</div><div class="glyph">&#10547;</div><div class="st">nothing new<br>skip</div></div>
+        <div class="day skip"><div class="dow" data-i18n="dow_mon">Mon</div><div class="glyph">&#10547;</div><div class="st" data-i18n-html="st_skip">nothing new<br>skip</div></div>
+        <div class="day build"><div class="dow" data-i18n="dow_tue">Tue</div><div class="glyph">&#9679;</div><div class="st" data-i18n-html="st_build">new orders<br>build</div></div>
+        <div class="day skip"><div class="dow" data-i18n="dow_wed">Wed</div><div class="glyph">&#10547;</div><div class="st" data-i18n-html="st_skip">nothing new<br>skip</div></div>
+        <div class="day skip"><div class="dow" data-i18n="dow_thu">Thu</div><div class="glyph">&#10547;</div><div class="st" data-i18n-html="st_skip">nothing new<br>skip</div></div>
+        <div class="day build"><div class="dow" data-i18n="dow_fri">Fri</div><div class="glyph">&#9679;</div><div class="st" data-i18n-html="st_build">new orders<br>build</div></div>
+        <div class="day skip"><div class="dow" data-i18n="dow_sat">Sat</div><div class="glyph">&#10547;</div><div class="st" data-i18n-html="st_skip">nothing new<br>skip</div></div>
       </div>
-      <p class="cap"><b>dbt State pays compute only on the days something actually changed.</b> The rest are skipped, because the answer is already sitting in your warehouse.</p>
+      <p class="cap" data-i18n-html="waste_cap"><b>dbt State pays compute only on the days something actually changed.</b> The rest are skipped, because the answer is already sitting in your warehouse.</p>
     </section>
 
     <section class="lvl reveal">
-      <div class="eyebrow">INSIDE A SINGLE RUN</div>
+      <div class="eyebrow" data-i18n="eb_run">INSIDE A SINGLE RUN</div>
       <div class="lvl-head">
         <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="6" r="2"/><circle cx="5.5" cy="18" r="2"/><circle cx="18.5" cy="12" r="2"/><path d="M7.4 6.7l9.3 4.4M7.4 17.3l9.3-4.4"/></svg>
-        <div class="lvl-titles"><div class="lvl-name">New data flows downstream</div><div class="lvl-sum">Build what's changed, skip what hasn't.</div></div>
+        <div class="lvl-titles"><div class="lvl-name" data-i18n="ln_run">New data flows downstream</div><div class="lvl-sum" data-i18n="ls_run">Build what's changed, skip what hasn't.</div></div>
       </div>
-      <p class="body-p">Zoom into one run. dbt State looks at every model and asks a simple question: has anything that feeds this changed since last time? New orders ripple forward. Everything in its path needs a fresh build. Everything else can be left exactly as it is.</p>
+      <p class="body-p" data-i18n-html="run_p">Zoom into one run. dbt State looks at every model and asks a simple question: has anything that feeds this changed since last time? New orders ripple forward. Everything in its path needs a fresh build. Everything else can be left exactly as it is.</p>
       <div class="diagram">
         <svg viewBox="0 0 760 330" role="img" aria-label="Lineage graph showing changed models rebuilt and unchanged models skipped">
           <line class="ed-run" x1="148" y1="57" x2="212" y2="57"/><line class="ed-run" x1="344" y1="57" x2="408" y2="57"/><line class="ed" x1="540" y1="57" x2="604" y2="57"/>
           <line class="ed" x1="148" y1="169" x2="212" y2="169"/><line class="ed" x1="344" y1="169" x2="408" y2="169"/>
           <line class="ed" x1="148" y1="281" x2="212" y2="281"/><line class="ed" x1="344" y1="281" x2="408" y2="281"/>
           <path class="ed" d="M344 169 C 378 169 378 57 408 57"/>
-          <g class="badge"><rect x="36" y="10" width="92" height="18" rx="9"/><text x="82" y="22.5" text-anchor="middle">NEW ORDERS</text></g>
+          <g class="badge"><rect x="36" y="10" width="92" height="18" rx="9"/><text x="82" y="22.5" text-anchor="middle" data-i18n="sv_neworders">NEW ORDERS</text></g>
           <g class="nd-built"><rect x="16" y="36" width="132" height="42" rx="7"/><text class="nl" x="82" y="61" text-anchor="middle">stg_orders</text></g>
           <g class="nd-built"><rect x="212" y="36" width="132" height="42" rx="7"/><text class="nl" x="278" y="61" text-anchor="middle">int_order_items</text></g>
           <g class="nd-built"><rect x="408" y="36" width="132" height="42" rx="7"/><text class="nl" x="474" y="61" text-anchor="middle">fct_order_items</text></g>
@@ -448,74 +454,74 @@
           <g class="nd-skip"><rect x="408" y="260" width="132" height="42" rx="7"/><text class="nl" x="474" y="285" text-anchor="middle">dim_parts</text></g>
         </svg>
         <div class="legend">
-          <div class="it"><span class="sw lg-dot"></span>new data landed</div>
-          <div class="it"><span class="sw lg-build"></span>fresh, so rebuilt</div>
-          <div class="it"><span class="sw lg-skip"></span>unchanged, reused as-is</div>
-          <div class="it"><span class="sw lg-sla"></span>skipped · 48-hour SLA</div>
+          <div class="it" data-i18n-html="lg_landed"><span class="sw lg-dot"></span>new data landed</div>
+          <div class="it" data-i18n-html="lg_rebuilt"><span class="sw lg-build"></span>fresh, so rebuilt</div>
+          <div class="it" data-i18n-html="lg_reused"><span class="sw lg-skip"></span>unchanged, reused as-is</div>
+          <div class="it" data-i18n-html="lg_sla"><span class="sw lg-sla"></span>skipped · 48-hour SLA</div>
         </div>
       </div>
-      <p class="cap">New orders land, so <b>int_order_items</b> and <b>fct_order_items</b> rebuild down the chain. <b>fct_agg_monthly</b> would refresh next, but it carries a <b>48-hour freshness SLA</b>, so dbt State leaves it until the data has to be that fresh. The supplier and parts branches never changed, so they are reused as-is. One run, almost no extra compute.</p>
+      <p class="cap" data-i18n-html="run_cap">New orders land, so <b>int_order_items</b> and <b>fct_order_items</b> rebuild down the chain. <b>fct_agg_monthly</b> would refresh next, but it carries a <b>48-hour freshness SLA</b>, so dbt State leaves it until the data has to be that fresh. The supplier and parts branches never changed, so they are reused as-is. One run, almost no extra compute.</p>
     </section>
 
     <section class="lvl reveal">
-      <div class="eyebrow">HOW IT DECIDES</div>
+      <div class="eyebrow" data-i18n="eb_decide">HOW IT DECIDES</div>
       <div class="lvl-head">
         <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 1.9"/></svg>
-        <div class="lvl-titles"><div class="lvl-name">Three outcomes, decided per model</div><div class="lvl-sum">No manifest scripts, no sub-selectors, no babysitting.</div></div>
+        <div class="lvl-titles"><div class="lvl-name" data-i18n="ln_decide">Three outcomes, decided per model</div><div class="lvl-sum" data-i18n="ls_decide">No manifest scripts, no sub-selectors, no babysitting.</div></div>
       </div>
-      <p class="body-p">On every run, dbt State compares each model's logic and its upstream data against what it built before. Based on that, it picks the cheapest correct path automatically. You turn it on and it just runs.</p>
+      <p class="body-p" data-i18n-html="decide_p">On every run, dbt State compares each model's logic and its upstream data against what it built before. Based on that, it picks the cheapest correct path automatically. You turn it on and it just runs.</p>
       <ul class="outs">
-        <li><span class="tag skip">skip</span><b>Nothing changed.</b> The model's logic and its fresh-enough upstream data match the last build, so dbt leaves the existing table alone.</li>
-        <li><span class="tag clone">clone</span><b>It exists elsewhere.</b> A matching, fresh copy already lives in another environment, so dbt clones it instead of recomputing it.</li>
-        <li><span class="tag build">build</span><b>Something is new.</b> Logic or upstream data changed, so dbt rebuilds this model and everything downstream that depends on it.</li>
+        <li data-i18n-html="out_skip"><span class="tag skip">skip</span><b>Nothing changed.</b> The model's logic and its fresh-enough upstream data match the last build, so dbt leaves the existing table alone.</li>
+        <li data-i18n-html="out_clone"><span class="tag clone">clone</span><b>It exists elsewhere.</b> A matching, fresh copy already lives in another environment, so dbt clones it instead of recomputing it.</li>
+        <li data-i18n-html="out_build"><span class="tag build">build</span><b>Something is new.</b> Logic or upstream data changed, so dbt rebuilds this model and everything downstream that depends on it.</li>
       </ul>
-      <p class="cap">It even ignores changes that do not matter, like a new comment or reformatted whitespace, since the compiled logic is identical. Changed words send the page back to the printer. Reformatting the margins on the same words does not.</p>
+      <p class="cap" data-i18n-html="decide_cap">It even ignores changes that do not matter, like a new comment or reformatted whitespace, since the compiled logic is identical. Changed words send the page back to the printer. Reformatting the margins on the same words does not.</p>
     </section>
 
     <section class="lvl reveal">
-      <div class="eyebrow">WHY IT ADDS UP</div>
+      <div class="eyebrow" data-i18n="eb_add">WHY IT ADDS UP</div>
       <div class="lvl-head">
         <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 19v-5M12 19v-9M16 19v-7M20 19V8"/></svg>
-        <div class="lvl-titles"><div class="lvl-name">The more you run, the more you save</div><div class="lvl-sum">Run as often as the business needs, not as often as the bill allows.</div></div>
+        <div class="lvl-titles"><div class="lvl-name" data-i18n="ln_add">The more you run, the more you save</div><div class="lvl-sum" data-i18n="ls_add">Run as often as the business needs, not as often as the bill allows.</div></div>
       </div>
-      <p class="body-p">Once you stop paying to redo work that has not changed, frequency stops being the enemy. Teams usually ration runs to control compute. With dbt State, the redundant rebuilds are the part that gets skipped, so running more often mostly adds skips, not cost. <b>You get fresher data and iterate faster, without the bill climbing in lockstep.</b></p>
+      <p class="body-p" data-i18n-html="add_p">Once you stop paying to redo work that has not changed, frequency stops being the enemy. Teams usually ration runs to control compute. With dbt State, the redundant rebuilds are the part that gets skipped, so running more often mostly adds skips, not cost. <b>You get fresher data and iterate faster, without the bill climbing in lockstep.</b></p>
       <div class="diffs">
-        <div class="diff"><div class="dt">Runs in any environment</div><div class="dd">Dev, staging, or prod, on dbt Core or the dbt platform, across Snowflake, BigQuery, Databricks, and Redshift. Not tied to Fusion, so the whole team gets it.</div></div>
-        <div class="diff sla"><div class="dt">Freshness SLAs per model</div><div class="dd">Tell each model how fresh it needs to be. It rebuilds only when it has to, and skips when the data is fresh enough.</div></div>
+        <div class="diff"><div class="dt" data-i18n="d1_t">Runs in any environment</div><div class="dd" data-i18n="d1_d">Dev, staging, or prod, on dbt Core or the dbt platform, across Snowflake, BigQuery, Databricks, and Redshift. Not tied to Fusion, so the whole team gets it.</div></div>
+        <div class="diff sla"><div class="dt" data-i18n="d2_t">Freshness SLAs per model</div><div class="dd" data-i18n="d2_d">Tell each model how fresh it needs to be. It rebuilds only when it has to, and skips when the data is fresh enough.</div></div>
       </div>
-      <blockquote class="anchor" style="border-color:var(--accent)">Stop paying to rebuild answers you already have.</blockquote>
+      <blockquote class="anchor" style="border-color:var(--accent)" data-i18n="anchor_add">Stop paying to rebuild answers you already have.</blockquote>
     </section>
 
     <section class="lvl reveal">
-      <div class="eyebrow">SEE IT IN THE PLATFORM</div>
+      <div class="eyebrow" data-i18n="eb_plat">SEE IT IN THE PLATFORM</div>
       <div class="lvl-head">
         <svg class="lvl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg>
-        <div class="lvl-titles"><div class="lvl-name">Cost Insights makes the savings a number</div><div class="lvl-sum">From "trust me, it's cheaper" to a figure on the screen.</div></div>
+        <div class="lvl-titles"><div class="lvl-name" data-i18n="ln_plat">Cost Insights makes the savings a number</div><div class="lvl-sum" data-i18n="ls_plat">From "trust me, it's cheaper" to a figure on the screen.</div></div>
       </div>
-      <p class="body-p">The skips are the mechanism. <a href="https://docs.getdbt.com/docs/explore/cost-insights" target="_blank" rel="noopener"><b>Cost Insights</b></a> is the proof. In the dbt platform it surfaces estimated compute cost at the model and job level, and quantifies the savings dbt State generated by not rebuilding what did not change. That turns platform efficiency into a visible, shareable number.</p>
+      <p class="body-p" data-i18n-html="plat_p">The skips are the mechanism. <a href="https://docs.getdbt.com/docs/explore/cost-insights" target="_blank" rel="noopener"><b>Cost Insights</b></a> is the proof. In the dbt platform it surfaces estimated compute cost at the model and job level, and quantifies the savings dbt State generated by not rebuilding what did not change. That turns platform efficiency into a visible, shareable number.</p>
       <div class="diffs">
-        <div class="diff"><div class="dt">Cost per model and job</div><div class="dd">See where compute actually goes, so the expensive models are obvious and tunable.</div></div>
-        <div class="diff" style="border-color:var(--accent-line)"><div class="dt">Savings, quantified</div><div class="dd">The dollars dbt State saved become a clear ROI line for adopting the dbt platform.</div></div>
+        <div class="diff"><div class="dt" data-i18n="d3_t">Cost per model and job</div><div class="dd" data-i18n="d3_d">See where compute actually goes, so the expensive models are obvious and tunable.</div></div>
+        <div class="diff" style="border-color:var(--accent-line)"><div class="dt" data-i18n="d4_t">Savings, quantified</div><div class="dd" data-i18n="d4_d">The dollars dbt State saved become a clear ROI line for adopting the dbt platform.</div></div>
       </div>
-      <p class="cap">The skips are the mechanism; Cost Insights is the receipt. Together they turn "trust me, it's cheaper" into a figure on the screen.</p>
+      <p class="cap" data-i18n-html="plat_cap">The skips are the mechanism; Cost Insights is the receipt. Together they turn "trust me, it's cheaper" into a figure on the screen.</p>
     </section>
 
     <div class="close reveal">
-      <div class="seq"><span>Compare</span><span class="arr">&#8594;</span><span>Reuse</span><span class="arr">&#8594;</span><span>Save</span></div>
-      <p>That is the whole idea: <em>build what's changed, skip what hasn't</em>. New data flows downstream and triggers a rebuild along its path. Everything else is reused. The more often you run, the more redundant work there is to skip, and the more it pays off. Cost Insights then puts a dollar figure on exactly that.</p>
+      <div class="seq"><span data-i18n="seq1">Compare</span><span class="arr">&#8594;</span><span data-i18n="seq2">Reuse</span><span class="arr">&#8594;</span><span data-i18n="seq3">Save</span></div>
+      <p data-i18n-html="close_p">That is the whole idea: <em>build what's changed, skip what hasn't</em>. New data flows downstream and triggers a rebuild along its path. Everything else is reused. The more often you run, the more redundant work there is to skip, and the more it pays off. Cost Insights then puts a dollar figure on exactly that.</p>
     </div>
 
     <div class="live">
-      <div class="live-h"><span class="ld"></span>how to turn it on</div>
+      <div class="live-h" data-i18n-html="live_h"><span class="ld"></span>how to turn it on</div>
       <div class="live-b">
-        <p>dbt State runs in dbt Core and the dbt platform with no extra setup. To turn the savings into a number, enable Cost Insights in the dbt platform: it shows cost per model and per job, and the savings from skipping models that did not change.</p>
-        <p><a href="https://docs.getdbt.com/docs/explore/cost-insights" target="_blank" rel="noopener noreferrer">dbt docs: Cost Insights &#8594;</a> &nbsp;&middot;&nbsp; <a href="https://docs.getdbt.com/docs/explore/set-up-cost-insights" target="_blank" rel="noopener noreferrer">how to set it up &#8594;</a></p>
+        <p data-i18n-html="live_p1">dbt State runs in dbt Core and the dbt platform with no extra setup. To turn the savings into a number, enable Cost Insights in the dbt platform: it shows cost per model and per job, and the savings from skipping models that did not change.</p>
+        <p data-i18n-html="live_p2"><a href="https://docs.getdbt.com/docs/explore/cost-insights" target="_blank" rel="noopener noreferrer">dbt docs: Cost Insights &#8594;</a> &nbsp;&middot;&nbsp; <a href="https://docs.getdbt.com/docs/explore/set-up-cost-insights" target="_blank" rel="noopener noreferrer">how to set it up &#8594;</a></p>
       </div>
     </div>
   </section>
 
   <div class="foot">
-    <a href="../">← all explainers</a>
+    <a href="../" data-i18n-html="back_all">← all explainers</a>
     <a href="https://github.com/cedricturner/dbt-artifacts" target="_blank" rel="noopener noreferrer"><svg height="13" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> source</a>
   </div>
 
@@ -534,6 +540,38 @@
   });
   var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});
   document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+</script>
+<script>
+/* ---- i18n: language toggle (EN / 日本語) ---- */
+var stCurLang='en';
+var stTranslations={"ja": {"back_all": "← すべての解説へ", "kicker": "状態を意識したオーケストレーションと、その節約効果", "h1": "dbt <span class=\"kc\">State</span> の解説", "tldr_p": "<b>dbt はデフォルトで、実行のたびにすべてのモデルを作り直します</b>。データが変わっていないモデルも含めてです。dbt State は変わったものだけを作り直し、残りはスキップするので、わずかな計算コストで同じ正しいテーブルが手に入ります。<b>実行の頻度が高いほど、節約は大きくなります。</b>", "lede1": "一言も変わっていない400ページのレポートを、誰かがファイルを開き直しただけで、もう一度印刷するためにお金を払ったりはしないはずです。印刷し直すのは、ページが<em>実際に変わったとき</em>です。", "lede2": "ところが dbt はデフォルトではそう動きません。実行するたびに、上流で実際に何かが変わったかどうかに関係なく、すべてのモデルを作り直します。ダッシュボードを新鮮に保つために1日に何度も実行するような規模になると、これは<span class=\"hl\">変わってもいないページを刷り直すために使うお金</span>が相当な額になります。", "lede3": "<em>dbt State</em> がそれを解決します。その考え方は、たった一文に収まります。<em>変わったものはビルドし、変わっていないものはスキップする</em>。", "eb_waste": "無駄なコスト", "ln_waste": "それ、もう印刷済みです", "ls_waste": "たいていの実行は、変わっていないものを作り直している。", "waste_p": "スケジュール実行が続く1週間を思い浮かべてください。パイプラインはタイマーで動きますが、新しいデータはときどきしか届きません。上流で何も変わらなかった日にモデルを作り直しても、すでに手元にあるのと同じテーブルができるだけです。それでも計算コストは払っています。", "dow_mon": "月", "dow_tue": "火", "dow_wed": "水", "dow_thu": "木", "dow_fri": "金", "dow_sat": "土", "st_skip": "新規なし<br>スキップ", "st_build": "新しい注文<br>ビルド", "waste_cap": "<b>dbt State は、実際に何かが変わった日にだけ計算コストを払います。</b>残りの日はスキップします。答えはすでにウェアハウスの中にあるからです。", "eb_run": "1回の実行の中身", "ln_run": "新しいデータが下流へ流れる", "ls_run": "変わったものはビルドし、変わっていないものはスキップ。", "run_p": "1回の実行を拡大してみましょう。dbt State はすべてのモデルを見て、シンプルな問いを立てます。これに入ってくるデータは、前回から何か変わっただろうか？ 新しい注文は下流へと波及していきます。その流れの上にあるものはすべて、作り直しが必要です。それ以外はすべて、そのままにしておけます。", "sv_neworders": "新しい注文", "lg_landed": "<span class=\"sw lg-dot\"></span>新しいデータが着地", "lg_rebuilt": "<span class=\"sw lg-build\"></span>新しいので作り直す", "lg_reused": "<span class=\"sw lg-skip\"></span>変更なし、そのまま再利用", "lg_sla": "<span class=\"sw lg-sla\"></span>スキップ・48時間SLA", "run_cap": "新しい注文が届いたので、<b>int_order_items</b> と <b>fct_order_items</b> がチェーンをたどって作り直されます。<b>fct_agg_monthly</b> も本来なら次に更新されますが、これは<b>48時間の鮮度SLA</b>を持つので、dbt State はそのデータがそこまで新しくある必要が出るまで手をつけません。サプライヤーと部品のブランチは何も変わっていないので、そのまま再利用されます。1回の実行で、追加の計算コストはほぼゼロです。", "eb_decide": "どう判断するのか", "ln_decide": "モデルごとに決まる、3つの結末", "ls_decide": "manifest スクリプトも、サブセレクタも、お守りも不要。", "decide_p": "実行のたびに、dbt State は各モデルのロジックと上流データを、前回ビルドしたときの状態と比較します。その結果をもとに、最も安く済む正しい経路を自動で選びます。オンにすれば、あとはそのまま走ります。", "out_skip": "<span class=\"tag skip\">スキップ</span><b>何も変わっていない。</b>モデルのロジックと、十分に新しい上流データが前回のビルドと一致しているので、dbt は既存のテーブルをそのままにします。", "out_clone": "<span class=\"tag clone\">クローン</span><b>別の場所に存在する。</b>一致する新鮮なコピーが別の環境にすでにあるので、dbt は計算し直す代わりにそれをクローンします。", "out_build": "<span class=\"tag build\">ビルド</span><b>何かが新しい。</b>ロジックか上流データが変わったので、dbt はこのモデルと、それに依存する下流すべてを作り直します。", "decide_cap": "新しいコメントや空白の整形のような、結果に関係のない変更は無視します。コンパイル後のロジックが同じだからです。言葉が変われば、ページは印刷し直しになります。同じ言葉のまま余白を整えただけなら、そうはなりません。", "eb_add": "なぜ効いてくるのか", "ln_add": "実行するほど、節約できる", "ls_add": "請求額が許す頻度ではなく、ビジネスが必要とする頻度で実行する。", "add_p": "変わっていない作業をやり直すためにお金を払わなくなれば、頻度はもう敵ではなくなります。多くのチームは、計算コストを抑えるために実行回数を切り詰めています。dbt State では、余計な作り直しこそがスキップされる部分なので、頻度を上げてもほとんど増えるのはスキップであってコストではありません。<b>請求額が足並みをそろえて膨らむことなく、より新鮮なデータを手に入れ、速く反復できます。</b>", "d1_t": "どの環境でも動く", "d1_d": "dev、staging、prod のいずれでも、dbt Core でも dbt platform でも、Snowflake、BigQuery、Databricks、Redshift をまたいで動きます。Fusion に縛られないので、チーム全員が使えます。", "d2_t": "モデルごとの鮮度SLA", "d2_d": "各モデルに、どれだけ新鮮であるべきかを伝えます。必要なときだけ作り直し、データが十分に新しければスキップします。", "anchor_add": "すでに持っている答えを、もう一度作るためにお金を払うのはやめましょう。", "eb_plat": "プラットフォームで確かめる", "ln_plat": "Cost Insights が、節約を数字にする", "ls_plat": "「安くなるから信じて」から、画面に出る数字へ。", "plat_p": "スキップは仕組みです。<a href=\"https://docs.getdbt.com/docs/explore/cost-insights\" target=\"_blank\" rel=\"noopener\"><b>Cost Insights</b></a> はその証拠です。dbt platform では、モデル単位・ジョブ単位で推定計算コストを可視化し、変わっていないものを作り直さなかったことで dbt State が生んだ節約を数値化します。プラットフォームの効率が、目に見えて共有できる数字になります。", "d3_t": "モデル・ジョブ単位のコスト", "d3_d": "計算コストが実際にどこへ向かっているかがわかるので、高コストなモデルが一目で見え、チューニングできます。", "d4_t": "節約を、数値で", "d4_d": "dbt State が節約した金額が、dbt platform を採用するための明確な ROI の数字になります。", "plat_cap": "スキップが仕組みで、Cost Insights が受け取り（レシート）です。この2つが合わさって、「安くなるから信じて」を画面に出る数字に変えます。", "seq1": "比較", "seq2": "再利用", "seq3": "節約", "close_p": "これがすべての考え方です。<em>変わったものはビルドし、変わっていないものはスキップする</em>。新しいデータが下流へ流れ、その経路に沿って作り直しが起きます。それ以外はすべて再利用されます。実行の頻度が高いほど、スキップできる余計な作業が増え、効果も大きくなります。そして Cost Insights が、まさにそれにドルの数字を付けます。", "live_h": "<span class=\"ld\"></span>使い始め方", "live_p1": "dbt State は dbt Core と dbt platform で、追加のセットアップなしに動きます。節約を数字にするには、dbt platform で Cost Insights を有効にします。モデル単位・ジョブ単位のコストと、変わっていないモデルをスキップしたことによる節約が表示されます。", "live_p2": "<a href=\"https://docs.getdbt.com/docs/explore/cost-insights\" target=\"_blank\" rel=\"noopener noreferrer\">dbt ドキュメント: Cost Insights &#8594;</a> &nbsp;&middot;&nbsp; <a href=\"https://docs.getdbt.com/docs/explore/set-up-cost-insights\" target=\"_blank\" rel=\"noopener noreferrer\">セットアップ方法 &#8594;</a>"}};
+function stCacheEn(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){el.dataset.en=el.textContent;});
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){el.dataset.enHtml=el.innerHTML;});
+}
+function stSetLang(lang){
+  stCurLang=lang;
+  var dict=stTranslations[lang]||{};
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k=el.getAttribute('data-i18n');
+    if(lang==='en'){if(el.dataset.en!==undefined)el.textContent=el.dataset.en;}
+    else if(dict[k]!==undefined){el.textContent=dict[k];}
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+    var k=el.getAttribute('data-i18n-html');
+    if(lang==='en'){if(el.dataset.enHtml!==undefined)el.innerHTML=el.dataset.enHtml;}
+    else if(dict[k]!==undefined){el.innerHTML=dict[k];}
+  });
+  document.documentElement.lang=lang;
+  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-lang')===lang);});
+  try{localStorage.setItem('lang',lang);}catch(e){}
+}
+stCacheEn();
+(function(){
+  var saved=null;try{saved=localStorage.getItem('lang');}catch(e){}
+  var initial=saved||(((navigator.language||navigator.userLanguage||'').toLowerCase().indexOf('ja')===0)?'ja':'en');
+  stSetLang(initial);
+})();
 </script>
 </body>
 </html>
