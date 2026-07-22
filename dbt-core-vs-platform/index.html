@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="field-notes">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>dbt Core vs. the platform, explained</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<title>dbt Core vs. dbt Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-height:100vh;overflow-x:hidden}
@@ -165,22 +165,68 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
   .gq{flex-direction:column;align-items:flex-start}
 }
 </style>
+<style id="field-notes-theme">
+:root{--paper:#fff;--ink:#171717;--muted:#5f5f5a;--rule:#d9d8d2;--wash:#f7f7f3;--blue:#1f5b8f;--teal:#167b73;--green:#357447;--ochre:#a96d20;--red:#a64431;--plum:#805477;--mono:'Space Mono',monospace;--sans:Inter,'Noto Sans JP',sans-serif}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.7}
+.app{max-width:1080px;padding:54px 28px 110px}
+.topbar{padding-bottom:14px;margin-bottom:68px;border-bottom:1.5px solid var(--ink)}
+.back{color:#565652;font-family:var(--mono);font-size:10px;text-transform:lowercase}
+.back:hover{color:var(--ink)}
+.language-picker{position:relative;z-index:20}
+.language-current{min-width:158px;padding:9px 13px;color:var(--language-ink,var(--blue));background:#fff;border:1.5px solid currentColor;border-radius:48% 4px 45% 3px/10% 45% 8% 42%;cursor:pointer;font:600 12px var(--sans);text-align:left}
+.language-current::after{float:right;content:'+';font:400 14px var(--mono)}
+.language-current[aria-expanded="true"]::after{content:'−'}
+.language-menu{position:absolute;top:calc(100% + 8px);right:0;width:220px;padding:8px;background:#fff;border:1.5px solid var(--ink)}
+.language-menu[hidden]{display:none}
+.language-option{--option-ink:var(--blue);display:block;width:100%;margin:0 0 5px;padding:10px 13px;color:var(--option-ink);background:#fff;border:1.5px solid currentColor;cursor:pointer;font:500 14px var(--sans);text-align:left;transform:rotate(var(--turn,0deg))}
+.language-option:last-child{margin-bottom:0}.language-option:hover,.language-option:focus-visible,.language-option[aria-selected="true"]{color:#fff;background:var(--option-ink);outline:0}
+.language-en{--option-ink:var(--blue);--turn:-.35deg}.language-ja{--option-ink:#bf3a31;--turn:.65deg}.language-es{--option-ink:#a24b31;--turn:-.7deg}.language-pt-br{--option-ink:#287047;--turn:.45deg}.language-de{--option-ink:#303033;--turn:-.25deg}
+.hdr{text-align:left;margin:0 0 76px}.hdr-tag{margin:0 0 20px;padding:0;color:#696963;background:none;border:0;border-radius:0;font:400 10px var(--mono);letter-spacing:.08em;text-transform:lowercase}
+.hdr h1{max-width:890px;margin:0;color:var(--ink);font-size:clamp(43px,7.4vw,78px);font-weight:500;line-height:.96;letter-spacing:-.06em}.hdr p{max-width:620px;margin:28px 0 0;color:#4c4c48;font-size:15px;line-height:1.75}
+.jump{position:relative;justify-content:space-between;gap:24px;margin:0 0 92px;padding:24px 0 0;border-top:1.5px solid var(--ink)}
+.jump::before{position:absolute;top:6px;left:2%;right:2%;height:8px;border-top:1px solid var(--ink);content:'';transform:rotate(-.35deg) skewX(-10deg)}
+.jump a{position:relative;color:#5c5c58;background:#fff;border:0;border-bottom:1px solid currentColor;border-radius:0;padding:3px 1px;font:400 11px var(--mono);text-transform:lowercase}.jump a:nth-child(1){color:var(--blue);transform:rotate(-.4deg)}.jump a:nth-child(2){color:var(--green);transform:rotate(.35deg)}.jump a:nth-child(3){color:var(--red);transform:rotate(-.25deg)}
+.thesis{max-width:820px;margin:0 0 94px;padding:0 0 0 24px;color:var(--ink);background:#fff;border:0;border-left:1.5px solid var(--blue);border-radius:0}.thesis .tl{color:var(--blue);font:600 10px var(--mono);letter-spacing:.08em;text-transform:lowercase}.thesis p,.thesis p b{color:#30302d}.thesis code,.mesh-note code,.viz-cap code{color:var(--ink);background:#f0f0ec;font-family:var(--mono)}
+.section{margin:0 0 112px}.sec-h{max-width:760px;margin-bottom:14px;color:var(--ink);font-size:clamp(28px,4vw,44px);font-weight:500;line-height:1.05;letter-spacing:-.04em}.sec-intro{max-width:650px;margin-bottom:44px;color:var(--muted);font-size:14px}
+.rightcard{padding:0;background:#fff;border:0;border-top:1.5px solid var(--ink);border-radius:0}.rightlist{gap:0;margin:0}.rightlist li{padding:17px 18px 17px 42px;color:#30302d;border-bottom:1px solid var(--rule);font-size:13px}.rightlist li::before{left:10px;top:17px;color:var(--green);font-family:var(--mono)}.sec-close{padding:22px 0;color:var(--muted);border-bottom:1px solid var(--rule);border-top:0}.altpath{margin-top:38px;padding:22px 0 0;border-top:1.5px solid var(--ochre)}.altpath-label{color:var(--ochre);font:600 10px var(--mono);letter-spacing:.08em;text-transform:lowercase}.altpath p{max-width:720px;color:#3e3e3a}
+.tip{margin:0 0 72px;background:#fff;border:0;border-top:1.5px solid var(--ink);border-radius:0;overflow:visible}.tip-head{display:grid;grid-template-columns:170px 1fr;gap:20px;padding:22px 0 8px}.tip-eyebrow{color:var(--blue);font:600 9px var(--mono);letter-spacing:.08em;text-transform:lowercase}.tip:nth-of-type(3n+2) .tip-eyebrow{color:var(--green)}.tip:nth-of-type(3n) .tip-eyebrow{color:var(--red)}.tip-title{color:var(--ink);font-size:21px;font-weight:500;letter-spacing:-.02em}.tip-moment{max-width:720px;margin:12px 0 26px;padding:2px 0 2px 20px;color:#353531;border-left:1.5px solid var(--ink);font-size:14px;font-style:normal}
+.viz{margin:0 0 20px;padding:20px 0 0;background:#fff;border:0;border-top:1px solid var(--rule);border-radius:0;overflow-x:auto}.viz-grid{gap:0;border:1px solid var(--rule)}.viz-panel{padding:18px;background:#fff;border:0;border-radius:0}.viz-panel+.viz-panel{border-left:1px solid var(--rule)}.viz-panel .vp-title{font:600 10px var(--mono);text-transform:lowercase}.viz-panel.core .vp-title{color:#666}.viz-panel.plat .vp-title{color:var(--teal)}
+.viz svg{background:#fff}.viz svg rect{filter:none}.viz svg rect[fill="#161b22"],.viz svg rect[fill="#1c2129"]{fill:#fff}.viz svg text[fill="#e6edf3"],.viz svg text[fill="#c9d1d9"]{fill:#252525}.viz svg text[fill="#8b949e"]{fill:#666}.viz svg line[stroke="#2d333b"],.viz svg rect[stroke="#444c56"]{stroke:#aaa}.viz-cap{margin:18px 0 0;padding:0;border-top:1px solid var(--rule)}.viz-cap>div{padding:16px;color:var(--muted)}.viz-cap>div:first-child{border-right:1px solid var(--rule)}.viz-cap b{color:var(--ink)}.viz-tag{border-radius:0;font-family:var(--mono);text-transform:lowercase}.viz-tag.core{color:#555;background:#eee}.viz-tag.plat{color:#12665f;background:#e7f4f1}
+.runcell{border-radius:48% 44% 52% 46%!important;background:#fff!important;font-family:var(--mono)}.runcell.unknown{color:#777;border-color:#777}.runcell.ok{color:#246d3c;border-color:#246d3c}.runcell.bad{color:#9e342c;border-color:#9e342c}.reqrow,.reach-lbl,.logrow{color:#333}.reqrow.friction .rm,.viz-note.warn{color:#9e342c}.reqrow.relief .rm{color:#246d3c}.logbox{color:#666;border-radius:0}.logrow{background:#fff;border-color:var(--rule);border-radius:0}.logrow b{color:var(--teal)}
+.mesh-ex{margin:20px 0 0;border:1px solid var(--ink);border-radius:0;background:#fff}.mesh-ex .mh{background:#fff;border-bottom-color:var(--rule)}.mesh-ex .mh .lbl,.mesh-ex .mh .hint{color:var(--blue);font-family:var(--mono)}.mesh-body,.mesh-body pre{color:var(--ink);background:var(--wash)}.mesh-body pre,.mesh-file{font-family:var(--mono)}.mesh-note{color:var(--muted)}
+.rchip,.gcap{border-radius:0;font-family:var(--mono)}.rchip.in,.rchip.hasnt,.gcap{color:#1d663d;background:#edf6ef;border-color:#78a887}.rchip.no{color:#888;border-color:#aaa}
+.core-v2-note{max-width:760px;margin:34px 0;padding:2px 0 2px 22px;color:var(--muted);border-left:1.5px solid var(--ochre);text-align:left;font-style:normal}.fusion-note{background:#fff!important;border-color:var(--rule)!important;border-radius:0!important}
+.gut{gap:0;border-top:1.5px solid var(--ink)}.gq{padding:18px 0;background:#fff;border:0;border-bottom:1px solid var(--rule);border-radius:0}.gq-text{color:#30302d}.hardtag{color:#96362e;background:#fff;border-color:#96362e;border-radius:0;font-family:var(--mono)}.yn-btn{color:#555;background:#fff;border:1px solid #888;border-radius:0;font-family:var(--mono)}.yn-btn:hover{color:var(--ink);border-color:var(--ink)}.yn-btn.yes.active{color:#fff;background:var(--green);border-color:var(--green)}.yn-btn.no.active{color:#fff;background:#555;border-color:#555}
+.gut-result{margin-top:28px;padding:30px 24px;background:#fff;border:1.5px solid var(--ink);border-radius:0;text-align:left}.gut-result.platform{border-color:var(--teal)}.gut-badge-lbl{color:#666;font-family:var(--mono);text-transform:lowercase}.gut-badge{color:var(--ink)!important;font-family:var(--mono);font-size:30px}.gut-verdict{margin:0;color:#30302d}.gut-caps{justify-content:flex-start}.gut-caps-label{font-family:var(--mono);text-transform:lowercase}
+.closing{margin-top:100px;padding:30px 0;border-top:1.5px solid var(--ink)}.closing p{color:var(--muted)}.closing p b{color:var(--ink)}
+.app>div:last-child{border-top-color:var(--rule)!important}.app>div:last-child a{color:#666!important;font-family:var(--mono)!important}
+code,pre,.lbl,.mesh-file{font-family:var(--mono)!important}
+button:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offset:4px}
+@media(max-width:700px){.app{padding:38px 20px 80px}.topbar{margin-bottom:54px}.hdr{margin-bottom:60px}.hdr h1{font-size:clamp(40px,13vw,62px)}.jump{justify-content:flex-start;margin-bottom:70px}.tip-head{grid-template-columns:1fr}.viz-grid{grid-template-columns:1fr}.viz-panel+.viz-panel{border-left:0;border-top:1px solid var(--rule)}.viz-cap{flex-direction:column}.viz-cap>div:first-child{border-right:0;border-bottom:1px solid var(--rule)}.language-current{min-width:132px}.language-menu{width:205px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+</style>
 </head>
 <body>
 <div class="app">
 
 <div class="topbar">
   <a class="back" href="../" data-i18n="back_all">← all explainers</a>
-  <div class="lang-toggle" role="group" aria-label="Language / 日本語">
-    <button type="button" class="lang-btn active" data-lang="en" onclick="CvPSetLang('en')">EN</button>
-    <button type="button" class="lang-btn" data-lang="ja" onclick="CvPSetLang('ja')">日本語</button>
+  <div class="language-picker">
+    <button type="button" class="language-current" id="languageCurrent" aria-haspopup="listbox" aria-expanded="false" onclick="CvPToggleLanguageMenu()">English</button>
+    <div class="language-menu" id="languageMenu" role="listbox" aria-label="language" hidden>
+      <button type="button" class="language-option language-en" role="option" data-lang="en" aria-selected="true" onclick="CvPChooseLang('en')">English</button>
+      <button type="button" class="language-option language-ja" role="option" data-lang="ja" aria-selected="false" onclick="CvPChooseLang('ja')">日本語</button>
+      <button type="button" class="language-option language-es" role="option" data-lang="es" aria-selected="false" onclick="CvPChooseLang('es')">Español</button>
+      <button type="button" class="language-option language-pt-br" role="option" data-lang="pt-BR" aria-selected="false" onclick="CvPChooseLang('pt-BR')">Português (Brasil)</button>
+      <button type="button" class="language-option language-de" role="option" data-lang="de" aria-selected="false" onclick="CvPChooseLang('de')">Deutsch</button>
+    </div>
   </div>
 </div>
 
 <div class="hdr">
-  <div class="hdr-tag" data-i18n="tag_kicker">core vs. platform</div>
-  <h1 data-i18n-html="h1">dbt Core vs. the platform: where the line actually is</h1>
-  <p data-i18n-html="hdr_sub">A practitioner's guide to the moment dbt Core alone stops being enough, and what you actually get when you start paying for the dbt platform.</p>
+  <div class="hdr-tag" data-i18n="tag_kicker">dbt Core vs. dbt Platform</div>
+  <h1 data-i18n-html="h1">dbt Core vs. dbt Platform</h1>
+  <p data-i18n-html="hdr_sub">A practitioner's guide to when dbt Core stops being enough, and what the dbt platform adds.</p>
 </div>
 
 <div class="jump">
@@ -196,7 +242,7 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
 
 <section class="section" id="right-call">
   <h2 class="sec-h" data-i18n="rc_h">Where dbt Core alone is still the right call</h2>
-  <p class="sec-intro" data-i18n="rc_intro">Before any pitch, the honest version. None of this is dbt Core "settling for less."</p>
+  <p class="sec-intro" data-i18n="rc_intro">Start with the teams that do not need the platform.</p>
   <div class="rightcard">
     <ul class="rightlist">
       <li data-i18n="rc1">A solo analyst or a single analytics engineer running their own project against their own warehouse.</li>
@@ -217,7 +263,7 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
 
 <section class="section" id="tipping-points">
   <h2 class="sec-h" data-i18n="tp_h">Where the line starts moving</h2>
-  <p class="sec-intro" data-i18n="tp_intro">Each one starts as a specific, ordinary moment, not a missing feature. The picture is the argument, the words underneath just label it.</p>
+  <p class="sec-intro" data-i18n="tp_intro">The line moves when ordinary operating problems begin to stack up.</p>
 
   <!-- TP1: scheduling / alerting / CI -->
   <div class="tip" id="tip-1">
@@ -307,7 +353,7 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
         </div>
       </div>
       <div class="viz-cap">
-        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c3">environments are hand-maintained <code>targets</code>, "who touched this" is just <code>git blame</code></span></div>
+        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c3">environments are hand-maintained <code>targets</code>; <code>git blame</code> is the record of who touched them</span></div>
         <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f3">RBAC, SSO, and audit logs on Enterprise-tier plans, plus managed dev/staging/prod</span></div>
       </div>
     </div>
@@ -368,7 +414,7 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
         <text x="577" y="164" fill="#5eead4" font-family="JetBrains Mono,monospace" font-size="8.5" text-anchor="middle" data-i18n="v4_note_right">column-level + cross-project, always current</text>
       </svg>
       <div class="viz-cap">
-        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n-html="c4"><code>dbt docs generate</code> gives a real, model-level DAG, current only as of the last manual regenerate, scoped to one project</span></div>
+        <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n-html="c4"><code>dbt docs generate</code> gives a model-level DAG, current as of the last manual regenerate and scoped to one project</span></div>
         <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f4">dbt Catalog (formerly Explorer) adds column-level lineage, cross-project visibility, and ownership/health signals, always current</span></div>
       </div>
     </div>
@@ -417,7 +463,7 @@ body{font-family:'DM Sans',sans-serif;background:#0e1117;color:#e6edf3;min-heigh
         <div class="mesh-file" data-i18n="mesh_file2">downstream project · models/finance_summary.sql</div>
         <pre>select ...
 from {{ ref('finance_project', 'fct_orders') }}</pre>
-        <div class="mesh-note" data-i18n-html="mesh_note"><code>access: public</code> isn't a suggestion, it's the switch that lets another project's <code>ref()</code> resolve to this model at all.</div>
+        <div class="mesh-note" data-i18n-html="mesh_note"><code>access: public</code> lets another project's <code>ref()</code> resolve to this model.</div>
       </div>
     </div>
   </div>
@@ -426,7 +472,7 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
   <div class="tip" id="tip-6">
     <div class="tip-head">
       <span class="tip-eyebrow" data-i18n="e6">tipping point 6 of 8</span>
-      <div class="tip-title" data-i18n="t6">How many people can actually work in this at once</div>
+      <div class="tip-title" data-i18n="t6">How many people can work in this at once</div>
     </div>
     <p class="tip-moment" data-i18n="m6">You hire a third analytics engineer. The "set up your laptop" doc outgrows the model they're shipping.</p>
     <div class="viz">
@@ -465,9 +511,9 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
   <div class="tip" id="tip-7">
     <div class="tip-head">
       <span class="tip-eyebrow" data-i18n="e7">tipping point 7 of 8</span>
-      <div class="tip-title" data-i18n="t7">How many people does the open-source project actually serve</div>
+      <div class="tip-title" data-i18n="t7">Who can use the open-source project</div>
     </div>
-    <p class="tip-moment" data-i18n="m7">A stakeholder asks to just look at the model himself instead of filing another ticket. He can't, not on his own.</p>
+    <p class="tip-moment" data-i18n="m7">A stakeholder wants to inspect the model without filing another ticket, but cannot access it alone.</p>
     <div class="viz">
       <div class="viz-grid">
         <div class="viz-panel core">
@@ -544,7 +590,7 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
   </div>
 </section>
 
-<p class="core-v2-note" data-i18n="corev2">One more thing: dbt Core v2 shipped its first alpha in June 2026, a Rust-based rewrite of the engine that's still Apache 2.0 licensed. It isn't the default stable release yet, so this page's core-vs-platform breakdown describes the dbt Core (v1.x) most teams install today.</p>
+<p class="core-v2-note" data-i18n="corev2">dbt Core v2 shipped its first alpha in June 2026. The Rust-based rewrite remains Apache 2.0 licensed. It is not the default stable release yet, so this comparison describes the dbt Core (v1.x) most teams install today.</p>
 
 <p class="core-v2-note" data-i18n="fusion_p">dbt Core v2 and the proprietary dbt Fusion engine now share that same Rust runtime: Core v2 is the open-source foundation, and Fusion is a separately licensed distribution built on top of it, adding SQL comprehension, column-level lineage, and richer local development. Fusion is free to use locally (via its VS Code extension) and also selectable inside the dbt platform.</p>
 
@@ -554,7 +600,7 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
 
   <div class="gut">
     <div class="gq">
-      <span class="gq-textwrap"><span class="gq-text" data-i18n="q1">Are you babysitting a scheduler, cron, Airflow, GitHub Actions, whatever it is, just to make sure dbt actually runs?</span></span>
+      <span class="gq-textwrap"><span class="gq-text" data-i18n="q1">Are you maintaining cron, Airflow, GitHub Actions, or another scheduler to make sure dbt runs?</span></span>
       <span class="yn-btns"><button type="button" class="yn-btn yes" onclick="CvPAnswer('q1',true,this)" data-i18n="yn_yes">yes</button><button type="button" class="yn-btn no" onclick="CvPAnswer('q1',false,this)" data-i18n="yn_no">no</button></span>
     </div>
     <div class="gq">
@@ -592,7 +638,7 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
 </section>
 
 <div class="closing">
-  <p data-i18n-html="closing_p">dbt Core is good, it's why any of this works at all. <b>Are you already paying the operational cost of running dbt yourself</b>, in time and risk, instead of in a subscription? Sometimes that trade is right. This page just makes it a conscious one.</p>
+  <p data-i18n-html="closing_p">dbt Core makes all of this possible. The choice is whether to pay the operational cost of running it yourself in time and risk, or pay for the platform. Either trade can be right; make it deliberately.</p>
 </div>
 
 <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #21262d"><a href="https://github.com/cedricturner/dbt-artifacts" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'"><svg height="13" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span data-i18n-html="gh_src">view source on github</span></a></div>
@@ -710,5 +756,6 @@ CvPCacheEn();
   CvPSetLang(initial);
 })();
 </script>
+<script src="translations.js"></script>
 </body>
 </html>
