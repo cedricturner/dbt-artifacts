@@ -37,24 +37,35 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .nbtn.pri:hover:not(:disabled){background:#6d28d9}
 .prog{font-family:var(--mono);font-size:11px;color:var(--muted)}
 .cap{font-size:12px;color:var(--muted);line-height:1.6;margin-top:14px;padding:10px 12px;background:var(--raised);border-radius:8px;border:1px solid var(--border)}
+
+.lang-toggle{display:inline-flex;background:#161b22;border:1px solid #2d333b;border-radius:99px;padding:3px;gap:2px;flex-shrink:0}
+.lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#8b949e;background:transparent;border:none;border-radius:99px;padding:5px 12px;cursor:pointer;transition:all .2s;line-height:1}
+.lang-btn:hover{color:#e6edf3}
+.lang-btn.active{background:var(--purple);color:#fff}
 </style>
 </head>
 <body>
 <div class="app">
-<div style="margin-bottom:24px"><a href="../" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'">← all explainers</a></div>
+<div style="margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+  <a href="../" data-i18n-html="back_all" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'">← all explainers</a>
+  <div class="lang-toggle" role="group" aria-label="Language / 言語">
+    <button type="button" class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+    <button type="button" class="lang-btn" data-lang="ja" onclick="setLang('ja')">日本語</button>
+  </div>
+</div>
 <div class="hdr">
   <div class="hdr-tag">dbt Labs · AI / LLM</div>
-  <h1>From Data to Conversation</h1>
-  <p>How dbt connects your warehouse to AI agents, with the same trust layer that powers your BI tools.</p>
+  <h1 data-i18n-html="h1">From Data to Conversation</h1>
+  <p data-i18n-html="intro">How dbt connects your warehouse to AI agents, with the same trust layer that powers your BI tools.</p>
 </div>
 <div class="nav" id="snav"></div>
 <div id="scontent"></div>
 <div class="ctrls">
-  <button class="nbtn" id="pb" onclick="nav(-1)">← Back</button>
+  <button class="nbtn" id="pb" onclick="nav(-1)" data-i18n-html="nav_back">← Back</button>
   <span class="prog" id="pg"></span>
   <button class="nbtn pri" id="nb" onclick="nav(1)">Next →</button>
 </div>
-<div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #21262d"><a href="https://github.com/cedricturner/dbt-artifacts" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'"><svg height="13" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>view source on github</a></div>
+<div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #21262d"><a href="https://github.com/cedricturner/dbt-artifacts" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'"><svg height="13" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span data-i18n-html="gh_src">view source on github</span></a></div>
 </div>
 
 <script>
@@ -64,72 +75,72 @@ var cur = 0;
 
 function renderStep0() {
   return `<div class="card">
-  <div class="card-title">Dashboard vs. Conversation</div>
-  <div class="card-sub">Same data, same metrics. Different interface.</div>
+  <div class="card-title">${T('t0_title','Dashboard vs. Conversation')}</div>
+  <div class="card-sub">${T('t0_sub','Same data, same metrics. Different interface.')}</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
 
     <!-- BI side -->
     <div style="background:var(--raised);border:1px solid var(--border);border-radius:10px;overflow:hidden">
       <div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
         <span style="width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block;flex-shrink:0"></span>
-        <span style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px">BI DASHBOARD</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px">${T('t0_bilabel','BI DASHBOARD')}</span>
       </div>
       <div style="padding:14px;display:flex;flex-direction:column;gap:10px">
         <!-- KPI row -->
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
           <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
             <div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--blue)">$12M</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:2px">Revenue</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">${T('t0_kpi1','Revenue')}</div>
             <div style="font-size:10px;color:var(--green);margin-top:3px">↑ 11.8% YoY</div>
           </div>
           <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
             <div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--green)">42K</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:2px">Active Users</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">${T('t0_kpi2','Active Users')}</div>
             <div style="font-size:10px;color:var(--green);margin-top:3px">↑ 6.2%</div>
           </div>
           <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
             <div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--red)">3.1%</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:2px">Churn Rate</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">${T('t0_kpi3','Churn Rate')}</div>
             <div style="font-size:10px;color:var(--red);margin-top:3px">↑ 0.3pp</div>
           </div>
         </div>
         <!-- Bar chart -->
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px">
-          <div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-bottom:12px;letter-spacing:1px">REVENUE BY REGION · Q4</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-bottom:12px;letter-spacing:1px">${T('t0_barcap','REVENUE BY REGION · Q4')}</div>
           <div style="display:flex;align-items:flex-end;gap:10px;height:80px;padding:0 4px">
             <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%">
               <div style="flex:1;display:flex;align-items:flex-end;width:100%">
                 <div style="width:100%;height:76%;background:linear-gradient(180deg,rgba(88,166,255,.8),rgba(88,166,255,.4));border-radius:3px 3px 0 0"></div>
               </div>
-              <div style="font-size:9px;color:var(--muted)">North</div>
+              <div style="font-size:9px;color:var(--muted)">${T('t0_region_n','North')}</div>
               <div style="font-family:var(--mono);font-size:9px;color:var(--blue)">$4.2M</div>
             </div>
             <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%">
               <div style="flex:1;display:flex;align-items:flex-end;width:100%">
                 <div style="width:100%;height:55%;background:linear-gradient(180deg,rgba(88,166,255,.7),rgba(88,166,255,.3));border-radius:3px 3px 0 0"></div>
               </div>
-              <div style="font-size:9px;color:var(--muted)">West</div>
+              <div style="font-size:9px;color:var(--muted)">${T('t0_region_w','West')}</div>
               <div style="font-family:var(--mono);font-size:9px;color:var(--blue)">$3.1M</div>
             </div>
             <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%">
               <div style="flex:1;display:flex;align-items:flex-end;width:100%">
                 <div style="width:100%;height:45%;background:linear-gradient(180deg,rgba(88,166,255,.6),rgba(88,166,255,.25));border-radius:3px 3px 0 0"></div>
               </div>
-              <div style="font-size:9px;color:var(--muted)">South</div>
+              <div style="font-size:9px;color:var(--muted)">${T('t0_region_s','South')}</div>
               <div style="font-family:var(--mono);font-size:9px;color:var(--blue)">$2.8M</div>
             </div>
             <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%">
               <div style="flex:1;display:flex;align-items:flex-end;width:100%">
                 <div style="width:100%;height:30%;background:linear-gradient(180deg,rgba(88,166,255,.5),rgba(88,166,255,.2));border-radius:3px 3px 0 0"></div>
               </div>
-              <div style="font-size:9px;color:var(--muted)">East</div>
+              <div style="font-size:9px;color:var(--muted)">${T('t0_region_e','East')}</div>
               <div style="font-family:var(--mono);font-size:9px;color:var(--blue)">$1.9M</div>
             </div>
           </div>
         </div>
         <!-- Second chart: trend line mock -->
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px">
-          <div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-bottom:10px;letter-spacing:1px">REVENUE TREND · 6 MONTHS</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-bottom:10px;letter-spacing:1px">${T('t0_trendcap','REVENUE TREND · 6 MONTHS')}</div>
           <svg viewBox="0 0 260 60" style="width:100%;display:block">
             <polyline points="0,50 52,42 104,35 156,28 208,20 260,15" fill="none" stroke="rgba(88,166,255,.6)" stroke-width="2"/>
             <polyline points="0,50 52,42 104,35 156,28 208,20 260,15" fill="url(#tg)" stroke="none"/>
@@ -138,7 +149,7 @@ function renderStep0() {
             ${['Jul','Aug','Sep','Oct','Nov','Dec'].map((m,i)=>`<text x="${i*52}" y="58" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="7" text-anchor="middle">${m}</text>`).join('')}
           </svg>
         </div>
-        <div style="font-size:10px;color:var(--muted);text-align:center;padding:6px;background:var(--bg);border:1px dashed var(--border);border-radius:6px">Pre-built views · fixed filters · need analyst to go deeper</div>
+        <div style="font-size:10px;color:var(--muted);text-align:center;padding:6px;background:var(--bg);border:1px dashed var(--border);border-radius:6px">${T('t0_bicaption','Pre-built views · fixed filters · need analyst to go deeper')}</div>
       </div>
     </div>
 
@@ -146,44 +157,44 @@ function renderStep0() {
     <div style="background:var(--raised);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column">
       <div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
         <span style="width:8px;height:8px;border-radius:50%;background:var(--purple);display:inline-block;flex-shrink:0"></span>
-        <span style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px">AI AGENT</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px">${T('t0_ailabel','AI AGENT')}</span>
       </div>
       <div style="padding:14px;flex:1;display:flex;flex-direction:column;gap:8px;overflow-y:auto">
-        <div style="align-self:flex-end;max-width:88%;padding:9px 12px;border-radius:10px;font-size:12px;line-height:1.5;background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.3);color:#c4b5fd">What drove East region's growth last quarter?</div>
+        <div style="align-self:flex-end;max-width:88%;padding:9px 12px;border-radius:10px;font-size:12px;line-height:1.5;background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.3);color:#c4b5fd">${T('t0_q1',"What drove East region's growth last quarter?")}</div>
         <div style="align-self:flex-start;max-width:92%;padding:9px 12px;border-radius:10px;font-size:12px;line-height:1.5;background:var(--bg);border:1px solid var(--border)">
           <span style="display:block;font-family:var(--mono);font-size:10px;color:var(--pl);background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:4px;padding:3px 7px;margin-bottom:5px">→ query_metrics(revenue, group_by=[region, channel])</span>
           <span style="display:block;font-family:var(--mono);font-size:10px;color:var(--green);background:rgba(63,185,80,.06);border:1px solid rgba(63,185,80,.15);border-radius:4px;padding:3px 7px;margin-bottom:6px">← East: $1.9M · Digital channel +34%</span>
-          East growth was almost entirely digital, up 34% QoQ. New customer acquisition, not expansion.
+          ${T('t0_a1','East growth was almost entirely digital, up 34% QoQ. New customer acquisition, not expansion.')}
         </div>
-        <div style="align-self:flex-end;max-width:88%;padding:9px 12px;border-radius:10px;font-size:12px;line-height:1.5;background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.3);color:#c4b5fd">Is CAC holding up or are we buying that growth?</div>
+        <div style="align-self:flex-end;max-width:88%;padding:9px 12px;border-radius:10px;font-size:12px;line-height:1.5;background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.3);color:#c4b5fd">${T('t0_q2','Is CAC holding up or are we buying that growth?')}</div>
         <div style="align-self:flex-start;max-width:92%;padding:9px 12px;border-radius:10px;font-size:12px;line-height:1.5;background:var(--bg);border:1px solid var(--border)">
           <span style="display:block;font-family:var(--mono);font-size:10px;color:var(--pl);background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:4px;padding:3px 7px;margin-bottom:5px">→ query_metrics(cac, region=East, group_by=[month])</span>
           <span style="display:block;font-family:var(--mono);font-size:10px;color:var(--green);background:rgba(63,185,80,.06);border:1px solid rgba(63,185,80,.15);border-radius:4px;padding:3px 7px;margin-bottom:6px">← CAC up 18% · payback period now 14mo</span>
-          CAC climbed 18% while revenue grew 34%. Efficient for now, but payback is stretching. Worth watching in Q1.
+          ${T('t0_a2','CAC climbed 18% while revenue grew 34%. Efficient for now, but payback is stretching. Worth watching in Q1.')}
         </div>
       </div>
-      <div style="font-size:10px;color:var(--green);text-align:center;padding:7px;border-top:1px solid var(--border);background:rgba(63,185,80,.04)">Governed metrics · follows the thread · no ticket required</div>
+      <div style="font-size:10px;color:var(--green);text-align:center;padding:7px;border-top:1px solid var(--border);background:rgba(63,185,80,.04)">${T('t0_aicaption','Governed metrics · follows the thread · no ticket required')}</div>
     </div>
   </div>
-  <div class="cap">The dashboard answers the question you thought to ask. The agent follows the one you're actually asking, and keeps going. Same underlying dbt metrics, same definitions. The interface is what changes.</div>
+  <div class="cap">${T('t0_cap',"The dashboard answers the question you thought to ask. The agent follows the one you're actually asking, and keeps going. Same underlying dbt metrics, same definitions. The interface is what changes.")}</div>
 </div>`;
 }
 
 function renderStep1() {
   return `<div class="card">
-  <div class="card-title">The Stack: source to AI</div>
-  <div class="card-sub">dbt sits at the center: it transforms raw data, defines business metrics in the Semantic Layer, and exposes everything via APIs. The MCP Server bridges dbt's APIs to LLMs, giving AI tools governed, structured access to the same data your dashboards use.</div>
+  <div class="card-title">${T('t1_title','The Stack: source to AI')}</div>
+  <div class="card-sub">${T('t1_sub',"dbt sits at the center: it transforms raw data, defines business metrics in the Semantic Layer, and exposes everything via APIs. The MCP Server bridges dbt's APIs to LLMs, giving AI tools governed, structured access to the same data your dashboards use.")}</div>
   <div style="background:var(--raised);border:1px solid var(--border);border-radius:10px;padding:16px;overflow-x:auto">
-    <img src="stack-diagram.svg" alt="The Stack: source to AI architecture diagram" style="width:100%;display:block;border-radius:6px;background:#fff"/>
+    <img src="stack-diagram.svg" alt="${T('t1_alt','The Stack: source to AI architecture diagram')}" style="width:100%;display:block;border-radius:6px;background:#fff"/>
   </div>
-  <div class="cap">The Semantic Layer and dbt APIs live inside the dbt Platform, defined once, reused by everyone. The MCP Server is the bridge: it wraps those APIs into structured tools that LLMs can reason with. Whether you're in Tableau or talking to Claude, you're getting the same governed data.</div>
+  <div class="cap">${T('t1_cap',"The Semantic Layer and dbt APIs live inside the dbt Platform, defined once, reused by everyone. The MCP Server is the bridge: it wraps those APIs into structured tools that LLMs can reason with. Whether you're in Tableau or talking to Claude, you're getting the same governed data.")}</div>
 </div>`;
 }
 
 function renderStep2() {
   return `<div class="card">
-  <div class="card-title">How the Semantic Layer is built</div>
-  <div class="card-sub">Mart model → Semantic model (entities + dimensions) → Metrics</div>
+  <div class="card-title">${T('t2_title','How the Semantic Layer is built')}</div>
+  <div class="card-sub">${T('t2_sub','Mart model → Semantic model (entities + dimensions) → Metrics')}</div>
   <div style="overflow-x:auto">
     <svg viewBox="0 0 800 330" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:580px;display:block">
       <defs>
@@ -194,7 +205,7 @@ function renderStep2() {
       <!-- MART MODEL -->
       <rect x="12" y="40" width="160" height="198" rx="8" fill="rgba(63,185,80,.07)" stroke="#3fb950" stroke-width="1.5"/>
       <text x="92" y="60" fill="#3fb950" font-family="JetBrains Mono,monospace" font-size="10" font-weight="600" text-anchor="middle">fct_orders</text>
-      <text x="92" y="73" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8" text-anchor="middle">mart model</text>
+      <text x="92" y="73" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8" text-anchor="middle">${T('t2_martmodel','mart model')}</text>
       <line x1="20" y1="80" x2="164" y2="80" stroke="#2d333b" stroke-width="1"/>
       <!-- columns -->
       <text x="24" y="97" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="8.5">order_id</text>
@@ -215,28 +226,28 @@ function renderStep2() {
 
       <!-- mart → sem model -->
       <path d="M172 139 L226 139" stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#sp)"/>
-      <text x="199" y="131" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="7.5" text-anchor="middle">built on</text>
+      <text x="199" y="131" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="7.5" text-anchor="middle">${T('t2_builton','built on')}</text>
 
       <!-- SEMANTIC MODEL -->
       <rect x="226" y="30" width="184" height="248" rx="8" fill="rgba(124,58,237,.08)" stroke="#7c3aed" stroke-width="2"/>
       <text x="318" y="50" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="10" font-weight="600" text-anchor="middle">sem_orders</text>
-      <text x="318" y="63" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8" text-anchor="middle">semantic model</text>
+      <text x="318" y="63" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8" text-anchor="middle">${T('t2_semmodel','semantic model')}</text>
       <line x1="234" y1="70" x2="402" y2="70" stroke="#3d2d6b" stroke-width="1"/>
 
       <!-- ENTITIES -->
-      <text x="238" y="85" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="7.5" font-weight="600" letter-spacing="1">ENTITIES</text>
+      <text x="238" y="85" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="7.5" font-weight="600" letter-spacing="1">${T('t2_entities','ENTITIES')}</text>
       <rect x="238" y="90" width="164" height="20" rx="3" fill="rgba(167,139,250,.1)" stroke="rgba(124,58,237,.3)" stroke-width="1"/>
-      <text x="244" y="103" fill="#c4b5fd" font-family="JetBrains Mono,monospace" font-size="8">order_id <tspan fill="#8b949e">(primary)</tspan></text>
+      <text x="244" y="103" fill="#c4b5fd" font-family="JetBrains Mono,monospace" font-size="8">order_id <tspan fill="#8b949e">${T('t2_primary','(primary)')}</tspan></text>
 
       <!-- DIMENSIONS -->
-      <text x="238" y="126" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="7.5" font-weight="600" letter-spacing="1">DIMENSIONS</text>
+      <text x="238" y="126" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="7.5" font-weight="600" letter-spacing="1">${T('t2_dimensions','DIMENSIONS')}</text>
       <rect x="238" y="131" width="164" height="20" rx="3" fill="rgba(88,166,255,.07)" stroke="rgba(88,166,255,.2)" stroke-width="1"/>
       <text x="244" y="144" fill="#58a6ff" font-family="JetBrains Mono,monospace" font-size="8">region <tspan fill="#8b949e">· channel · status</tspan></text>
       <rect x="238" y="155" width="164" height="20" rx="3" fill="rgba(88,166,255,.06)" stroke="rgba(88,166,255,.2)" stroke-width="1"/>
-      <text x="244" y="168" fill="#58a6ff" font-family="JetBrains Mono,monospace" font-size="8">ordered_at <tspan fill="#8b949e">(time dimension)</tspan></text>
+      <text x="244" y="168" fill="#58a6ff" font-family="JetBrains Mono,monospace" font-size="8">ordered_at <tspan fill="#8b949e">${T('t2_timedim','(time dimension)')}</tspan></text>
 
       <!-- MEASURES -->
-      <text x="238" y="193" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="7.5" font-weight="600" letter-spacing="1">MEASURES</text>
+      <text x="238" y="193" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="7.5" font-weight="600" letter-spacing="1">${T('t2_measures','MEASURES')}</text>
       <rect x="238" y="198" width="164" height="20" rx="3" fill="rgba(63,185,80,.08)" stroke="rgba(63,185,80,.25)" stroke-width="1"/>
       <text x="244" y="211" fill="#3fb950" font-family="JetBrains Mono,monospace" font-size="8">order_total <tspan fill="#8b949e">SUM</tspan></text>
       <rect x="238" y="222" width="164" height="20" rx="3" fill="rgba(63,185,80,.06)" stroke="rgba(63,185,80,.2)" stroke-width="1"/>
@@ -247,44 +258,44 @@ function renderStep2() {
       <path d="M410 155 L452 165" stroke="#7c3aed" stroke-width="1.5" fill="none" marker-end="url(#sp)" opacity=".7"/>
       <path x1="410" y1="228" x2="452" y2="240" stroke="#7c3aed" stroke-width="1.5" fill="none" marker-end="url(#sp)" opacity=".7"/>
       <path d="M410 228 L452 240" stroke="#7c3aed" stroke-width="1.5" fill="none" marker-end="url(#sp)" opacity=".7"/>
-      <text x="430" y="130" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="7.5" text-anchor="middle">defines</text>
+      <text x="430" y="130" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="7.5" text-anchor="middle">${T('t2_defines','defines')}</text>
 
       <!-- METRICS -->
       <!-- revenue -->
       <rect x="452" y="42" width="332" height="72" rx="7" fill="rgba(124,58,237,.08)" stroke="rgba(124,58,237,.3)" stroke-width="1.5"/>
       <text x="464" y="60" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="10" font-weight="600">revenue</text>
       <rect x="546" y="47" width="46" height="16" rx="3" fill="rgba(124,58,237,.15)" stroke="rgba(124,58,237,.3)" stroke-width="1"/>
-      <text x="569" y="58" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="7.5" text-anchor="middle">simple</text>
+      <text x="569" y="58" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="7.5" text-anchor="middle">${T('t2_simple','simple')}</text>
       <line x1="460" y1="68" x2="776" y2="68" stroke="#2d333b" stroke-width="1"/>
-      <text x="464" y="81" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8">measure</text>
+      <text x="464" y="81" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8">${T('t2_measure','measure')}</text>
       <text x="528" y="81" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="8">SUM(order_total) where status=completed</text>
-      <text x="464" y="97" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8">group by</text>
+      <text x="464" y="97" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8">${T('t2_groupby','group by')}</text>
       <text x="528" y="97" fill="#58a6ff" font-family="JetBrains Mono,monospace" font-size="8">region · channel · time</text>
 
       <!-- order_count -->
       <rect x="452" y="130" width="332" height="66" rx="7" fill="rgba(88,166,255,.07)" stroke="rgba(88,166,255,.25)" stroke-width="1.5"/>
       <text x="464" y="148" fill="#58a6ff" font-family="JetBrains Mono,monospace" font-size="10" font-weight="600">order_count</text>
       <rect x="562" y="135" width="46" height="16" rx="3" fill="rgba(88,166,255,.1)" stroke="rgba(88,166,255,.3)" stroke-width="1"/>
-      <text x="585" y="146" fill="#58a6ff" font-family="JetBrains Mono,monospace" font-size="7.5" text-anchor="middle">simple</text>
+      <text x="585" y="146" fill="#58a6ff" font-family="JetBrains Mono,monospace" font-size="7.5" text-anchor="middle">${T('t2_simple','simple')}</text>
       <line x1="460" y1="155" x2="776" y2="155" stroke="#2d333b" stroke-width="1"/>
-      <text x="464" y="168" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8">measure</text>
+      <text x="464" y="168" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8">${T('t2_measure','measure')}</text>
       <text x="528" y="168" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="8">COUNT(order_id)</text>
-      <text x="464" y="185" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8">group by</text>
+      <text x="464" y="185" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8">${T('t2_groupby','group by')}</text>
       <text x="528" y="185" fill="#58a6ff" font-family="JetBrains Mono,monospace" font-size="8">region · channel · time</text>
 
       <!-- avg_order_value (derived) -->
       <rect x="452" y="212" width="332" height="66" rx="7" fill="rgba(210,153,34,.07)" stroke="rgba(210,153,34,.25)" stroke-width="1.5"/>
       <text x="464" y="230" fill="#d29922" font-family="JetBrains Mono,monospace" font-size="10" font-weight="600">avg_order_value</text>
       <rect x="600" y="217" width="52" height="16" rx="3" fill="rgba(210,153,34,.1)" stroke="rgba(210,153,34,.3)" stroke-width="1"/>
-      <text x="626" y="228" fill="#d29922" font-family="JetBrains Mono,monospace" font-size="7.5" text-anchor="middle">derived</text>
+      <text x="626" y="228" fill="#d29922" font-family="JetBrains Mono,monospace" font-size="7.5" text-anchor="middle">${T('t2_derived','derived')}</text>
       <line x1="460" y1="237" x2="776" y2="237" stroke="#2d333b" stroke-width="1"/>
-      <text x="464" y="250" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8">expr</text>
+      <text x="464" y="250" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8">${T('t2_expr','expr')}</text>
       <text x="528" y="250" fill="#e6edf3" font-family="JetBrains Mono,monospace" font-size="8">revenue / order_count</text>
-      <text x="464" y="267" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8">inherits</text>
-      <text x="528" y="267" fill="#58a6ff" font-family="JetBrains Mono,monospace" font-size="8">all dimensions from parent metrics</text>
+      <text x="464" y="267" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="8">${T('t2_inherits','inherits')}</text>
+      <text x="528" y="267" fill="#58a6ff" font-family="JetBrains Mono,monospace" font-size="8">${T('t2_inheritsval','all dimensions from parent metrics')}</text>
     </svg>
   </div>
-  <div class="cap">The semantic model registers <strong>entities</strong> (the grain), <strong>dimensions</strong> (how to slice), and <strong>measures</strong> (raw aggregations). Metrics sit on top. Simple ones reference a single measure, derived ones compose from other metrics. When an AI agent calls <code style="color:var(--pl)">query_metrics("revenue")</code>, MetricFlow generates the SQL. Nothing extra is materialized.</div>
+  <div class="cap">${T('t2_cap','The semantic model registers <strong>entities</strong> (the grain), <strong>dimensions</strong> (how to slice), and <strong>measures</strong> (raw aggregations). Metrics sit on top. Simple ones reference a single measure, derived ones compose from other metrics. When an AI agent calls <code style="color:var(--pl)">query_metrics("revenue")</code>, MetricFlow generates the SQL. Nothing extra is materialized.')}</div>
 </div>`;
 }
 
@@ -292,80 +303,80 @@ function renderStep3() {
   var tiers = [
     {
       num: 1,
-      label: 'Tier 1: Semantic Layer',
-      badge: 'MOST EFFICIENT',
+      label: T('t3_1_label','Tier 1: Semantic Layer'),
+      badge: T('t3_1_badge','MOST EFFICIENT'),
       badgeColor: 'var(--pl)',
       color: 'var(--pl)',
       border: 'rgba(167,139,250,.5)',
       bg: 'rgba(124,58,237,.08)',
-      headline: 'Call a named metric directly',
-      when: 'Agent knows the answer is a defined metric. No SQL written, no schema guessing.',
+      headline: T('t3_1_headline','Call a named metric directly'),
+      when: T('t3_1_when','Agent knows the answer is a defined metric. No SQL written, no schema guessing.'),
       tools: ['list_metrics', 'query_metrics', 'get_dimensions', 'get_entities', 'list_saved_queries'],
-      exampleQ: 'What was revenue last quarter by region?',
+      exampleQ: T('t3_1_q','What was revenue last quarter by region?'),
       exampleSteps: [
         { type: 'tool',   text: 'list_metrics()' },
-        { type: 'result', text: "finds 'revenue' in metric list" },
+        { type: 'result', text: T('t3_1_s2',"finds 'revenue' in metric list") },
         { type: 'tool',   text: 'query_metrics("revenue", group_by=["region", "metric_time__quarter"])' },
         { type: 'result', text: '{North: $4.2M, West: $3.1M, South: $2.8M, East: $1.9M}' },
-        { type: 'ok',     text: 'No SQL generated. Fully governed.' },
+        { type: 'ok',     text: T('t3_1_s5','No SQL generated. Fully governed.') },
       ]
     },
     {
       num: 2,
-      label: 'Tier 2: Discovery',
-      badge: 'EXPLORE FIRST',
+      label: T('t3_2_label','Tier 2: Discovery'),
+      badge: T('t3_2_badge','EXPLORE FIRST'),
       badgeColor: 'var(--blue)',
       color: 'var(--blue)',
       border: 'rgba(88,166,255,.5)',
       bg: 'rgba(88,166,255,.07)',
-      headline: 'Understand the project before acting',
-      when: 'Agent needs context: what models exist, what the lineage looks like, what tests are passing. Adds tokens but prevents wrong answers.',
+      headline: T('t3_2_headline','Understand the project before acting'),
+      when: T('t3_2_when','Agent needs context: what models exist, what the lineage looks like, what tests are passing. Adds tokens but prevents wrong answers.'),
       tools: ['get_all_models', 'get_model_details', 'get_lineage', 'get_model_health', 'get_all_sources', 'get_model_parents', 'get_model_children', 'search'],
-      exampleQ: 'Something looks off with churn, can you investigate?',
+      exampleQ: T('t3_2_q','Something looks off with churn, can you investigate?'),
       exampleSteps: [
         { type: 'tool',   text: 'get_lineage("churn_rate")' },
-        { type: 'result', text: 'traces to stg_subscriptions' },
+        { type: 'result', text: T('t3_2_s2','traces to stg_subscriptions') },
         { type: 'tool',   text: 'get_model_health("stg_subscriptions")' },
-        { type: 'result', text: 'last run: 31 hours ago' },
-        { type: 'ok',     text: 'Surfaces root cause without writing any SQL.' },
+        { type: 'result', text: T('t3_2_s4','last run: 31 hours ago') },
+        { type: 'ok',     text: T('t3_2_s5','Surfaces root cause without writing any SQL.') },
       ]
     },
     {
       num: 3,
-      label: 'Tier 3: Direct SQL',
-      badge: 'AD HOC',
+      label: T('t3_3_label','Tier 3: Direct SQL'),
+      badge: T('t3_3_badge','AD HOC'),
       badgeColor: 'var(--amber)',
       color: 'var(--amber)',
       border: 'rgba(210,153,34,.5)',
       bg: 'rgba(210,153,34,.07)',
-      headline: 'Run SQL directly when no metric covers it',
-      when: 'The question does not map to a defined metric. Agent writes SQL against known models. More tokens, less governance.',
+      headline: T('t3_3_headline','Run SQL directly when no metric covers it'),
+      when: T('t3_3_when','The question does not map to a defined metric. Agent writes SQL against known models. More tokens, less governance.'),
       tools: ['execute_sql', 'show'],
-      exampleQ: 'How many accounts were created in the last 7 days by plan type?',
+      exampleQ: T('t3_3_q','How many accounts were created in the last 7 days by plan type?'),
       exampleSteps: [
-        { type: 'think',  text: 'No metric for this. Querying fct_accounts directly.' },
+        { type: 'think',  text: T('t3_3_s1','No metric for this. Querying fct_accounts directly.') },
         { type: 'tool',   text: 'execute_sql("SELECT plan_type, COUNT(*) FROM fct_accounts WHERE created_at >= CURRENT_DATE - 7 GROUP BY 1")' },
         { type: 'result', text: '{free: 1842, pro: 214, enterprise: 31}' },
-        { type: 'warn',   text: 'Raw result. No tests, no metric definition enforced.' },
+        { type: 'warn',   text: T('t3_3_s4','Raw result. No tests, no metric definition enforced.') },
       ]
     },
     {
       num: 4,
-      label: 'Tier 4: Text-to-SQL',
-      badge: 'LAST RESORT',
+      label: T('t3_4_label','Tier 4: Text-to-SQL'),
+      badge: T('t3_4_badge','LAST RESORT'),
       badgeColor: 'var(--red)',
       color: 'var(--red)',
       border: 'rgba(248,81,73,.5)',
       bg: 'rgba(248,81,73,.06)',
-      headline: 'Generate SQL from natural language',
-      when: 'No metric, no known model. Agent generates SQL from scratch. Most tokens, most error-prone, no governance. Avoid when possible.',
+      headline: T('t3_4_headline','Generate SQL from natural language'),
+      when: T('t3_4_when','No metric, no known model. Agent generates SQL from scratch. Most tokens, most error-prone, no governance. Avoid when possible.'),
       tools: ['text_to_sql'],
-      exampleQ: 'Average order value by country for enterprise accounts',
+      exampleQ: T('t3_4_q','Average order value by country for enterprise accounts'),
       exampleSteps: [
-        { type: 'think',  text: 'No metric, no known model for this question' },
+        { type: 'think',  text: T('t3_4_s1','No metric, no known model for this question') },
         { type: 'tool',   text: 'text_to_sql("average order value by country for enterprise accounts")' },
-        { type: 'result', text: 'SQL generated from schema only' },
-        { type: 'warn',   text: 'No tests, no definitions. Result may differ from Tableau.' },
+        { type: 'result', text: T('t3_4_s3','SQL generated from schema only') },
+        { type: 'warn',   text: T('t3_4_s4','No tests, no definitions. Result may differ from Tableau.') },
       ]
     },
   ];
@@ -387,13 +398,13 @@ function renderStep3() {
 
     // when to use
     html += '<div style="margin-bottom:12px;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:7px">';
-    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">WHEN TO USE</div>';
+    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">' + T('t3_lbl_when','WHEN TO USE') + '</div>';
     html += '<div style="font-size:11px;color:var(--text);line-height:1.6">' + t.when + '</div>';
     html += '</div>';
 
     // tools
     html += '<div style="margin-bottom:12px">';
-    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:6px">TOOLS</div>';
+    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:6px">' + T('t3_lbl_tools','TOOLS') + '</div>';
     html += '<div style="display:flex;flex-wrap:wrap;gap:5px">';
     for (var j = 0; j < t.tools.length; j++) {
       html += '<span style="font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:5px;background:' + t.bg + ';border:1px solid ' + t.border + ';color:' + t.color + '">' + t.tools[j] + '</span>';
@@ -401,7 +412,7 @@ function renderStep3() {
     html += '</div></div>';
 
     // example interaction
-    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:6px">EXAMPLE INTERACTION</div>';
+    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:6px">' + T('t3_lbl_example','EXAMPLE INTERACTION') + '</div>';
     html += '<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:hidden">';
     html += '<div style="padding:8px 12px;background:rgba(124,58,237,.08);border-bottom:1px solid rgba(124,58,237,.2)">';
     html += '<div style="font-size:11px;color:#c4b5fd">' + t.exampleQ + '</div></div>';
@@ -437,15 +448,15 @@ function renderStep3() {
     pillsHtml += '</div></div></div>';
   }
   pillsHtml += '<div style="margin-top:8px;padding:8px 10px;background:var(--bg);border:1px solid var(--border);border-radius:7px">';
-  pillsHtml += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">EFFICIENCY SPECTRUM</div>';
+  pillsHtml += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">' + T('t3_spectrum','EFFICIENCY SPECTRUM') + '</div>';
   pillsHtml += '<div style="display:flex;align-items:center;gap:6px">';
   pillsHtml += '<span style="font-size:9px;color:var(--pl)">T1</span>';
   pillsHtml += '<div style="flex:1;height:4px;border-radius:2px;background:linear-gradient(90deg,#7c3aed,#58a6ff,#d29922,#f85149)"></div>';
   pillsHtml += '<span style="font-size:9px;color:var(--red)">T4</span>';
   pillsHtml += '</div>';
   pillsHtml += '<div style="display:flex;justify-content:space-between;margin-top:3px">';
-  pillsHtml += '<span style="font-size:8px;color:var(--muted)">fewest tokens · most governed</span>';
-  pillsHtml += '<span style="font-size:8px;color:var(--muted)">most tokens · least governed</span>';
+  pillsHtml += '<span style="font-size:8px;color:var(--muted)">' + T('t3_spec_left','fewest tokens · most governed') + '</span>';
+  pillsHtml += '<span style="font-size:8px;color:var(--muted)">' + T('t3_spec_right','most tokens · least governed') + '</span>';
   pillsHtml += '</div></div>';
   pillsHtml += '</div>';
 
@@ -454,7 +465,7 @@ function renderStep3() {
   detailHtml += '<div style="padding:16px;flex:1" id="tier-body">' + buildTierDetail(0) + '</div>';
   detailHtml += '</div>';
 
-  return '<div class="card"><div class="card-title">Agent Reasoning</div><div class="card-sub">How the agent decides which tools to use, from most efficient to last resort.</div>' +
+  return '<div class="card"><div class="card-title">' + T('t3_title','Agent Reasoning') + '</div><div class="card-sub">' + T('t3_sub','How the agent decides which tools to use, from most efficient to last resort.') + '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px">' +
     pillsHtml + detailHtml +
     '</div></div>';
@@ -474,147 +485,147 @@ window.setTier = function(i) {
   }
   var hdr  = document.getElementById('tier-hdr');
   var body = document.getElementById('tier-body');
-  if (hdr)  hdr.textContent = 'TIER ' + tiers[i].num + ': ' + tiers[i].label.split(':')[1].trim().toUpperCase();
+  if (hdr)  hdr.textContent = T('t3_tierword','TIER') + ' ' + tiers[i].num + ': ' + tiers[i].label.split(':')[1].trim().toUpperCase();
   if (body) body.innerHTML  = window._buildTierDetail(i);
 };
 
 function renderStep4() {
   var cases = [
     {
-      title: 'Semantic Layer',
-      sub: 'Governed metric queries, no raw SQL',
+      title: T('t4_1_title','Semantic Layer'),
+      sub: T('t4_1_sub','Governed metric queries, no raw SQL'),
       color: '#a78bfa',
       border: 'rgba(124,58,237,.4)',
       bg: 'rgba(124,58,237,.08)',
       tools: ['list_metrics', 'query_metrics', 'get_dimensions', 'list_saved_queries', 'get_metrics_compiled_sql'],
-      desc: 'The highest-value tool group. Agents query pre-defined, tested metrics by name, the same definitions powering your BI dashboards. No SQL generation, no guessing column names.',
+      desc: T('t4_1_desc','The highest-value tool group. Agents query pre-defined, tested metrics by name, the same definitions powering your BI dashboards. No SQL generation, no guessing column names.'),
       usecases: [
-        { icon: '📊', title: 'Natural language querying', detail: 'Stakeholders ask "What was churn last quarter?" and get accurate, governed answers. No analyst needed, no SQL written.' },
-        { icon: '🖥', title: 'BI tools & consistent answers', detail: 'BI tools like Tableau, Sigma, or Excel hit the same Semantic Layer. One definition, consistent numbers everywhere.' },
-        { icon: '📅', title: 'Scheduled reporting', detail: 'Agents pull metrics on a schedule, write a narrative summary, and post to Slack or email, automatically and accurately.' },
-        { icon: '🔍', title: 'Metric exploration', detail: 'Agents can discover what metrics exist, what dimensions are available, and what saved queries are already defined before answering.' },
+        { icon: '📊', title: T('t4_1_uc1_t','Natural language querying'), detail: T('t4_1_uc1_d','Stakeholders ask "What was churn last quarter?" and get accurate, governed answers. No analyst needed, no SQL written.') },
+        { icon: '🖥', title: T('t4_1_uc2_t','BI tools & consistent answers'), detail: T('t4_1_uc2_d','BI tools like Tableau, Sigma, or Excel hit the same Semantic Layer. One definition, consistent numbers everywhere.') },
+        { icon: '📅', title: T('t4_1_uc3_t','Scheduled reporting'), detail: T('t4_1_uc3_d','Agents pull metrics on a schedule, write a narrative summary, and post to Slack or email, automatically and accurately.') },
+        { icon: '🔍', title: T('t4_1_uc4_t','Metric exploration'), detail: T('t4_1_uc4_d','Agents can discover what metrics exist, what dimensions are available, and what saved queries are already defined before answering.') },
       ],
       steps: [
-        { type: 'think',  text: 'Q: "What\'s our churn rate by plan type this quarter?"' },
+        { type: 'think',  text: T('t4_1_s1','Q: "What\'s our churn rate by plan type this quarter?"') },
         { type: 'tool',   text: 'list_metrics()' },
         { type: 'result', text: '[churn_rate, revenue, cac, ndr...]' },
         { type: 'tool',   text: 'query_metrics("churn_rate", group_by=["plan_type", "metric_time__quarter"])' },
         { type: 'result', text: '{free: 3.4%, pro: 0.9%, enterprise: 0.2%}' },
-        { type: 'ok',     text: 'Free tier churn rose to 3.4%. Pro and Enterprise held steady.' },
+        { type: 'ok',     text: T('t4_1_s6','Free tier churn rose to 3.4%. Pro and Enterprise held steady.') },
       ]
     },
     {
-      title: 'Discovery API',
-      sub: 'Understand your project before acting',
+      title: T('t4_2_title','Discovery API'),
+      sub: T('t4_2_sub','Understand your project before acting'),
       color: '#58a6ff',
       border: 'rgba(88,166,255,.4)',
       bg: 'rgba(88,166,255,.08)',
       tools: ['get_all_models', 'get_model_details', 'get_lineage', 'get_model_health', 'get_model_parents', 'get_model_children', 'get_all_sources', 'get_exposures'],
-      desc: 'Discovery tools give agents a map of your project: models, lineage, health, and documentation. Essential context before modifying anything or debugging an issue.',
+      desc: T('t4_2_desc','Discovery tools give agents a map of your project: models, lineage, health, and documentation. Essential context before modifying anything or debugging an issue.'),
       usecases: [
-        { icon: '🕵️', title: 'Lineage exploration', detail: 'Trace where a metric comes from, what models feed into it, and which downstream reports depend on it. Useful for debugging data quality issues and impact analysis.' },
-        { icon: '🔗', title: 'External lineage ingestion', detail: 'Pull lineage metadata into other tools like data catalogs, observability platforms, or custom dashboards, for a unified view of your project.' },
-        { icon: '🩺', title: 'Debugging broken metrics', detail: 'If a Semantic Layer query returns unexpected results, discovery tools trace the path upstream to find stale models, failed tests, or schema changes.' },
-        { icon: '📖', title: 'Project onboarding', detail: 'New engineers or agents can explore the full project structure: what models exist, what they do, and how they connect, without opening the codebase.' },
+        { icon: '🕵️', title: T('t4_2_uc1_t','Lineage exploration'), detail: T('t4_2_uc1_d','Trace where a metric comes from, what models feed into it, and which downstream reports depend on it. Useful for debugging data quality issues and impact analysis.') },
+        { icon: '🔗', title: T('t4_2_uc2_t','External lineage ingestion'), detail: T('t4_2_uc2_d','Pull lineage metadata into other tools like data catalogs, observability platforms, or custom dashboards, for a unified view of your project.') },
+        { icon: '🩺', title: T('t4_2_uc3_t','Debugging broken metrics'), detail: T('t4_2_uc3_d','If a Semantic Layer query returns unexpected results, discovery tools trace the path upstream to find stale models, failed tests, or schema changes.') },
+        { icon: '📖', title: T('t4_2_uc4_t','Project onboarding'), detail: T('t4_2_uc4_d','New engineers or agents can explore the full project structure: what models exist, what they do, and how they connect, without opening the codebase.') },
       ],
       steps: [
-        { type: 'think',  text: 'Q: "Revenue dropped 18%. What happened?"' },
+        { type: 'think',  text: T('t4_2_s1','Q: "Revenue dropped 18%. What happened?"') },
         { type: 'tool',   text: 'get_lineage("fct_revenue")' },
-        { type: 'result', text: 'traces to fct_orders → stg_payments' },
+        { type: 'result', text: T('t4_2_s3','traces to fct_orders → stg_payments') },
         { type: 'tool',   text: 'get_model_health("stg_payments")' },
-        { type: 'result', text: 'last successful run: 31 hours ago' },
-        { type: 'ok',     text: 'stg_payments is stale. This is a pipeline lag, not a real revenue drop.' },
+        { type: 'result', text: T('t4_2_s5','last successful run: 31 hours ago') },
+        { type: 'ok',     text: T('t4_2_s6','stg_payments is stale. This is a pipeline lag, not a real revenue drop.') },
       ]
     },
     {
-      title: 'Admin API',
-      sub: 'Jobs, runs, and performance monitoring',
+      title: T('t4_3_title','Admin API'),
+      sub: T('t4_3_sub','Jobs, runs, and performance monitoring'),
       color: '#d29922',
       border: 'rgba(210,153,34,.4)',
       bg: 'rgba(210,153,34,.08)',
       tools: ['list_jobs', 'trigger_job_run', 'list_jobs_runs', 'get_job_run_details', 'get_job_run_error', 'cancel_job_run', 'retry_job_run', 'get_model_performance'],
-      desc: 'Admin tools let agents manage the full job lifecycle: trigger runs, monitor status, surface failures, and debug performance. No one needs to log into dbt Cloud.',
+      desc: T('t4_3_desc','Admin tools let agents manage the full job lifecycle: trigger runs, monitor status, surface failures, and debug performance. No one needs to log into dbt Cloud.'),
       usecases: [
-        { icon: '🚨', title: 'Job failure triage', detail: 'When a job fails, an agent can immediately pull the error logs, identify which model broke, trace upstream, and surface actionable context to the on-call engineer.' },
-        { icon: '⏱', title: 'Performance debugging', detail: 'Agents can identify which models are slow, how run times have changed over time, and suggest where to add incremental logic or partitioning.' },
-        { icon: '🔄', title: 'Automated run management', detail: 'Trigger jobs in response to upstream events (a source table landing), monitor completion, retry failures, or cancel stuck runs. No manual intervention.' },
-        { icon: '📈', title: 'Observability & alerting', detail: 'Proactively monitor job health, surface degrading run times before they become outages, and feed status into ops dashboards or Slack alerts.' },
+        { icon: '🚨', title: T('t4_3_uc1_t','Job failure triage'), detail: T('t4_3_uc1_d','When a job fails, an agent can immediately pull the error logs, identify which model broke, trace upstream, and surface actionable context to the on-call engineer.') },
+        { icon: '⏱', title: T('t4_3_uc2_t','Performance debugging'), detail: T('t4_3_uc2_d','Agents can identify which models are slow, how run times have changed over time, and suggest where to add incremental logic or partitioning.') },
+        { icon: '🔄', title: T('t4_3_uc3_t','Automated run management'), detail: T('t4_3_uc3_d','Trigger jobs in response to upstream events (a source table landing), monitor completion, retry failures, or cancel stuck runs. No manual intervention.') },
+        { icon: '📈', title: T('t4_3_uc4_t','Observability & alerting'), detail: T('t4_3_uc4_d','Proactively monitor job health, surface degrading run times before they become outages, and feed status into ops dashboards or Slack alerts.') },
       ],
       steps: [
-        { type: 'think',  text: 'Alert: revenue metric stale. Investigating.' },
+        { type: 'think',  text: T('t4_3_s1','Alert: revenue metric stale. Investigating.') },
         { type: 'tool',   text: 'list_jobs_runs(status="failed", limit=5)' },
-        { type: 'result', text: 'stg_payments job failed 32h ago' },
+        { type: 'result', text: T('t4_3_s3','stg_payments job failed 32h ago') },
         { type: 'tool',   text: 'get_job_run_error(run_id=...)' },
-        { type: 'warn',   text: 'Column "amount_usd" not found in source table' },
-        { type: 'ok',     text: 'Schema change upstream. Surfaced to engineer with full context.' },
+        { type: 'warn',   text: T('t4_3_s5','Column "amount_usd" not found in source table') },
+        { type: 'ok',     text: T('t4_3_s6','Schema change upstream. Surfaced to engineer with full context.') },
       ]
     },
     {
       title: 'dbt CLI',
-      sub: 'Build, test, and query in a live session',
+      sub: T('t4_4_sub','Build, test, and query in a live session'),
       color: '#ff6b35',
       border: 'rgba(255,107,53,.4)',
       bg: 'rgba(255,107,53,.08)',
       tools: ['run', 'build', 'test', 'compile', 'execute_sql', 'text_to_sql'],
-      desc: 'CLI tools close the loop between writing and validating. An agent can build a model, run tests, and immediately query the output, all in one session. Best for active development workflows.',
+      desc: T('t4_4_desc','CLI tools close the loop between writing and validating. An agent can build a model, run tests, and immediately query the output, all in one session. Best for active development workflows.'),
       usecases: [
-        { icon: '🛠', title: 'Active model development', detail: 'Write a model, compile to validate SQL, run it, test it, and query the output, without ever leaving the agent conversation.' },
-        { icon: '✅', title: 'Pre-PR validation', detail: 'Agents can run affected models and their tests before code is merged, catching failures early and surfacing results as PR comments.' },
-        { icon: '🔬', title: 'Ad-hoc SQL exploration', detail: 'execute_sql gives agents a direct query path when a metric doesn\'t exist yet. Useful for one-off analysis or exploratory data work.' },
-        { icon: '⚠️', title: 'text_to_sql (last resort)', detail: 'When no metric or model matches the question, agents can generate raw SQL. Least reliable. Results may differ from governed metrics. Use as a fallback only.' },
+        { icon: '🛠', title: T('t4_4_uc1_t','Active model development'), detail: T('t4_4_uc1_d','Write a model, compile to validate SQL, run it, test it, and query the output, without ever leaving the agent conversation.') },
+        { icon: '✅', title: T('t4_4_uc2_t','Pre-PR validation'), detail: T('t4_4_uc2_d','Agents can run affected models and their tests before code is merged, catching failures early and surfacing results as PR comments.') },
+        { icon: '🔬', title: T('t4_4_uc3_t','Ad-hoc SQL exploration'), detail: T('t4_4_uc3_d','execute_sql gives agents a direct query path when a metric doesn\'t exist yet. Useful for one-off analysis or exploratory data work.') },
+        { icon: '⚠️', title: T('t4_4_uc4_t','text_to_sql (last resort)'), detail: T('t4_4_uc4_d','When no metric or model matches the question, agents can generate raw SQL. Least reliable. Results may differ from governed metrics. Use as a fallback only.') },
       ],
       steps: [
-        { type: 'think',  text: '"Build a model joining orders and customer segments"' },
+        { type: 'think',  text: T('t4_4_s1','"Build a model joining orders and customer segments"') },
         { type: 'tool',   text: 'compile("fct_orders_segmented")' },
-        { type: 'result', text: 'SQL valid. No syntax errors.' },
+        { type: 'result', text: T('t4_4_s3','SQL valid. No syntax errors.') },
         { type: 'tool',   text: 'build("fct_orders_segmented")' },
         { type: 'tool',   text: 'test("fct_orders_segmented")' },
-        { type: 'ok',     text: 'All tests passed. Model ready.' },
+        { type: 'ok',     text: T('t4_4_s6','All tests passed. Model ready.') },
       ]
     },
     {
-      title: 'Codegen',
-      sub: 'Generate dbt boilerplate from your schema',
+      title: T('t4_5_title','Codegen'),
+      sub: T('t4_5_sub','Generate dbt boilerplate from your schema'),
       color: '#3fb950',
       border: 'rgba(63,185,80,.4)',
       bg: 'rgba(63,185,80,.08)',
       tools: ['generate_source', 'generate_staging_model', 'generate_model_yaml'],
-      desc: 'Codegen tools let agents introspect a database schema and generate source definitions, staging models, and YAML documentation, turning hours of setup into minutes.',
+      desc: T('t4_5_desc','Codegen tools let agents introspect a database schema and generate source definitions, staging models, and YAML documentation, turning hours of setup into minutes.'),
       usecases: [
-        { icon: '🗄', title: 'New source onboarding', detail: 'A new data source lands in the warehouse. An agent generates sources.yml, staging models, and column-level YAML documentation in minutes, not hours.' },
-        { icon: '📝', title: 'Documentation generation', detail: 'Agents can generate model YAML with column names and types pre-populated, giving engineers a head start on writing descriptions.' },
-        { icon: '🏗', title: 'Scaffold new projects', detail: 'Spin up a new dbt project area with consistent staging patterns, naming conventions, and file structure. No copy-paste from old models.' },
+        { icon: '🗄', title: T('t4_5_uc1_t','New source onboarding'), detail: T('t4_5_uc1_d','A new data source lands in the warehouse. An agent generates sources.yml, staging models, and column-level YAML documentation in minutes, not hours.') },
+        { icon: '📝', title: T('t4_5_uc2_t','Documentation generation'), detail: T('t4_5_uc2_d','Agents can generate model YAML with column names and types pre-populated, giving engineers a head start on writing descriptions.') },
+        { icon: '🏗', title: T('t4_5_uc3_t','Scaffold new projects'), detail: T('t4_5_uc3_d','Spin up a new dbt project area with consistent staging patterns, naming conventions, and file structure. No copy-paste from old models.') },
       ],
       steps: [
-        { type: 'think',  text: 'New source arrives: raw_stripe schema' },
+        { type: 'think',  text: T('t4_5_s1','New source arrives: raw_stripe schema') },
         { type: 'tool',   text: 'generate_source(schema="raw_stripe")' },
-        { type: 'result', text: 'sources.yml created: 12 tables' },
+        { type: 'result', text: T('t4_5_s3','sources.yml created: 12 tables') },
         { type: 'tool',   text: 'generate_staging_model("raw_stripe", "charges")' },
-        { type: 'result', text: 'stg_stripe__charges.sql created' },
+        { type: 'result', text: T('t4_5_s5','stg_stripe__charges.sql created') },
         { type: 'tool',   text: 'generate_model_yaml("stg_stripe__charges")' },
-        { type: 'ok',     text: 'YAML with all 24 columns. Hours of setup in minutes.' },
+        { type: 'ok',     text: T('t4_5_s7','YAML with all 24 columns. Hours of setup in minutes.') },
       ]
     },
     {
       title: 'Fusion / LSP',
-      sub: 'Column-level lineage and IDE context',
+      sub: T('t4_6_sub','Column-level lineage and IDE context'),
       color: '#2dd4bf',
       border: 'rgba(45,212,191,.4)',
       bg: 'rgba(45,212,191,.08)',
       tools: ['fusion.get_column_lineage', 'fusion.get_ref_completions', 'fusion.get_source_completions'],
-      desc: 'Fusion tools provide column-level lineage and IDE-style intelligence. Best for developer workflows, specifically understanding where a column comes from and how it flows through the project.',
+      desc: T('t4_6_desc','Fusion tools provide column-level lineage and IDE-style intelligence. Best for developer workflows, specifically understanding where a column comes from and how it flows through the project.'),
       usecases: [
-        { icon: '🔬', title: 'Column-level lineage', detail: 'Trace exactly where a column\'s value comes from, through joins, CTEs, and across models, to understand data transformations and debug unexpected values.' },
-        { icon: '🐛', title: 'Debugging data quality', detail: 'When a number looks wrong in a dashboard, column lineage traces back to the raw source to find where the value was transformed or filtered incorrectly.' },
-        { icon: '💡', title: 'Developer intelligence', detail: 'ref() and source() completions help agents write accurate dbt SQL, knowing which models and sources exist without guessing or hallucinating names.' },
+        { icon: '🔬', title: T('t4_6_uc1_t','Column-level lineage'), detail: T('t4_6_uc1_d','Trace exactly where a column\'s value comes from, through joins, CTEs, and across models, to understand data transformations and debug unexpected values.') },
+        { icon: '🐛', title: T('t4_6_uc2_t','Debugging data quality'), detail: T('t4_6_uc2_d','When a number looks wrong in a dashboard, column lineage traces back to the raw source to find where the value was transformed or filtered incorrectly.') },
+        { icon: '💡', title: T('t4_6_uc3_t','Developer intelligence'), detail: T('t4_6_uc3_d','ref() and source() completions help agents write accurate dbt SQL, knowing which models and sources exist without guessing or hallucinating names.') },
       ],
       steps: [
-        { type: 'think',  text: '"Why is revenue different in two models?"' },
+        { type: 'think',  text: T('t4_6_s1','"Why is revenue different in two models?"') },
         { type: 'tool',   text: 'fusion.get_column_lineage("fct_revenue.revenue")' },
-        { type: 'result', text: 'traces: stg_stripe.amount → intermediate.orders_with_fx → fct_revenue' },
+        { type: 'result', text: T('t4_6_s3','traces: stg_stripe.amount → intermediate.orders_with_fx → fct_revenue') },
         { type: 'tool',   text: 'fusion.get_column_lineage("fct_orders.revenue")' },
-        { type: 'result', text: 'traces: stg_braintree.amount_usd → fct_orders' },
-        { type: 'ok',     text: 'Different payment sources. Not the same metric. Surfaced to analyst.' },
+        { type: 'result', text: T('t4_6_s5','traces: stg_braintree.amount_usd → fct_orders') },
+        { type: 'ok',     text: T('t4_6_s6','Different payment sources. Not the same metric. Surfaced to analyst.') },
       ]
     },
   ];
@@ -633,7 +644,7 @@ function renderStep4() {
 
     // tools
     html += '<div style="margin-bottom:12px">';
-    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:6px">AVAILABLE TOOLS</div>';
+    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:6px">' + T('t4_lbl_tools','AVAILABLE TOOLS') + '</div>';
     html += '<div style="display:flex;flex-wrap:wrap;gap:5px">';
     for (var j = 0; j < c.tools.length; j++) {
       html += '<span style="font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:5px;background:' + c.bg + ';border:1px solid ' + c.border + ';color:' + c.color + '">' + c.tools[j] + '</span>';
@@ -641,7 +652,7 @@ function renderStep4() {
     html += '</div></div>';
 
     // use cases
-    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:8px">USE CASES</div>';
+    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:8px">' + T('t4_lbl_usecases','USE CASES') + '</div>';
     html += '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">';
     for (var u = 0; u < c.usecases.length; u++) {
       var uc = c.usecases[u];
@@ -653,7 +664,7 @@ function renderStep4() {
     html += '</div>';
 
     // example trace
-    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:6px">EXAMPLE TRACE</div>';
+    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:6px">' + T('t4_lbl_trace','EXAMPLE TRACE') + '</div>';
     html += '<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px">';
     html += '<div style="padding:10px 12px;display:flex;flex-direction:column;gap:5px">';
     for (var k = 0; k < c.steps.length; k++) {
@@ -688,7 +699,7 @@ function renderStep4() {
     '<div style="padding:14px;flex:1;overflow-y:auto" id="uc-body">' + buildUCDetail(0) + '</div>' +
     '</div>';
 
-  return '<div class="card"><div class="card-title">Use Cases by Tool Group</div><div class="card-sub">Each tool group unlocks different agent capabilities. Click a group to see what it enables and how it works in practice.</div>' +
+  return '<div class="card"><div class="card-title">' + T('t4_title','Use Cases by Tool Group') + '</div><div class="card-sub">' + T('t4_sub','Each tool group unlocks different agent capabilities. Click a group to see what it enables and how it works in practice.') + '</div>' +
     '<div style="display:grid;grid-template-columns:200px 1fr;gap:14px;align-items:start">' +
     pillsHtml + visHtml +
     '</div></div>';
@@ -716,109 +727,109 @@ function renderStep5() {
     {
       num: '01',
       title: 'Cursor / Claude',
-      sub: 'No dbt context',
+      sub: T('t5_1_sub','No dbt context'),
       color: 'var(--amber)',
       border: 'rgba(210,153,34,.45)',
       bg: 'rgba(210,153,34,.07)',
-      stack: ['AI coding agent', 'Your codebase (files only)'],
+      stack: [T('t5_stack_agent','AI coding agent'), T('t5_1_stack2','Your codebase (files only)')],
       stackColors: ['var(--amber)', 'var(--muted)'],
       caps: [
-        { label: 'Write SQL queries',           have: true,  note: 'generates raw SQL from scratch' },
-        { label: 'Understand your schema',       have: 'partial', note: 'only if you paste it in' },
-        { label: 'Know your metric definitions', have: false, note: 'guesses from table/column names' },
-        { label: 'Validated, tested output',     have: false, note: 'no tests, no contracts' },
-        { label: 'Lineage awareness',            have: false, note: 'no DAG, no upstream context' },
-        { label: 'Consistent answers',           have: false, note: '"revenue" means whatever the model guesses' },
+        { label: T('t5_cap_sql','Write SQL queries'),           have: true,  note: T('t5_1_c1','generates raw SQL from scratch') },
+        { label: T('t5_cap_schema','Understand your schema'),       have: 'partial', note: T('t5_1_c2','only if you paste it in') },
+        { label: T('t5_cap_metrics','Know your metric definitions'), have: false, note: T('t5_1_c3','guesses from table/column names') },
+        { label: T('t5_cap_validated','Validated, tested output'),     have: false, note: T('t5_1_c4','no tests, no contracts') },
+        { label: T('t5_cap_lineage','Lineage awareness'),            have: false, note: T('t5_1_c5','no DAG, no upstream context') },
+        { label: T('t5_cap_consistent','Consistent answers'),         have: false, note: T('t5_1_c6','"revenue" means whatever the model guesses') },
       ],
       scenario: {
-        q: 'What was revenue last month by region?',
+        q: T('t5_1_q','What was revenue last month by region?'),
         steps: [
-          { type: 'think', text: 'I\'ll look for a table that sounds like orders or revenue...' },
+          { type: 'think', text: T('t5_1_s1','I\'ll look for a table that sounds like orders or revenue...') },
           { type: 'sql',   text: 'SELECT region, SUM(amount)\nFROM orders\nWHERE date >= \'2025-11-01\'\nGROUP BY region' },
-          { type: 'warn',  text: 'Guessed "amount" column · no filter for completed orders · no tests · may be wrong' },
+          { type: 'warn',  text: T('t5_1_s3','Guessed "amount" column · no filter for completed orders · no tests · may be wrong') },
         ]
       }
     },
     {
       num: '02',
       title: 'Cursor / Claude + dbt MCP',
-      sub: 'Semantic Layer connected',
+      sub: T('t5_2_sub','Semantic Layer connected'),
       color: 'var(--green)',
       border: 'rgba(63,185,80,.4)',
       bg: 'rgba(63,185,80,.05)',
-      stack: ['AI coding agent', 'dbt MCP Server', 'Semantic Layer → MetricFlow'],
+      stack: [T('t5_stack_agent','AI coding agent'), 'dbt MCP Server', T('t5_2_stack3','Semantic Layer → MetricFlow')],
       stackColors: ['var(--amber)', 'var(--green)', 'var(--pl)'],
       caps: [
-        { label: 'Write SQL queries',           have: true,  note: 'still can, but no longer needs to' },
-        { label: 'Understand your schema',       have: true,  note: 'via get_model_details, get_all_models' },
-        { label: 'Know your metric definitions', have: true,  note: 'list_metrics · get_dimensions' },
-        { label: 'Validated, tested output',     have: true,  note: 'queries go through MetricFlow' },
-        { label: 'Lineage awareness',            have: true,  note: 'get_lineage available as a tool' },
-        { label: 'Consistent answers',           have: true,  note: 'revenue = revenue, always' },
+        { label: T('t5_cap_sql','Write SQL queries'),           have: true,  note: T('t5_2_c1','still can, but no longer needs to') },
+        { label: T('t5_cap_schema','Understand your schema'),       have: true,  note: T('t5_2_c2','via get_model_details, get_all_models') },
+        { label: T('t5_cap_metrics','Know your metric definitions'), have: true,  note: T('t5_2_c3','list_metrics · get_dimensions') },
+        { label: T('t5_cap_validated','Validated, tested output'),     have: true,  note: T('t5_2_c4','queries go through MetricFlow') },
+        { label: T('t5_cap_lineage','Lineage awareness'),            have: true,  note: T('t5_2_c5','get_lineage available as a tool') },
+        { label: T('t5_cap_consistent','Consistent answers'),         have: true,  note: T('t5_2_c6','revenue = revenue, always') },
       ],
       scenario: {
-        q: 'What was revenue last month by region?',
+        q: T('t5_1_q','What was revenue last month by region?'),
         steps: [
           { type: 'tool',   text: 'list_metrics()  →  [revenue, churn_rate, cac...]' },
           { type: 'tool',   text: 'get_dimensions("revenue")  →  [region, channel, metric_time__month]' },
           { type: 'tool',   text: 'query_metrics("revenue", group_by=["region"], where=["Nov 2025"])' },
           { type: 'result', text: '{North: $4.2M, West: $3.1M, South: $2.8M, East: $1.9M}' },
-          { type: 'ok',     text: 'Governed · tested · consistent. No SQL written by the model.' },
+          { type: 'ok',     text: T('t5_2_s5','Governed · tested · consistent. No SQL written by the model.') },
         ]
       }
     },
     {
       num: '03',
       title: '+ dbt Extension & Fusion',
-      sub: 'IDE-aware, live project context',
+      sub: T('t5_3_sub','IDE-aware, live project context'),
       color: 'var(--blue)',
       border: 'rgba(88,166,255,.4)',
       bg: 'rgba(88,166,255,.05)',
-      stack: ['AI coding agent', 'dbt Extension (VS Code / Cursor)', 'Fusion engine (live project graph)', 'dbt MCP Server'],
+      stack: [T('t5_stack_agent','AI coding agent'), 'dbt Extension (VS Code / Cursor)', T('t5_3_stack3','Fusion engine (live project graph)'), 'dbt MCP Server'],
       stackColors: ['var(--amber)', 'var(--blue)', 'var(--orange)', 'var(--green)'],
       caps: [
-        { label: 'Write SQL queries',           have: true,  note: 'with full project context' },
-        { label: 'Understand your schema',       have: true,  note: 'live, no compile step required' },
-        { label: 'Know your metric definitions', have: true,  note: 'via MCP + extension context' },
-        { label: 'Validated, tested output',     have: true,  note: 'via MetricFlow + Fusion validation' },
-        { label: 'Lineage awareness',            have: true,  note: 'real-time DAG in editor + MCP' },
-        { label: 'Autocomplete & ref() linking', have: true,  note: 'Fusion keeps graph live, refs resolve instantly' },
+        { label: T('t5_cap_sql','Write SQL queries'),           have: true,  note: T('t5_3_c1','with full project context') },
+        { label: T('t5_cap_schema','Understand your schema'),       have: true,  note: T('t5_3_c2','live, no compile step required') },
+        { label: T('t5_cap_metrics','Know your metric definitions'), have: true,  note: T('t5_3_c3','via MCP + extension context') },
+        { label: T('t5_cap_validated','Validated, tested output'),     have: true,  note: T('t5_3_c4','via MetricFlow + Fusion validation') },
+        { label: T('t5_cap_lineage','Lineage awareness'),            have: true,  note: T('t5_3_c5','real-time DAG in editor + MCP') },
+        { label: T('t5_3_cap6','Autocomplete & ref() linking'), have: true,  note: T('t5_3_c6','Fusion keeps graph live, refs resolve instantly') },
       ],
       scenario: {
-        q: 'Build a new model that joins orders with customer segments',
+        q: T('t5_3_q','Build a new model that joins orders with customer segments'),
         steps: [
-          { type: 'think',  text: 'Extension sees full project: fct_orders, dim_customers already in context' },
+          { type: 'think',  text: T('t5_3_s1','Extension sees full project: fct_orders, dim_customers already in context') },
           { type: 'sql',    text: 'SELECT o.*, c.segment\nFROM {{ ref(\'fct_orders\') }} o\nJOIN {{ ref(\'dim_customers\') }} c\n  ON o.customer_id = c.customer_id' },
-          { type: 'ok',     text: 'ref() autocompleted · Fusion validates upstream exists · lineage auto-updated' },
+          { type: 'ok',     text: T('t5_3_s3','ref() autocompleted · Fusion validates upstream exists · lineage auto-updated') },
         ]
       }
     },
     {
       num: '04',
-      title: '+ Everything Together',
-      sub: 'Full dbt stack, most powerful',
+      title: T('t5_4_title','+ Everything Together'),
+      sub: T('t5_4_sub','Full dbt stack, most powerful'),
       color: 'var(--pl)',
       border: 'rgba(167,139,250,.5)',
       bg: 'rgba(124,58,237,.07)',
-      stack: ['AI coding agent', 'dbt Extension + Fusion (live context)', 'dbt MCP Server (query + catalog)', 'Semantic Layer (governed metrics)', 'Tested, documented mart models'],
+      stack: [T('t5_stack_agent','AI coding agent'), T('t5_4_stack2','dbt Extension + Fusion (live context)'), T('t5_4_stack3','dbt MCP Server (query + catalog)'), T('t5_4_stack4','Semantic Layer (governed metrics)'), T('t5_4_stack5','Tested, documented mart models')],
       stackColors: ['var(--amber)', 'var(--blue)', 'var(--green)', 'var(--pl)', 'var(--orange)'],
       caps: [
-        { label: 'Write & validate models',       have: true,  note: 'extension + Fusion, live' },
-        { label: 'Query governed metrics',         have: true,  note: 'MCP + Semantic Layer' },
-        { label: 'Trace lineage end-to-end',       have: true,  note: 'from source to metric' },
-        { label: 'Consistent, tested answers',     have: true,  note: 'MetricFlow enforces definitions' },
-        { label: 'Trigger & monitor jobs',         have: true,  note: 'list_jobs, trigger_job via MCP' },
-        { label: 'Build + query in same session',  have: true,  note: 'model in editor, query via MCP, closed loop' },
+        { label: T('t5_4_cap1','Write & validate models'),       have: true,  note: T('t5_4_c1','extension + Fusion, live') },
+        { label: T('t5_4_cap2','Query governed metrics'),         have: true,  note: T('t5_4_c2','MCP + Semantic Layer') },
+        { label: T('t5_4_cap3','Trace lineage end-to-end'),       have: true,  note: T('t5_4_c3','from source to metric') },
+        { label: T('t5_4_cap4','Consistent, tested answers'),     have: true,  note: T('t5_4_c4','MetricFlow enforces definitions') },
+        { label: T('t5_4_cap5','Trigger & monitor jobs'),         have: true,  note: T('t5_4_c5','list_jobs, trigger_job via MCP') },
+        { label: T('t5_4_cap6','Build + query in same session'),  have: true,  note: T('t5_4_c6','model in editor, query via MCP, closed loop') },
       ],
       scenario: {
-        q: 'Something looks off with churn. Investigate and fix it.',
+        q: T('t5_4_q','Something looks off with churn. Investigate and fix it.'),
         steps: [
           { type: 'tool',   text: 'query_metrics("churn_rate", group_by=["plan_type"])  →  free tier spike' },
           { type: 'tool',   text: 'get_lineage("churn_rate")  →  traces to stg_subscriptions' },
-          { type: 'think',  text: 'Extension opens stg_subscriptions, spots a bad filter on cancelled_at' },
+          { type: 'think',  text: T('t5_4_s3','Extension opens stg_subscriptions, spots a bad filter on cancelled_at') },
           { type: 'sql',    text: '-- fix: stg_subscriptions.sql\nWHERE cancelled_at IS NOT NULL\n  AND cancellation_reason != \'payment_retry\'' },
           { type: 'tool',   text: 'trigger_job("stg_subscriptions")  →  job queued' },
-          { type: 'ok',     text: 'Investigated, diagnosed, fixed, and re-run, all in one session' },
+          { type: 'ok',     text: T('t5_4_s6','Investigated, diagnosed, fixed, and re-run, all in one session') },
         ]
       }
     },
@@ -832,7 +843,7 @@ function renderStep5() {
 
     // stack pills
     html += '<div style="margin-bottom:14px">';
-    html += '<div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px">STACK</div>';
+    html += '<div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px">' + T('t5_lbl_stack','STACK') + '</div>';
     html += '<div style="display:flex;flex-direction:column;gap:4px">';
     for (var s = c.stack.length - 1; s >= 0; s--) {
       html += '<div style="padding:6px 10px;border-radius:6px;font-family:var(--mono);font-size:10px;font-weight:600;color:' + c.stackColors[s] + ';background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);text-align:center">' + c.stack[s] + '</div>';
@@ -841,7 +852,7 @@ function renderStep5() {
     html += '</div></div>';
 
     // capabilities
-    html += '<div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px">CAPABILITIES</div>';
+    html += '<div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px">' + T('t5_lbl_caps','CAPABILITIES') + '</div>';
     html += '<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px">';
     for (var ci = 0; ci < c.caps.length; ci++) {
       var cap = c.caps[ci];
@@ -858,7 +869,7 @@ function renderStep5() {
     html += '</div>';
 
     // scenario
-    html += '<div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px">EXAMPLE INTERACTION</div>';
+    html += '<div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px">' + T('t5_lbl_example','EXAMPLE INTERACTION') + '</div>';
     html += '<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:hidden">';
     html += '<div style="padding:8px 12px;background:rgba(124,58,237,.08);border-bottom:1px solid rgba(124,58,237,.2)">';
     html += '<div style="font-size:11px;color:#c4b5fd">' + c.scenario.q + '</div></div>';
@@ -899,12 +910,12 @@ function renderStep5() {
   visHtml += '<div style="padding:16px;flex:1;overflow-y:auto;max-height:600px" id="cfg-body">' + buildConfig(0) + '</div>';
   visHtml += '</div>';
 
-  return '<div class="card"><div class="card-title">Cursor / Claude: 4 configurations</div>' +
-    '<div class="card-sub">Each layer of dbt adds something the AI agent couldn\'t do before. Click to compare.</div>' +
+  return '<div class="card"><div class="card-title">' + T('t5_title','Cursor / Claude: 4 configurations') + '</div>' +
+    '<div class="card-sub">' + T('t5_sub','Each layer of dbt adds something the AI agent couldn\'t do before. Click to compare.') + '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px">' +
     pillsHtml + visHtml +
     '</div>' +
-    '<div class="cap">Configuration 4 is the full picture, but configurations 2 and 3 are already meaningful standalone improvements. The question isn\'t "do you need all of it" but rather "how much of your data workflow do you want the AI to understand?"</div>' +
+    '<div class="cap">' + T('t5_cap','Configuration 4 is the full picture, but configurations 2 and 3 are already meaningful standalone improvements. The question isn\'t "do you need all of it" but rather "how much of your data workflow do you want the AI to understand?"') + '</div>' +
     '</div>';
 }
 
@@ -943,21 +954,21 @@ function renderStep6() {
   var devCol =
     '<div style="border:1.5px solid rgba(124,58,237,.5);border-radius:10px;overflow:hidden">' +
       '<div style="background:rgba(124,58,237,.12);padding:14px 15px;border-bottom:1px solid rgba(124,58,237,.2)">' +
-        '<div style="color:#a78bfa;font-size:13px;font-weight:600;margin-bottom:2px">Developer Seat</div>' +
-        '<div style="color:var(--muted);font-size:10px">Build, deploy &amp; maintain</div>' +
+        '<div style="color:#a78bfa;font-size:13px;font-weight:600;margin-bottom:2px">' + T('t6_dev_title','Developer Seat') + '</div>' +
+        '<div style="color:var(--muted);font-size:10px">' + T('t6_dev_sub','Build, deploy &amp; maintain') + '</div>' +
       '</div>' +
       '<div style="padding:13px 15px;border-bottom:1px solid var(--border)">' +
-        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:7px">HOW THEY LOG IN</div>' +
-        pill('INTERNAL', '#a78bfa') +
-        '<div style="color:var(--muted);font-size:10px;margin-top:6px">dbt username &amp; password</div>' +
+        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:7px">' + T('t6_lbl_login','HOW THEY LOG IN') + '</div>' +
+        pill(T('t6_internal','INTERNAL'), '#a78bfa') +
+        '<div style="color:var(--muted);font-size:10px;margin-top:6px">' + T('t6_dev_login','dbt username &amp; password') + '</div>' +
       '</div>' +
       '<div style="padding:13px 15px">' +
-        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:8px">WHAT THEY CAN DO</div>' +
-        check('IDE, CLI &amp; Jobs') +
-        check('All models &amp; metrics') +
-        check('Write &amp; deploy') +
-        check('Catalog, Docs &amp; Lineage') +
-        check('Full audit log') +
+        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:8px">' + T('t6_lbl_cando','WHAT THEY CAN DO') + '</div>' +
+        check(T('t6_dev_c1','IDE, CLI &amp; Jobs')) +
+        check(T('t6_dev_c2','All models &amp; metrics')) +
+        check(T('t6_dev_c3','Write &amp; deploy')) +
+        check(T('t6_cando_catalog','Catalog, Docs &amp; Lineage')) +
+        check(T('t6_dev_c5','Full audit log')) +
       '</div>' +
     '</div>';
 
@@ -965,23 +976,23 @@ function renderStep6() {
   var roCol =
     '<div style="border:1.5px solid rgba(63,185,80,.5);border-radius:10px;overflow:hidden">' +
       '<div style="background:rgba(63,185,80,.1);padding:14px 15px;border-bottom:1px solid rgba(63,185,80,.2)">' +
-        '<div style="color:#3fb950;font-size:13px;font-weight:600;margin-bottom:2px">Read-Only Seat</div>' +
-        '<div style="color:var(--muted);font-size:10px">Consume, explore &amp; analyze</div>' +
+        '<div style="color:#3fb950;font-size:13px;font-weight:600;margin-bottom:2px">' + T('t6_ro_title','Read-Only Seat') + '</div>' +
+        '<div style="color:var(--muted);font-size:10px">' + T('t6_ro_sub','Consume, explore &amp; analyze') + '</div>' +
       '</div>' +
       '<div style="padding:13px 15px;border-bottom:1px solid var(--border)">' +
-        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:7px">HOW THEY LOG IN</div>' +
-        pill('INTERNAL', '#3fb950') +
-        '<div style="color:var(--muted);font-size:10px;margin-top:6px;margin-bottom:5px"><strong style="color:var(--text)">Today:</strong> Personal Access Token (PAT)</div>' +
-        '<div style="color:#3fb950;font-size:10px"><strong>Coming soon:</strong> OAuth "login with dbt", short-lived and SSO-compatible</div>' +
+        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:7px">' + T('t6_lbl_login','HOW THEY LOG IN') + '</div>' +
+        pill(T('t6_internal','INTERNAL'), '#3fb950') +
+        '<div style="color:var(--muted);font-size:10px;margin-top:6px;margin-bottom:5px"><strong style="color:var(--text)">' + T('t6_today','Today:') + '</strong> ' + T('t6_ro_pat','Personal Access Token (PAT)') + '</div>' +
+        '<div style="color:#3fb950;font-size:10px"><strong>' + T('t6_soon','Coming soon:') + '</strong> ' + T('t6_ro_oauth','OAuth "login with dbt", short-lived and SSO-compatible') + '</div>' +
       '</div>' +
       '<div style="padding:13px 15px">' +
-        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:8px">WHAT THEY CAN DO</div>' +
-        check('Catalog, Docs &amp; Lineage') +
-        check('Source Freshness &amp; job alerts') +
-        check('API access') +
-        check('Semantic Layer &amp; MCP <span style="color:#3fb950;font-size:9px">(H1 2026)</span>') +
-        check('dbt Insights <span style="color:#3fb950;font-size:9px">(H2 2026)</span>') +
-        cross('IDE, CLI, Jobs or deploy') +
+        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:8px">' + T('t6_lbl_cando','WHAT THEY CAN DO') + '</div>' +
+        check(T('t6_cando_catalog','Catalog, Docs &amp; Lineage')) +
+        check(T('t6_ro_c2','Source Freshness &amp; job alerts')) +
+        check(T('t6_ro_c3','API access')) +
+        check(T('t6_ro_c4','Semantic Layer &amp; MCP <span style="color:#3fb950;font-size:9px">(H1 2026)</span>')) +
+        check(T('t6_ro_c5','dbt Insights <span style="color:#3fb950;font-size:9px">(H2 2026)</span>')) +
+        cross(T('t6_ro_c6','IDE, CLI, Jobs or deploy')) +
       '</div>' +
     '</div>';
 
@@ -989,22 +1000,22 @@ function renderStep6() {
   var aiCol =
     '<div style="border:1.5px solid rgba(210,153,34,.5);border-radius:10px;overflow:hidden">' +
       '<div style="background:rgba(210,153,34,.1);padding:14px 15px;border-bottom:1px solid rgba(210,153,34,.2)">' +
-        '<div style="color:#d29922;font-size:13px;font-weight:600;margin-bottom:2px">LLMs &amp; AI Agents</div>' +
-        '<div style="color:var(--muted);font-size:10px">Claude, MCP connections, shared BI tools</div>' +
+        '<div style="color:#d29922;font-size:13px;font-weight:600;margin-bottom:2px">' + T('t6_ai_title','LLMs &amp; AI Agents') + '</div>' +
+        '<div style="color:var(--muted);font-size:10px">' + T('t6_ai_sub','Claude, MCP connections, shared BI tools') + '</div>' +
       '</div>' +
       '<div style="padding:13px 15px;border-bottom:1px solid var(--border)">' +
-        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:7px">HOW THEY CONNECT</div>' +
-        pill('PROGRAMMATIC / MACHINE', '#d29922') +
-        '<div style="color:var(--muted);font-size:10px;margin-top:6px"><strong style="color:var(--text)">Service Token</strong>: one per use case or team, scoped to a domain. Not tied to a person. Revoke without affecting anyone else.</div>' +
+        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:7px">' + T('t6_lbl_connect','HOW THEY CONNECT') + '</div>' +
+        pill(T('t6_programmatic','PROGRAMMATIC / MACHINE'), '#d29922') +
+        '<div style="color:var(--muted);font-size:10px;margin-top:6px"><strong style="color:var(--text)">' + T('t6_svctoken','Service Token') + '</strong>' + T('t6_ai_svcdesc',': one per use case or team, scoped to a domain. Not tied to a person. Revoke without affecting anyone else.') + '</div>' +
       '</div>' +
       '<div style="padding:13px 15px">' +
-        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:8px">WHAT THEY CAN DO</div>' +
-        check('Semantic Layer, governed metrics only') +
-        check('MetricFlow queries via MCP') +
-        check('Scoped to assigned domain') +
-        check('Audit logged per token') +
-        check('Same path for shared BI tools (Tableau Server, Power BI)') +
-        cross('Raw SQL or direct model access') +
+        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:8px">' + T('t6_lbl_cando','WHAT THEY CAN DO') + '</div>' +
+        check(T('t6_ai_c1','Semantic Layer, governed metrics only')) +
+        check(T('t6_ai_c2','MetricFlow queries via MCP')) +
+        check(T('t6_ai_c3','Scoped to assigned domain')) +
+        check(T('t6_ai_c4','Audit logged per token')) +
+        check(T('t6_ai_c5','Same path for shared BI tools (Tableau Server, Power BI)')) +
+        cross(T('t6_ai_c6','Raw SQL or direct model access')) +
       '</div>' +
     '</div>';
 
@@ -1013,13 +1024,13 @@ function renderStep6() {
     '<div style="display:flex;gap:10px;margin-top:10px">' +
       '<div style="flex:1;background:rgba(63,185,80,.05);border:1px solid rgba(63,185,80,.2);border-radius:7px;padding:10px 13px;display:flex;align-items:center;gap:10px">' +
         '<div style="font-size:18px">👤</div>' +
-        '<div><div style="color:#3fb950;font-size:10.5px;font-weight:600;margin-bottom:2px">Personal login (PAT or OAuth)</div>' +
-        '<div style="color:var(--muted);font-size:10px">Developer &amp; Read-Only seats. Tied to a real person, audited by user. Also covers personal BI connections (your own Excel, Tableau Desktop).</div></div>' +
+        '<div><div style="color:#3fb950;font-size:10.5px;font-weight:600;margin-bottom:2px">' + T('t6_note1_title','Personal login (PAT or OAuth)') + '</div>' +
+        '<div style="color:var(--muted);font-size:10px">' + T('t6_note1_desc','Developer &amp; Read-Only seats. Tied to a real person, audited by user. Also covers personal BI connections (your own Excel, Tableau Desktop).') + '</div></div>' +
       '</div>' +
       '<div style="flex:1;background:rgba(210,153,34,.06);border:1px solid rgba(210,153,34,.2);border-radius:7px;padding:10px 13px;display:flex;align-items:center;gap:10px">' +
         '<div style="font-size:18px">🔑</div>' +
-        '<div><div style="color:#d29922;font-size:10.5px;font-weight:600;margin-bottom:2px">Service Token (machine credentials)</div>' +
-        '<div style="color:var(--muted);font-size:10px">AI agents, Claude, MCP connections, and shared BI tools (Tableau Server, Power BI workspace). Not tied to a person. Scoped and revocable per use case.</div></div>' +
+        '<div><div style="color:#d29922;font-size:10.5px;font-weight:600;margin-bottom:2px">' + T('t6_note2_title','Service Token (machine credentials)') + '</div>' +
+        '<div style="color:var(--muted);font-size:10px">' + T('t6_note2_desc','AI agents, Claude, MCP connections, and shared BI tools (Tableau Server, Power BI workspace). Not tied to a person. Scoped and revocable per use case.') + '</div></div>' +
       '</div>' +
     '</div>';
 
@@ -1027,20 +1038,20 @@ function renderStep6() {
   var gates =
     '<div style="display:flex;gap:10px;margin-top:10px">' +
       '<div style="flex:1;background:rgba(255,107,53,.06);border:1.5px solid #ff6b35;border-radius:8px;padding:13px 15px">' +
-        '<div style="color:#ff6b35;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.5px;margin-bottom:5px">GATE 1: dbt</div>' +
-        '<div style="color:var(--text);font-size:11px;font-weight:600;margin-bottom:4px">Controls what you can ask for</div>' +
-        '<div style="color:var(--muted);font-size:10px;line-height:1.6">Your role in dbt determines which models and metrics you\'re even allowed to request, regardless of what the warehouse would technically allow.</div>' +
+        '<div style="color:#ff6b35;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.5px;margin-bottom:5px">' + T('t6_gate1_lbl','GATE 1: dbt') + '</div>' +
+        '<div style="color:var(--text);font-size:11px;font-weight:600;margin-bottom:4px">' + T('t6_gate1_title','Controls what you can ask for') + '</div>' +
+        '<div style="color:var(--muted);font-size:10px;line-height:1.6">' + T('t6_gate1_desc',"Your role in dbt determines which models and metrics you're even allowed to request, regardless of what the warehouse would technically allow.") + '</div>' +
       '</div>' +
       '<div style="flex:1;background:rgba(88,166,255,.06);border:1.5px solid #58a6ff;border-radius:8px;padding:13px 15px">' +
-        '<div style="color:#58a6ff;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.5px;margin-bottom:5px">GATE 2: Warehouse</div>' +
-        '<div style="color:var(--text);font-size:11px;font-weight:600;margin-bottom:4px">Controls which rows come back</div>' +
-        '<div style="color:var(--muted);font-size:10px;line-height:1.6">Row-level security is enforced at query time by the warehouse itself. This is the final backstop. dbt and MCP cannot bypass it.</div>' +
+        '<div style="color:#58a6ff;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.5px;margin-bottom:5px">' + T('t6_gate2_lbl','GATE 2: Warehouse') + '</div>' +
+        '<div style="color:var(--text);font-size:11px;font-weight:600;margin-bottom:4px">' + T('t6_gate2_title','Controls which rows come back') + '</div>' +
+        '<div style="color:var(--muted);font-size:10px;line-height:1.6">' + T('t6_gate2_desc','Row-level security is enforced at query time by the warehouse itself. This is the final backstop. dbt and MCP cannot bypass it.') + '</div>' +
       '</div>' +
     '</div>';
 
   return '<div class="card">' +
-    '<div class="card-title">Security &amp; Governance</div>' +
-    '<div class="card-sub">Same warehouse. Three types of access. Every query passes two gates.</div>' +
+    '<div class="card-title">' + T('t6_title','Security &amp; Governance') + '</div>' +
+    '<div class="card-sub">' + T('t6_sub','Same warehouse. Three types of access. Every query passes two gates.') + '</div>' +
 
     // Three identity columns
     '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:4px">' +
@@ -1052,7 +1063,7 @@ function renderStep6() {
 
     // Section divider
     '<div style="border-top:1px solid var(--border);margin:14px 0 10px;display:flex;align-items:center;gap:10px">' +
-      '<span style="color:#ff6b35;font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:1.5px;white-space:nowrap;background:var(--surface);padding-right:10px">THE TWO GATES</span>' +
+      '<span style="color:#ff6b35;font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:1.5px;white-space:nowrap;background:var(--surface);padding-right:10px">' + T('t6_twogates','THE TWO GATES') + '</span>' +
     '</div>' +
 
     gates +
@@ -1075,7 +1086,7 @@ function renderNav() {
   for (var i = 0; i < STEPS.length; i++) {
     html += '<button class="ns ' + (i===cur?'on':'') + '" onclick="goTo(' + i + ')">';
     html += '<span class="ns-n">' + String(i+1).padStart(2,'0') + '</span>';
-    html += '<span class="ns-l">' + STEPS[i].lbl + '</span>';
+    html += '<span class="ns-l">' + T('nav_lbl_'+i, STEPS[i].lbl) + '</span>';
     html += '</button>';
   }
   document.getElementById('snav').innerHTML = html;
@@ -1087,14 +1098,54 @@ function renderContent() {
   document.getElementById('pb').disabled = cur === 0;
   var nb = document.getElementById('nb');
   nb.disabled = cur === STEPS.length - 1;
-  nb.textContent = cur === STEPS.length - 1 ? 'Done' : 'Next →';
+  nb.textContent = cur === STEPS.length - 1 ? T('nav_done','Done') : T('nav_next','Next →');
 }
 
 function goTo(i) { cur = i; renderNav(); renderContent(); window.scrollTo({top:0,behavior:'smooth'}); }
 function nav(d) { if (cur+d >= 0 && cur+d < STEPS.length) goTo(cur+d); }
 
+/* ---- i18n: language toggle (EN / 日本語) ---- */
+var curLang='en';
+var translations={"ja": {"t0_title": "ダッシュボード vs. 会話", "t0_sub": "同じデータ、同じメトリクス。違うのはインターフェースだけ。", "t0_bilabel": "BIダッシュボード", "t0_kpi1": "収益", "t0_kpi2": "アクティブユーザー", "t0_kpi3": "解約率", "t0_barcap": "地域別収益・Q4", "t0_region_n": "北", "t0_region_w": "西", "t0_region_s": "南", "t0_region_e": "東", "t0_trendcap": "収益トレンド・過去6か月", "t0_bicaption": "あらかじめ用意されたビュー・固定フィルター・深掘りにはアナリストが必要", "t0_ailabel": "AIエージェント", "t0_q1": "前四半期、東エリアの成長を牽引したのは何？", "t0_a1": "東エリアの成長はほぼすべてデジタル経由で、前四半期比34%増。既存顧客の拡大ではなく新規顧客の獲得によるものです。", "t0_q2": "CACは健全な水準？ それともお金で成長を買っているだけ？", "t0_a2": "CACは18%上昇した一方、収益は34%伸びました。今のところ効率的ですが、回収期間は伸びています。Q1は注視が必要です。", "t0_aicaption": "ガバナンスの効いたメトリクス・話の流れをそのまま追える・チケット申請不要", "t0_cap": "ダッシュボードは、あなたが思いついた質問に答えます。エージェントは、あなたが今まさに聞きたいことを追いかけ続けます。裏側にあるdbtのメトリクスと定義は同じで、変わるのはインターフェースだけです。", "t1_title": "スタック全体像：ソースからAIまで", "t1_sub": "dbt はその中心に位置し、生データを変換し、セマンティックレイヤーでビジネスメトリクスを定義し、すべてを API として公開します。MCP サーバーは dbt の API と LLM をつなぐ橋渡し役で、AI ツールにダッシュボードと同じガバナンスの効いた構造化データへのアクセスを与えます。", "t1_alt": "スタック全体像：ソースからAIまでのアーキテクチャ図", "t1_cap": "セマンティックレイヤーと dbt の API は dbt Platform の中にあり、一度定義すれば誰もが使い回せます。MCP サーバーはその橋渡し役で、これらの API を LLM が扱える構造化ツールとしてラップします。Tableau を使っていても Claude と話していても、得られるのは同じガバナンスの効いたデータです。", "t2_title": "セマンティックレイヤーはどう作られるか", "t2_sub": "マートモデル → セマンティックモデル（エンティティ＋ディメンション） → メトリクス", "t2_martmodel": "マートモデル", "t2_builton": "土台にする", "t2_semmodel": "セマンティックモデル", "t2_entities": "エンティティ", "t2_primary": "（主キー）", "t2_dimensions": "ディメンション", "t2_timedim": "（時間ディメンション）", "t2_measures": "メジャー", "t2_defines": "定義する", "t2_simple": "シンプル", "t2_measure": "メジャー", "t2_groupby": "グループ化", "t2_derived": "導出", "t2_expr": "式", "t2_inherits": "継承", "t2_inheritsval": "親メトリクスのすべてのディメンション", "t2_cap": "セマンティックモデルは<strong>エンティティ</strong>（グレイン）、<strong>ディメンション</strong>（切り口）、<strong>メジャー</strong>（生の集計）を登録します。メトリクスはその上に乗ります。シンプルなメトリクスは単一のメジャーを参照し、導出メトリクスはほかのメトリクスを組み合わせます。AI エージェントが <code style=\"color:var(--pl)\">query_metrics(\"revenue\")</code> を呼ぶと、MetricFlow が SQL を生成します。余計なものは何もマテリアライズされません。", "t3_1_label": "ティア1: セマンティックレイヤー", "t3_1_badge": "最も効率的", "t3_1_headline": "名前付きメトリクスを直接呼び出す", "t3_1_when": "エージェントは答えが定義済みのメトリクスだとわかっている。SQL は書かず、スキーマも推測しない。", "t3_1_q": "前四半期の地域別収益は？", "t3_1_s2": "メトリクス一覧に 'revenue' を発見", "t3_1_s5": "SQL は生成されない。完全にガバナンスが効いている。", "t3_2_label": "ティア2: ディスカバリー", "t3_2_badge": "まず探索する", "t3_2_headline": "行動する前にプロジェクトを理解する", "t3_2_when": "エージェントには文脈が必要：どんなモデルがあるか、リネージュはどうなっているか、どのテストが通っているか。トークンは増えるが誤答を防げる。", "t3_2_q": "解約率の様子がおかしい。調べてもらえる？", "t3_2_s2": "stg_subscriptions までたどり着く", "t3_2_s4": "最終実行: 31時間前", "t3_2_s5": "SQL を一切書かずに根本原因を突き止める。", "t3_3_label": "ティア3: 直接SQL", "t3_3_badge": "アドホック", "t3_3_headline": "該当するメトリクスがなければ直接 SQL を実行する", "t3_3_when": "その質問に対応する定義済みメトリクスがない。エージェントは既知のモデルに対して SQL を書く。トークンは増え、ガバナンスは弱まる。", "t3_3_q": "過去7日間でプランタイプ別に作成されたアカウント数は？", "t3_3_s1": "該当するメトリクスがない。fct_accounts に直接クエリする。", "t3_3_s4": "生の結果。テストもメトリクス定義の強制もない。", "t3_4_label": "ティア4: テキストからSQL", "t3_4_badge": "最後の手段", "t3_4_headline": "自然言語から SQL を生成する", "t3_4_when": "メトリクスも既知のモデルもない。エージェントは SQL をゼロから生成する。トークン消費が最も多く、間違いも起きやすく、ガバナンスもない。できる限り避けるべき。", "t3_4_q": "エンタープライズアカウントの国別平均注文額", "t3_4_s1": "この質問に対応するメトリクスも既知のモデルもない", "t3_4_s3": "スキーマだけをもとに SQL を生成", "t3_4_s4": "テストも定義もない。Tableau の結果と異なる可能性がある。", "t3_lbl_when": "使いどころ", "t3_lbl_tools": "ツール", "t3_lbl_example": "やり取りの例", "t3_spectrum": "効率のスペクトラム", "t3_spec_left": "トークン最小・ガバナンス最大", "t3_spec_right": "トークン最大・ガバナンス最小", "t3_title": "エージェントの推論", "t3_sub": "エージェントがどのツールを使うかをどう決めるか。最も効率的な手段から最後の手段まで。", "t3_tierword": "ティア", "t4_1_title": "セマンティックレイヤー", "t4_1_sub": "ガバナンスの効いたメトリクスクエリ。生の SQL は不要。", "t4_1_desc": "最も価値の高いツール群。エージェントは事前に定義・テスト済みのメトリクスを名前で問い合わせます。BI ダッシュボードを動かしているのと同じ定義です。SQL 生成も、列名の推測も必要ありません。", "t4_1_uc1_t": "自然言語での問い合わせ", "t4_1_uc1_d": "ステークホルダーが「先月の解約率は？」と聞けば、正確でガバナンスの効いた答えが返ってきます。アナリストも SQL も不要です。", "t4_1_uc2_t": "BIツールと一貫した答え", "t4_1_uc2_d": "Tableau、Sigma、Excel などの BI ツールも同じセマンティックレイヤーに問い合わせます。定義は1つ、どこでも同じ数字です。", "t4_1_uc3_t": "定期レポーティング", "t4_1_uc3_d": "エージェントがスケジュールに沿ってメトリクスを取得し、要約を書いて Slack やメールに自動かつ正確に投稿します。", "t4_1_uc4_t": "メトリクスの探索", "t4_1_uc4_d": "エージェントは回答する前に、どんなメトリクスが存在するか、どんなディメンションが使えるか、どんな保存済みクエリがすでに定義されているかを調べられます。", "t4_1_s1": "Q: 「今四半期のプランタイプ別解約率は？」", "t4_1_s6": "無料プランの解約率は3.4%に上昇。Pro と Enterprise は横ばいでした。", "t4_2_title": "Discovery API", "t4_2_sub": "行動する前にプロジェクトを理解する", "t4_2_desc": "Discovery ツールは、モデル・リネージュ・ヘルス・ドキュメントなど、プロジェクト全体の地図をエージェントに与えます。何かを変更したり問題をデバッグしたりする前に欠かせない文脈です。", "t4_2_uc1_t": "リネージュの探索", "t4_2_uc1_d": "あるメトリクスがどこから来ているのか、どのモデルがそれに流れ込んでいるのか、どの下流レポートがそれに依存しているのかをたどれます。データ品質のデバッグや影響範囲の分析に役立ちます。", "t4_2_uc2_t": "外部ツールへのリネージュ取り込み", "t4_2_uc2_d": "リネージュのメタデータをデータカタログ、オブザーバビリティ基盤、独自ダッシュボードなど他のツールに取り込み、プロジェクト全体を統一的に把握できます。", "t4_2_uc3_t": "壊れたメトリクスのデバッグ", "t4_2_uc3_d": "セマンティックレイヤーのクエリが想定外の結果を返したとき、Discovery ツールが上流をたどり、古いモデル・失敗したテスト・スキーマ変更を突き止めます。", "t4_2_uc4_t": "プロジェクトのオンボーディング", "t4_2_uc4_d": "新しいエンジニアやエージェントは、コードベースを開かなくても、どんなモデルがあるか、それらが何をしていて、どうつながっているかをプロジェクト全体から探索できます。", "t4_2_s1": "Q: 「収益が18%落ちた。何が起きた？」", "t4_2_s3": "fct_orders → stg_payments へとたどり着く", "t4_2_s5": "最終成功実行: 31時間前", "t4_2_s6": "stg_payments が古い。これはパイプラインの遅延であり、実際の収益減少ではない。", "t4_3_title": "Admin API", "t4_3_sub": "ジョブ・実行・パフォーマンスの監視", "t4_3_desc": "Admin ツールを使えば、エージェントはジョブのライフサイクル全体を管理できます。実行のトリガー、ステータスの監視、失敗の可視化、パフォーマンスのデバッグまで。誰も dbt Cloud にログインする必要はありません。", "t4_3_uc1_t": "ジョブ失敗のトリアージ", "t4_3_uc1_d": "ジョブが失敗すると、エージェントはすぐにエラーログを取得し、どのモデルが壊れたかを特定し、上流をたどって、オンコールのエンジニアに実行可能な文脈を提示できます。", "t4_3_uc2_t": "パフォーマンスのデバッグ", "t4_3_uc2_d": "エージェントはどのモデルが遅いか、実行時間がどう推移しているかを特定し、増分ロジックやパーティショニングをどこに追加すべきか提案できます。", "t4_3_uc3_t": "実行の自動管理", "t4_3_uc3_d": "上流のイベント（ソーステーブルの着地など）に応じてジョブをトリガーし、完了を監視し、失敗をリトライし、あるいはスタックした実行をキャンセルします。手作業は不要です。", "t4_3_uc4_t": "オブザーバビリティとアラート", "t4_3_uc4_d": "ジョブの健全性を積極的に監視し、障害になる前に実行時間の悪化を可視化し、その状態を運用ダッシュボードや Slack アラートに反映します。", "t4_3_s1": "アラート: revenue メトリクスが古い。調査中。", "t4_3_s3": "stg_payments のジョブが32時間前に失敗", "t4_3_s5": "ソーステーブルに列 \"amount_usd\" が見つからない", "t4_3_s6": "上流でスキーマが変更された。すべての文脈とともにエンジニアへ提示。", "t4_4_sub": "ライブセッションでビルド・テスト・クエリを行う", "t4_4_desc": "CLI ツールは、書くこととそれを検証することの間をつなぎます。エージェントはモデルをビルドし、テストを実行し、その場で出力にクエリをかけられます。すべて1つのセッションの中で。開発中のアクティブなワークフローに最適です。", "t4_4_uc1_t": "アクティブなモデル開発", "t4_4_uc1_d": "モデルを書き、compile で SQL を検証し、実行し、テストし、出力にクエリをかける。エージェントとの会話を一度も離れることなく。", "t4_4_uc2_t": "PR前の検証", "t4_4_uc2_d": "コードがマージされる前に、エージェントは影響を受けるモデルとそのテストを実行し、失敗を早期に検知して PR コメントとして結果を提示できます。", "t4_4_uc3_t": "アドホックなSQL探索", "t4_4_uc3_d": "execute_sql は、まだメトリクスが存在しないときにエージェントへ直接的なクエリ手段を与えます。単発の分析や探索的なデータ作業に便利です。", "t4_4_uc4_t": "text_to_sql（最後の手段）", "t4_4_uc4_d": "メトリクスもモデルも質問に一致しないとき、エージェントは生の SQL を生成できます。最も信頼性が低く、ガバナンスの効いたメトリクスとは結果が異なる場合があります。あくまでフォールバックとして使います。", "t4_4_s1": "「orders と customer segments を結合するモデルを作って」", "t4_4_s3": "SQL は正常。構文エラーなし。", "t4_4_s6": "すべてのテストが通過。モデルは準備完了。", "t4_5_title": "Codegen", "t4_5_sub": "スキーマから dbt の定型コードを生成する", "t4_5_desc": "Codegen ツールは、エージェントがデータベーススキーマを読み取り、ソース定義・ステージングモデル・YAML ドキュメントを生成できるようにします。何時間もかかるセットアップが数分で終わります。", "t4_5_uc1_t": "新しいソースのオンボーディング", "t4_5_uc1_d": "新しいデータソースがウェアハウスに到着すると、エージェントは sources.yml、ステージングモデル、列レベルの YAML ドキュメントを数分で生成します。何時間もかかりません。", "t4_5_uc2_t": "ドキュメントの生成", "t4_5_uc2_d": "エージェントは列名と型があらかじめ埋まったモデル YAML を生成でき、エンジニアは説明文を書くところから始められます。", "t4_5_uc3_t": "新しいプロジェクトのひな形作成", "t4_5_uc3_d": "一貫したステージングパターン、命名規則、ファイル構成を持つ新しい dbt プロジェクト領域を立ち上げます。古いモデルからのコピペは不要です。", "t4_5_s1": "新しいソースが到着: raw_stripe スキーマ", "t4_5_s3": "sources.yml を作成: 12テーブル", "t4_5_s5": "stg_stripe__charges.sql を作成", "t4_5_s7": "24列すべてを含む YAML。何時間ものセットアップが数分で完了。", "t4_6_sub": "列レベルのリネージュとIDEの文脈", "t4_6_desc": "Fusion ツールは列レベルのリネージュと IDE スタイルのインテリジェンスを提供します。開発者のワークフロー、特に「ある列がどこから来て、プロジェクト内をどう流れているか」を理解するのに最適です。", "t4_6_uc1_t": "列レベルのリネージュ", "t4_6_uc1_d": "ある列の値が、結合や CTE を経てモデルをまたいでどこから来ているのかを正確にたどり、データ変換を理解して想定外の値をデバッグします。", "t4_6_uc2_t": "データ品質のデバッグ", "t4_6_uc2_d": "ダッシュボードの数字がおかしく見えるとき、列レベルのリネージュを生データのソースまでさかのぼり、値がどこで誤って変換・フィルタされたかを見つけます。", "t4_6_uc3_t": "開発者向けインテリジェンス", "t4_6_uc3_d": "ref() と source() の補完機能は、エージェントがどのモデルとソースが存在するかを推測やハルシネーションなしに把握し、正確な dbt の SQL を書く助けになります。", "t4_6_s1": "「なぜ2つのモデルで revenue の値が違うの？」", "t4_6_s3": "たどると: stg_stripe.amount → intermediate.orders_with_fx → fct_revenue", "t4_6_s5": "たどると: stg_braintree.amount_usd → fct_orders", "t4_6_s6": "決済ソースが違う。同じメトリクスではない。アナリストへ提示。", "t4_lbl_tools": "利用可能なツール", "t4_lbl_usecases": "ユースケース", "t4_lbl_trace": "トレース例", "t4_title": "ツールグループ別ユースケース", "t4_sub": "ツールグループごとに、エージェントができることが変わります。グループをクリックすると、それが何を可能にし、実際にどう動くかがわかります。", "t5_1_sub": "dbt の文脈なし", "t5_stack_agent": "AIコーディングエージェント", "t5_1_stack2": "あなたのコードベース（ファイルのみ）", "t5_cap_sql": "SQLクエリを書く", "t5_1_c1": "ゼロから生の SQL を生成する", "t5_cap_schema": "スキーマを理解する", "t5_1_c2": "貼り付けた場合のみ", "t5_cap_metrics": "メトリクスの定義を知る", "t5_1_c3": "テーブル名・列名から推測するだけ", "t5_cap_validated": "検証・テスト済みの出力", "t5_1_c4": "テストも契約もない", "t5_cap_lineage": "リネージュの把握", "t5_1_c5": "DAGも上流の文脈もない", "t5_cap_consistent": "一貫した答え", "t5_1_c6": "「revenue」の意味はモデルの推測次第", "t5_1_q": "先月の地域別収益は？", "t5_1_s1": "orders や revenue っぽい名前のテーブルを探してみよう…", "t5_1_s3": "\"amount\" 列を推測 ・完了済み注文のフィルターなし・テストなし・間違っている可能性あり", "t5_2_sub": "セマンティックレイヤーに接続", "t5_2_stack3": "セマンティックレイヤー → MetricFlow", "t5_2_c1": "まだ書けるが、もう書く必要はない", "t5_2_c2": "get_model_details・get_all_models 経由", "t5_2_c3": "list_metrics ・get_dimensions", "t5_2_c4": "クエリは MetricFlow を経由する", "t5_2_c5": "get_lineage がツールとして使える", "t5_2_c6": "revenue は常に revenue", "t5_2_s5": "ガバナンスあり・テスト済み・一貫している。モデルが SQL を書くことはない。", "t5_3_sub": "IDEを理解し、プロジェクトの文脈をリアルタイムに把握", "t5_3_stack3": "Fusion エンジン（リアルタイムのプロジェクトグラフ）", "t5_3_c1": "プロジェクトの文脈をすべて把握したうえで", "t5_3_c2": "リアルタイム。コンパイル不要", "t5_3_c3": "MCP と拡張機能の文脈経由", "t5_3_c4": "MetricFlow と Fusion の検証経由", "t5_3_c5": "エディタ内のリアルタイムDAG + MCP", "t5_3_cap6": "オートコンプリートと ref() の連携", "t5_3_c6": "Fusion がグラフを常に最新に保ち、ref は即座に解決される", "t5_3_q": "orders と customer segments を結合する新しいモデルを作って", "t5_3_s1": "拡張機能はプロジェクト全体を把握。fct_orders と dim_customers はすでに文脈にある", "t5_3_s3": "ref() は自動補完・Fusion が上流の存在を検証・リネージュも自動更新", "t5_4_title": "＋すべてを組み合わせる", "t5_4_sub": "dbt のフルスタック、最も強力な構成", "t5_4_stack2": "dbt Extension + Fusion（リアルタイムの文脈）", "t5_4_stack3": "dbt MCP Server（クエリ＋カタログ）", "t5_4_stack4": "セマンティックレイヤー（ガバナンスの効いたメトリクス）", "t5_4_stack5": "テスト・ドキュメント済みのマートモデル", "t5_4_cap1": "モデルを書いて検証する", "t5_4_c1": "拡張機能 + Fusion、リアルタイム", "t5_4_cap2": "ガバナンスの効いたメトリクスに問い合わせる", "t5_4_c2": "MCP + セマンティックレイヤー", "t5_4_cap3": "リネージュをエンドツーエンドでたどる", "t5_4_c3": "ソースからメトリクスまで", "t5_4_cap4": "一貫した、テスト済みの答え", "t5_4_c4": "MetricFlow が定義を強制する", "t5_4_cap5": "ジョブをトリガーし監視する", "t5_4_c5": "list_jobs・trigger_job を MCP 経由で", "t5_4_cap6": "同じセッションでビルドとクエリを行う", "t5_4_c6": "エディタでモデルを書き、MCP でクエリする、閉じたループ", "t5_4_q": "解約率の様子がおかしい。調査して直して。", "t5_4_s3": "拡張機能が stg_subscriptions を開き、cancelled_at の不適切なフィルターを発見", "t5_4_s6": "調査・診断・修正・再実行までを1つのセッションで完了", "t5_lbl_stack": "スタック", "t5_lbl_caps": "できること", "t5_lbl_example": "やり取りの例", "t5_title": "Cursor / Claude：4つの構成", "t5_sub": "dbt の各レイヤーが、それまで AI エージェントにできなかったことを1つずつ可能にします。クリックして比較してみましょう。", "t5_cap": "構成4がすべてを揃えた完成形ですが、構成2と3だけでもすでに意味のある改善です。問うべきは「全部必要か」ではなく「データワークフローのどこまでを AI に理解させたいか」です。", "t6_dev_title": "Developer シート", "t6_dev_sub": "構築・デプロイ・保守", "t6_lbl_login": "ログイン方法", "t6_internal": "社内", "t6_dev_login": "dbt のユーザー名とパスワード", "t6_lbl_cando": "できること", "t6_dev_c1": "IDE・CLI・ジョブ", "t6_dev_c2": "すべてのモデルとメトリクス", "t6_dev_c3": "書いてデプロイする", "t6_cando_catalog": "カタログ・ドキュメント・リネージュ", "t6_dev_c5": "完全な監査ログ", "t6_ro_title": "Read-Only シート", "t6_ro_sub": "利用・探索・分析", "t6_today": "現在：", "t6_ro_pat": "Personal Access Token（PAT）", "t6_soon": "近日公開：", "t6_ro_oauth": "OAuth の「login with dbt」。短命でSSO対応", "t6_ro_c2": "ソースの鮮度とジョブアラート", "t6_ro_c3": "APIアクセス", "t6_ro_c4": "セマンティックレイヤー＆MCP <span style=\"color:#3fb950;font-size:9px\">（2026年上半期）</span>", "t6_ro_c5": "dbt Insights <span style=\"color:#3fb950;font-size:9px\">（2026年下半期）</span>", "t6_ro_c6": "IDE・CLI・ジョブ・デプロイ", "t6_ai_title": "LLMとAIエージェント", "t6_ai_sub": "Claude、MCP接続、共有BIツール", "t6_lbl_connect": "接続方法", "t6_programmatic": "プログラム・マシン経由", "t6_svctoken": "サービストークン", "t6_ai_svcdesc": "：ユースケースやチームごとに1つ、特定のドメインにスコープされる。個人には紐づかない。ほかの誰にも影響を与えずに失効できる。", "t6_ai_c1": "セマンティックレイヤー、ガバナンスの効いたメトリクスのみ", "t6_ai_c2": "MCP経由のMetricFlowクエリ", "t6_ai_c3": "割り当てられたドメインにスコープされる", "t6_ai_c4": "トークンごとに監査ログが記録される", "t6_ai_c5": "共有BIツール（Tableau Server、Power BI）も同じ経路", "t6_ai_c6": "生のSQLやモデルへの直接アクセス", "t6_note1_title": "個人ログイン（PATまたはOAuth）", "t6_note1_desc": "Developer と Read-Only シート。実在の個人に紐づき、ユーザー単位で監査される。個人のBI接続（自分のExcel、Tableau Desktop）もここに含まれる。", "t6_note2_title": "サービストークン（マシン認証情報）", "t6_note2_desc": "AIエージェント、Claude、MCP接続、共有BIツール（Tableau Server、Power BIワークスペース）。個人には紐づかず、ユースケースごとにスコープされ失効できる。", "t6_gate1_lbl": "ゲート1: dbt", "t6_gate1_title": "何を要求できるかを制御する", "t6_gate1_desc": "dbt上でのロールが、ウェアハウスが技術的に許可するかどうかにかかわらず、そもそもどのモデルやメトリクスを要求できるかを決める。", "t6_gate2_lbl": "ゲート2: ウェアハウス", "t6_gate2_title": "どの行が返ってくるかを制御する", "t6_gate2_desc": "行レベルセキュリティはクエリ実行時にウェアハウス自身によって強制される。これが最後の砦であり、dbt も MCP もこれを迂回できない。", "t6_title": "セキュリティとガバナンス", "t6_sub": "同じウェアハウス、3種類のアクセス。すべてのクエリは2つのゲートを通過する。", "t6_twogates": "2つのゲート", "nav_done": "完了 ✓", "nav_next": "次へ →", "nav_back": "← 戻る", "back_all": "← すべての解説へ", "gh_src": "GitHub でソースを見る", "h1": "データから会話へ", "intro": "dbt がウェアハウスと AI エージェントをどうつなぐのか。BI ツールを支えているのと同じ信頼のレイヤーを使って。", "nav_lbl_0": "シフト", "nav_lbl_1": "スタック", "nav_lbl_2": "セマンティックレイヤー", "nav_lbl_3": "エージェントの推論", "nav_lbl_4": "ユースケース", "nav_lbl_5": "構成", "nav_lbl_6": "セキュリティ"}};
+function T(key, en){
+  if(curLang!=='en'){
+    var dict=translations[curLang];
+    if(dict && Object.prototype.hasOwnProperty.call(dict,key)) return dict[key];
+  }
+  return en;
+}
+function cacheEn(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){el.dataset.en=el.textContent;});
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){el.dataset.enHtml=el.innerHTML;});
+}
+function setLang(lang){
+  curLang=lang;
+  var dict=translations[lang]||{};
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k=el.getAttribute('data-i18n');
+    if(lang==='en'){if(el.dataset.en!==undefined)el.textContent=el.dataset.en;}
+    else if(dict[k]!==undefined){el.textContent=dict[k];}
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+    var k=el.getAttribute('data-i18n-html');
+    if(lang==='en'){if(el.dataset.enHtml!==undefined)el.innerHTML=el.dataset.enHtml;}
+    else if(dict[k]!==undefined){el.innerHTML=dict[k];}
+  });
+  document.documentElement.lang=lang;
+  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-lang')===lang);});
+  renderNav();
+  renderContent();
+  try{localStorage.setItem('lang',lang);}catch(e){}
+}
+
 renderNav();
 renderContent();
+cacheEn();
+(function(){
+  var saved=null;try{saved=localStorage.getItem('lang');}catch(e){}
+  var initial=saved||(((navigator.language||navigator.userLanguage||'').toLowerCase().indexOf('ja')===0)?'ja':'en');
+  setLang(initial);
+})();
 </script>
 </body>
 </html>
