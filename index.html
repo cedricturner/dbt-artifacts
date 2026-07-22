@@ -4,265 +4,293 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
-<title>dbt notes and explainers — Cedric Turner</title>
+<title>dbt explainers | Cedric Turner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Mono:wght@400;700&amp;family=Noto+Sans+JP:wght@400;600&amp;display=swap" rel="stylesheet">
 <style>
 :root {
-  --paper: #f4f4f1;
-  --ink: #111111;
-  --muted: #6f6f6b;
-  --faint: #b7b7b1;
-  --rule: #deded9;
-  --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  --paper: #fff;
+  --ink: #171717;
+  --text: #353535;
+  --muted: #73736e;
+  --rule: #d8d8d4;
+  --blue: #1f5b8f;
+  --teal: #16807a;
+  --green: #3f7c49;
+  --ochre: #a66b1f;
+  --orange: #b8512e;
+  --rose: #aa4b73;
+  --violet: #6e4b8b;
+  --body: Inter, "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: "Space Mono", "SFMono-Regular", Consolas, monospace;
 }
 * { box-sizing: border-box; }
 html { background: var(--paper); color: var(--ink); }
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: var(--sans);
-  font-size: 14px;
-  line-height: 1.5;
+  background: var(--paper);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.7;
 }
-::selection { background: var(--ink); color: var(--paper); }
-.shell {
-  width: min(1080px, calc(100% - 48px));
+button, a { font: inherit; }
+a { color: inherit; }
+::selection { color: #fff; background: var(--ink); }
+.page {
+  width: min(1040px, calc(100% - 56px));
   margin: 0 auto;
-  padding: 38px 0 30px;
+  padding: 68px 0 80px;
 }
-.utility {
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--ink);
+}
+.byline {
+  color: #4a4a4a;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-decoration: none;
+}
+.byline:focus-visible, .byline:hover { color: var(--blue); }
+.language-picker { position: relative; z-index: 10; }
+.language-current {
+  min-width: 154px;
+  padding: 9px 14px;
+  color: var(--language-ink, var(--blue));
+  background: #fff;
+  border: 1.5px solid currentColor;
+  border-radius: 48% 4px 45% 3px / 10% 45% 8% 42%;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+}
+.language-current::after {
+  float: right;
+  content: "+";
+  font-family: var(--mono);
+  font-weight: 400;
+}
+.language-current[aria-expanded="true"]::after { content: "−"; }
+.language-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 218px;
+  padding: 8px;
+  background: #fff;
+  border: 1.5px solid var(--ink);
+}
+.language-menu[hidden] { display: none; }
+.language-option {
+  display: block;
+  width: 100%;
+  margin: 0 0 5px;
+  padding: 10px 13px;
+  color: var(--option-ink);
+  background: #fff;
+  border: 1.5px solid currentColor;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+  transform: rotate(var(--turn));
+}
+.language-option:last-child { margin-bottom: 0; }
+.language-option:hover, .language-option:focus-visible, .language-option[aria-selected="true"] {
+  color: #fff;
+  background: var(--option-ink);
+  outline: 0;
+}
+.language-en { --option-ink: var(--blue); --turn: -.4deg; }
+.language-ja { --option-ink: #c43b2f; --turn: .7deg; }
+.language-es { --option-ink: #a9432f; --turn: -.8deg; border-bottom-color: #c89118; }
+.language-pt-br { --option-ink: #267044; --turn: .5deg; border-bottom-color: #b48a19; }
+.language-de { --option-ink: #2f3032; --turn: -.3deg; border-bottom-color: #b52f35; }
+.hero { margin: 76px 0 104px; }
+.kicker {
+  margin: 0 0 18px;
+  color: #4a4a4a;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+}
+h1 {
+  max-width: 840px;
+  margin: 0;
+  font-size: clamp(48px, 8vw, 88px);
+  font-weight: 500;
+  letter-spacing: -.065em;
+  line-height: .92;
+}
+.intro {
+  max-width: 540px;
+  margin: 32px 0 0;
+  color: #4a4a4a;
+  font-size: 16px;
+  line-height: 1.75;
+}
+.directory { position: relative; }
+.directory-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 42px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ink);
+}
+h2 { margin: 0; font-size: 14px; font-weight: 600; }
+.count { color: var(--muted); font-family: var(--mono); font-size: 10px; }
+.entries { margin: 0; padding: 0; list-style: none; }
+.entry { --entry-ink: var(--blue); position: relative; }
+.entry:nth-child(2) { --entry-ink: var(--teal); }
+.entry:nth-child(3) { --entry-ink: var(--green); }
+.entry:nth-child(4) { --entry-ink: var(--ochre); }
+.entry:nth-child(5) { --entry-ink: var(--orange); }
+.entry:nth-child(6) { --entry-ink: var(--rose); }
+.entry:nth-child(7) { --entry-ink: var(--violet); }
+.entry-link {
+  display: grid;
+  grid-template-columns: minmax(220px, .95fr) minmax(300px, 1.4fr) auto;
+  gap: 24px;
+  align-items: baseline;
+  padding: 25px 8px 27px 0;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+}
+.entry:first-child .entry-link { border-top: 1px solid var(--rule); }
+.entry-link:hover .entry-name, .entry-link:focus-visible .entry-name { color: var(--entry-ink); }
+.entry-link:focus-visible { outline: 1.5px solid var(--entry-ink); outline-offset: 5px; }
+.entry-name { display: block; font-size: 17px; font-weight: 600; line-height: 1.35; transition: color 120ms ease; }
+.entry-file { display: block; margin-top: 5px; color: #9a9a94; font-family: var(--mono); font-size: 9px; }
+.entry-description { color: var(--text); font-size: 14px; }
+.entry-meta { color: var(--muted); font-family: var(--mono); font-size: 10px; white-space: nowrap; }
+.footer {
   display: flex;
   justify-content: space-between;
   gap: 24px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--ink);
+  margin-top: 88px;
+  padding-top: 16px;
   color: var(--muted);
-  font-size: 11px;
-}
-header { padding: 48px 0 44px; }
-h1 {
-  max-width: 900px;
-  margin: 0;
-  font-size: clamp(40px, 7vw, 76px);
-  font-weight: 600;
-  letter-spacing: -.055em;
-  line-height: .98;
-}
-.readme {
-  display: grid;
-  grid-template-columns: 180px minmax(0, 620px);
-  gap: 32px;
-  padding: 20px 0 44px;
-  border-top: 1px solid var(--rule);
-}
-.readme-label {
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 11px;
-}
-.readme p {
-  margin: 0;
-  font-size: 17px;
-  line-height: 1.5;
-}
-h2 {
-  margin: 0;
-  padding: 0 0 14px;
-  font-size: 14px;
-  font-weight: 600;
-}
-.directory-head {
-  display: grid;
-  grid-template-columns: minmax(230px, 1.1fr) minmax(300px, 1.5fr) 100px;
-  gap: 22px;
-  padding: 9px 12px;
-  border-bottom: 1px solid var(--ink);
-  color: var(--muted);
-  font-size: 11px;
-}
-.directory-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.entry { border-bottom: 1px solid var(--rule); }
-.entry a {
-  display: grid;
-  grid-template-columns: minmax(230px, 1.1fr) minmax(300px, 1.5fr) 100px;
-  gap: 22px;
-  align-items: baseline;
-  padding: 17px 12px;
-  color: inherit;
-  text-decoration: none;
-}
-.entry a:hover,
-.entry a:focus-visible {
-  background: var(--ink);
-  color: var(--paper);
-  outline: 0;
-}
-.entry-name {
-  display: block;
-  font-weight: 600;
-}
-.entry-file {
-  display: block;
-  margin-top: 3px;
-  color: var(--faint);
+  border-top: 1px solid var(--ink);
   font-family: var(--mono);
   font-size: 10px;
 }
-.entry-description { color: var(--muted); }
-.entry-meta {
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 11px;
+.footer a { text-underline-offset: 4px; }
+.footer a:hover, .footer a:focus-visible { color: var(--blue); }
+@media (max-width: 720px) {
+  .page { width: min(100% - 36px, 1040px); padding: 42px 0 64px; }
+  .topbar { align-items: flex-start; }
+  .hero { margin: 60px 0 78px; }
+  h1 { font-size: clamp(46px, 15vw, 70px); }
+  .directory-heading { margin-bottom: 28px; }
+  .entry-link { grid-template-columns: 1fr auto; gap: 8px 14px; padding-block: 22px; }
+  .entry-description { grid-column: 1 / -1; }
+  .entry-meta { grid-column: 2; grid-row: 1; }
+  .footer { flex-direction: column; }
 }
-.entry a:hover .entry-file,
-.entry a:hover .entry-description,
-.entry a:hover .entry-meta,
-.entry a:focus-visible .entry-file,
-.entry a:focus-visible .entry-description,
-.entry a:focus-visible .entry-meta {
-  color: var(--paper);
+@media (max-width: 460px) {
+  .language-current { min-width: 142px; }
 }
-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
-  padding-top: 18px;
-  color: var(--muted);
-  font-size: 11px;
-}
-footer a {
-  color: inherit;
-  text-underline-offset: 3px;
-}
-footer a:hover,
-footer a:focus-visible {
-  color: var(--ink);
-  outline: 1px solid var(--ink);
-  outline-offset: 3px;
-}
-@media (max-width: 680px) {
-  .shell {
-    width: min(100% - 28px, 1080px);
-    padding-top: 22px;
-  }
-  .utility span:last-child { display: none; }
-  header { padding: 34px 0 30px; }
-  h1 { font-size: clamp(38px, 12vw, 56px); }
-  .readme {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    padding-bottom: 32px;
-  }
-  .directory-head { display: none; }
-  nav { border-top: 1px solid var(--ink); }
-  .entry a {
-    grid-template-columns: 1fr auto;
-    gap: 8px 16px;
-    padding: 15px 8px;
-  }
-  .entry-description {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-  .entry-meta {
-    grid-column: 2;
-    grid-row: 3;
-    text-align: right;
-  }
-  footer { flex-direction: column; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
 </style>
 </head>
 <body>
-<div class="shell">
-  <div class="utility">
-    <span>Cedric Turner · shared notes</span>
-    <span>7 explainers</span>
+<div class="page">
+  <div class="topbar">
+    <div class="language-picker">
+      <button type="button" class="language-current" id="language-current" aria-haspopup="listbox" aria-expanded="false" aria-controls="language-menu">English</button>
+      <div class="language-menu" id="language-menu" role="listbox" aria-label="language" hidden>
+        <button type="button" class="language-option language-en" role="option" aria-selected="true" data-lang="en">English</button>
+        <button type="button" class="language-option language-ja" role="option" aria-selected="false" data-lang="ja">日本語</button>
+        <button type="button" class="language-option language-es" role="option" aria-selected="false" data-lang="es">Español</button>
+        <button type="button" class="language-option language-pt-br" role="option" aria-selected="false" data-lang="pt-BR">Português (Brasil)</button>
+        <button type="button" class="language-option language-de" role="option" aria-selected="false" data-lang="de">Deutsch</button>
+      </div>
+    </div>
   </div>
 
-  <header>
-    <h1>dbt explainers</h1>
+  <header class="hero">
+    <p class="kicker" data-i18n="kicker">dbt / notes / 7 explainers</p>
+    <h1 data-i18n="title">dbt explainers</h1>
+    <p class="intro" data-i18n="intro">the way I explain different parts of dbt.</p>
   </header>
 
-  <main>
-    <section class="readme" aria-labelledby="readme-label">
-      <div class="readme-label" id="readme-label">README.txt</div>
-      <p>the way I explain different parts of dbt</p>
-    </section>
-
-    <h2>open an explainer</h2>
-    <div class="directory-head" aria-hidden="true">
-      <span>topic</span>
-      <span>what it explains</span>
-      <span>time</span>
+  <main class="directory">
+    <div class="directory-heading">
+      <h2 data-i18n="open">open an explainer</h2>
+      <span class="count" data-i18n="count">7 notes</span>
     </div>
-
-    <nav aria-label="dbt artifact directories">
-      <ul class="directory-list">
-        <li class="entry">
-          <a href="./dbt-vs-stored-procs/">
-            <span><span class="entry-name">dbt vs. stored procedures</span><span class="entry-file">dbt-vs-stored-procs/</span></span>
-            <span class="entry-description">how dbt turns one long stored procedure into clean, testable SQL models.</span>
-            <span class="entry-meta">~10 min</span>
-          </a>
-        </li>
-        <li class="entry">
-          <a href="./dbt-vs-notebooks/">
-            <span><span class="entry-name">dbt vs. notebooks</span><span class="entry-file">dbt-vs-notebooks/</span></span>
-            <span class="entry-description">what changes when data transformations move from a notebook into the warehouse.</span>
-            <span class="entry-meta">~10 min</span>
-          </a>
-        </li>
-        <li class="entry">
-          <a href="./dbt-core-vs-platform/">
-            <span><span class="entry-name">dbt Core vs. the platform</span><span class="entry-file">dbt-core-vs-platform/</span></span>
-            <span class="entry-description">where dbt Core alone is enough, and where paying for the dbt platform actually earns its cost.</span>
-            <span class="entry-meta">~12 min</span>
-          </a>
-        </li>
-        <li class="entry">
-          <a href="./dbt-connection-modes/">
-            <span><span class="entry-name">dbt connection modes</span><span class="entry-file">dbt-connection-modes/</span></span>
-            <span class="entry-description">how dbt signs in and connects to your data platform.</span>
-            <span class="entry-meta">~8 min</span>
-          </a>
-        </li>
-        <li class="entry">
-          <a href="./dbt-ai-llm/">
-            <span><span class="entry-name">dbt, AI, and LLMs</span><span class="entry-file">dbt-ai-llm/</span></span>
-            <span class="entry-description">how AI tools use governed metrics from the dbt Semantic Layer.</span>
-            <span class="entry-meta">walkthrough</span>
-          </a>
-        </li>
-        <li class="entry">
-          <a href="./dbt-wizard/">
-            <span><span class="entry-name">dbt Wizard</span><span class="entry-file">dbt-wizard/</span></span>
-            <span class="entry-description">what dbt Wizard is and why it understands a dbt project better than a general AI tool.</span>
-            <span class="entry-meta">4 parts</span>
-          </a>
-        </li>
-        <li class="entry">
-          <a href="./dbt-state/">
-            <span><span class="entry-name">dbt state</span><span class="entry-file">dbt-state/</span></span>
-            <span class="entry-description">how dbt builds what changed and skips what did not.</span>
-            <span class="entry-meta">walkthrough</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <ol class="entries">
+      <li class="entry"><a class="entry-link" href="./dbt-vs-stored-procs/"><span><span class="entry-name" data-i18n="e1n">dbt vs. stored procedures</span><span class="entry-file">dbt-vs-stored-procs/</span></span><span class="entry-description" data-i18n="e1d">turn one long procedure into small SQL models you can test and trace.</span><span class="entry-meta" data-i18n="e1m">~10 min</span></a></li>
+      <li class="entry"><a class="entry-link" href="./dbt-vs-notebooks/"><span><span class="entry-name" data-i18n="e2n">dbt vs. notebooks</span><span class="entry-file">dbt-vs-notebooks/</span></span><span class="entry-description" data-i18n="e2d">see what changes when transformations move from a notebook into the warehouse.</span><span class="entry-meta" data-i18n="e2m">~10 min</span></a></li>
+      <li class="entry"><a class="entry-link" href="./dbt-core-vs-platform/"><span><span class="entry-name" data-i18n="e3n">dbt Core vs. the platform</span><span class="entry-file">dbt-core-vs-platform/</span></span><span class="entry-description" data-i18n="e3d">work out when dbt Core is enough and what the platform adds.</span><span class="entry-meta" data-i18n="e3m">~12 min</span></a></li>
+      <li class="entry"><a class="entry-link" href="./dbt-connection-modes/"><span><span class="entry-name" data-i18n="e4n">dbt connection modes</span><span class="entry-file">dbt-connection-modes/</span></span><span class="entry-description" data-i18n="e4d">follow how dbt signs in and connects to your data platform.</span><span class="entry-meta" data-i18n="e4m">~8 min</span></a></li>
+      <li class="entry"><a class="entry-link" href="./dbt-ai-llm/"><span><span class="entry-name" data-i18n="e5n">dbt, AI, and LLMs</span><span class="entry-file">dbt-ai-llm/</span></span><span class="entry-description" data-i18n="e5d">connect AI tools to governed metrics in the dbt Semantic Layer.</span><span class="entry-meta" data-i18n="walkthrough">walkthrough</span></a></li>
+      <li class="entry"><a class="entry-link" href="./dbt-wizard/"><span><span class="entry-name" data-i18n="e6n">dbt Wizard</span><span class="entry-file">dbt-wizard/</span></span><span class="entry-description" data-i18n="e6d">see why project context gives dbt Wizard an edge over a general AI tool.</span><span class="entry-meta" data-i18n="parts">4 parts</span></a></li>
+      <li class="entry"><a class="entry-link" href="./dbt-state/"><span><span class="entry-name" data-i18n="e7n">dbt State</span><span class="entry-file">dbt-state/</span></span><span class="entry-description" data-i18n="e7d">build what changed and skip what did not.</span><span class="entry-meta" data-i18n="walkthrough">walkthrough</span></a></li>
+    </ol>
   </main>
 
-  <footer>
-    <span>things that helped me during my time at dbt</span>
-    <a href="https://github.com/cedricturner/dbt-artifacts">view the source files</a>
-  </footer>
+  <footer class="footer"><span data-i18n="footer">things that helped me during my time at dbt</span><a href="https://github.com/cedricturner/dbt-artifacts" data-i18n="source">view the source files</a></footer>
 </div>
+<script>
+const copy = {
+  en: { kicker:'dbt / notes / 7 explainers', title:'dbt explainers', intro:'the way I explain the parts of dbt that usually need a whiteboard.', open:'open an explainer', count:'7 notes', e1n:'dbt vs. stored procedures', e1d:'turn one long procedure into small SQL models you can test and trace.', e1m:'~10 min', e2n:'dbt vs. notebooks', e2d:'see what changes when transformations move from a notebook into the warehouse.', e2m:'~10 min', e3n:'dbt Core vs. the platform', e3d:'work out when dbt Core is enough and what the platform adds.', e3m:'~12 min', e4n:'dbt connection modes', e4d:'follow how dbt signs in and connects to your data platform.', e4m:'~8 min', e5n:'dbt, AI, and LLMs', e5d:'connect AI tools to governed metrics in the dbt Semantic Layer.', walkthrough:'walkthrough', e6n:'dbt Wizard', e6d:'see why project context gives dbt Wizard an edge over a general AI tool.', parts:'4 parts', e7n:'dbt state', e7d:'build what changed and skip what did not.', footer:'things that helped me during my time at dbt', source:'view the source files' },
+  ja: { kicker:'dbt / ノート / 7つの解説', title:'dbt 解説ノート', intro:'ふだんホワイトボードを使って説明する dbt の仕組みを、ここにまとめました。', open:'解説を開く', count:'7つのノート', e1n:'dbt とストアドプロシージャ', e1d:'長いプロシージャを、テストと追跡ができる小さな SQL モデルに分けます。', e1m:'約10分', e2n:'dbt とノートブック', e2d:'変換処理をノートブックからウェアハウスへ移すと何が変わるかを見ます。', e2m:'約10分', e3n:'dbt Core と dbt platform', e3d:'dbt Core だけで足りる場合と、platform が加える機能を整理します。', e3m:'約12分', e4n:'dbt の接続モード', e4d:'dbt がデータプラットフォームへ認証し、接続する流れを追います。', e4m:'約8分', e5n:'dbt、AI、LLM', e5d:'AI ツールを dbt Semantic Layer の管理されたメトリクスにつなぎます。', walkthrough:'ウォークスルー', e6n:'dbt Wizard', e6d:'プロジェクトの文脈が、汎用 AI ツールとの違いを生む理由を見ます。', parts:'全4部', e7n:'dbt state', e7d:'変更されたものだけをビルドし、それ以外をスキップします。', footer:'dbt で働いていたときに役立ったこと', source:'ソースファイルを見る' },
+  es: { kicker:'dbt / notas / 7 explicaciones', title:'explicaciones de dbt', intro:'así explico las partes de dbt que normalmente necesitan una pizarra.', open:'abre una explicación', count:'7 notas', e1n:'dbt vs. procedimientos almacenados', e1d:'convierte un procedimiento largo en modelos SQL pequeños, comprobables y rastreables.', e1m:'~10 min', e2n:'dbt vs. notebooks', e2d:'mira qué cambia cuando las transformaciones pasan del notebook al warehouse.', e2m:'~10 min', e3n:'dbt Core vs. la plataforma', e3d:'decide cuándo basta dbt Core y qué añade la plataforma.', e3m:'~12 min', e4n:'modos de conexión de dbt', e4d:'sigue cómo dbt inicia sesión y se conecta a tu plataforma de datos.', e4m:'~8 min', e5n:'dbt, IA y LLMs', e5d:'conecta herramientas de IA con métricas gobernadas en dbt Semantic Layer.', walkthrough:'recorrido', e6n:'dbt Wizard', e6d:'mira por qué el contexto del proyecto da ventaja a dbt Wizard frente a una IA general.', parts:'4 partes', e7n:'dbt state', e7d:'construye lo que cambió y omite lo que no.', footer:'cosas que me ayudaron durante mi etapa en dbt', source:'ver los archivos fuente' },
+  'pt-BR': { kicker:'dbt / notas / 7 explicações', title:'explicações de dbt', intro:'como eu explico as partes do dbt que normalmente pedem um quadro branco.', open:'abra uma explicação', count:'7 notas', e1n:'dbt vs. stored procedures', e1d:'transforme uma procedure longa em modelos SQL pequenos, testáveis e rastreáveis.', e1m:'~10 min', e2n:'dbt vs. notebooks', e2d:'veja o que muda quando as transformações saem do notebook e vão para o warehouse.', e2m:'~10 min', e3n:'dbt Core vs. a plataforma', e3d:'entenda quando o dbt Core basta e o que a plataforma acrescenta.', e3m:'~12 min', e4n:'modos de conexão do dbt', e4d:'acompanhe como o dbt autentica e se conecta à sua plataforma de dados.', e4m:'~8 min', e5n:'dbt, IA e LLMs', e5d:'conecte ferramentas de IA a métricas governadas no dbt Semantic Layer.', walkthrough:'passo a passo', e6n:'dbt Wizard', e6d:'veja por que o contexto do projeto dá ao dbt Wizard vantagem sobre uma IA genérica.', parts:'4 partes', e7n:'dbt state', e7d:'construa o que mudou e pule o que não mudou.', footer:'coisas que me ajudaram enquanto trabalhei na dbt', source:'ver os arquivos-fonte' },
+  de: { kicker:'dbt / notizen / 7 erklärungen', title:'dbt erklärt', intro:'so erkläre ich die Teile von dbt, für die man sonst ein Whiteboard braucht.', open:'eine Erklärung öffnen', count:'7 notizen', e1n:'dbt vs. Stored Procedures', e1d:'zerlege eine lange Prozedur in kleine SQL-Modelle, die sich testen und verfolgen lassen.', e1m:'~10 Min.', e2n:'dbt vs. Notebooks', e2d:'sieh dir an, was sich ändert, wenn Transformationen aus dem Notebook ins Warehouse wandern.', e2m:'~10 Min.', e3n:'dbt Core vs. die Plattform', e3d:'finde heraus, wann dbt Core reicht und was die Plattform ergänzt.', e3m:'~12 Min.', e4n:'dbt-Verbindungsmodi', e4d:'verfolge, wie dbt sich anmeldet und mit deiner Datenplattform verbindet.', e4m:'~8 Min.', e5n:'dbt, KI und LLMs', e5d:'verbinde KI-Tools mit kontrollierten Metriken im dbt Semantic Layer.', walkthrough:'Rundgang', e6n:'dbt Wizard', e6d:'sieh dir an, warum Projektkontext dbt Wizard einen Vorteil gegenüber allgemeiner KI gibt.', parts:'4 Teile', e7n:'dbt state', e7d:'baue, was sich geändert hat, und überspringe den Rest.', footer:'Dinge, die mir während meiner Zeit bei dbt geholfen haben', source:'Quelldateien ansehen' }
+};
+copy.en.intro = 'the way I explain different parts of dbt.';
+copy.ja.intro = 'dbt のさまざまな部分を、私なりに説明したものです。';
+copy.es.intro = 'así explico distintas partes de dbt.';
+copy['pt-BR'].intro = 'como eu explico diferentes partes do dbt.';
+copy.de.intro = 'so erkläre ich verschiedene Teile von dbt.';
+Object.keys(copy).forEach(function(locale) { copy[locale].e7n = 'dbt State'; });
+const languageMeta = { en:{label:'English',ink:'#1f5b8f'}, ja:{label:'日本語',ink:'#c43b2f'}, es:{label:'Español',ink:'#a9432f'}, 'pt-BR':{label:'Português (Brasil)',ink:'#267044'}, de:{label:'Deutsch',ink:'#2f3032'} };
+const current = document.getElementById('language-current');
+const menu = document.getElementById('language-menu');
+const options = [...document.querySelectorAll('.language-option')];
+let lang = 'en';
+function closeMenu(focusButton = false) { menu.hidden = true; current.setAttribute('aria-expanded','false'); if (focusButton) current.focus(); }
+function openMenu() { menu.hidden = false; current.setAttribute('aria-expanded','true'); (options.find(option => option.dataset.lang === lang) || options[0]).focus(); }
+function setLanguage(next) {
+  if (!copy[next]) return;
+  lang = next;
+  document.documentElement.lang = next;
+  document.title = `${copy[next].title} | Cedric Turner`;
+  document.querySelectorAll('[data-i18n]').forEach(node => { node.textContent = copy[next][node.dataset.i18n]; });
+  current.textContent = languageMeta[next].label;
+  current.style.setProperty('--language-ink', languageMeta[next].ink);
+  options.forEach(option => option.setAttribute('aria-selected', String(option.dataset.lang === next)));
+  try { localStorage.setItem('dbt-explainers-language', next); } catch (_) {}
+  closeMenu(true);
+}
+current.addEventListener('click', () => menu.hidden ? openMenu() : closeMenu());
+current.addEventListener('keydown', event => { if (event.key === 'ArrowDown') { event.preventDefault(); openMenu(); } if (event.key === 'Escape') closeMenu(); });
+options.forEach((option, index) => {
+  option.addEventListener('click', () => setLanguage(option.dataset.lang));
+  option.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closeMenu(true);
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); options[(index + (event.key === 'ArrowDown' ? 1 : -1) + options.length) % options.length].focus(); }
+    if (event.key === 'Home' || event.key === 'End') { event.preventDefault(); options[event.key === 'Home' ? 0 : options.length - 1].focus(); }
+  });
+});
+document.addEventListener('click', event => { if (!event.target.closest('.language-picker')) closeMenu(); });
+let saved;
+try { saved = localStorage.getItem('dbt-explainers-language'); } catch (_) {}
+const browserLanguage = (navigator.language || '').toLowerCase();
+const initial = copy[saved] ? saved : browserLanguage.startsWith('ja') ? 'ja' : browserLanguage.startsWith('es') ? 'es' : browserLanguage.startsWith('pt') ? 'pt-BR' : browserLanguage.startsWith('de') ? 'de' : 'en';
+setLanguage(initial);
+</script>
 </body>
 </html>
