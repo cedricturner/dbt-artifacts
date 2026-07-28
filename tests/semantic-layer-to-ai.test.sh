@@ -8,8 +8,6 @@ test -f "$page"
 test -f "$directory"
 
 # Canonical page and seven-step structure.
-rg -Fq '<title>From Data to Conversation</title>' "$page"
-rg -Fq 'From Data to Conversation' "$page"
 test "$(rg -c "render: renderStep[0-6]" "$page")" -eq 7
 
 for label in \
@@ -23,6 +21,9 @@ for label in \
 do
   rg -Fq "lbl: '$label'" "$page"
 done
+
+rg -Fq '<title>From Data to Conversation</title>' "$page"
+rg -Eq '<h1[^>]*>From Data to Conversation</h1>' "$page"
 
 # Field-notes visual system matches the stored-procedures explainer.
 rg -Fq 'class="field-notes"' "$page"
