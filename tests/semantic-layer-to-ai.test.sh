@@ -23,7 +23,7 @@ do
 done
 
 rg -Fq '<title>From Data to Conversation</title>' "$page"
-rg -Eq '<h1[^>]*>From Data to Conversation</h1>' "$page"
+rg -q '<h1[^>]*>From Data to Conversation</h1>' "$page"
 
 # Field-notes visual system matches the stored-procedures explainer.
 rg -Fq 'class="field-notes"' "$page"
