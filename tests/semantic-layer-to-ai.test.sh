@@ -8,22 +8,9 @@ test -f "$page"
 test -f "$directory"
 
 # Canonical page and seven-step structure.
-rg -Fq '<title>dbt + AI</title>' "$page"
+rg -Fq '<title>From Data to Conversation</title>' "$page"
 rg -Fq 'From Data to Conversation' "$page"
 test "$(rg -c "render: renderStep[0-6]" "$page")" -eq 7
-
-# Field-notes visual system matches the stored-procedures explainer.
-rg -Fq 'class="field-notes"' "$page"
-rg -Fq -- '--paper: #fafaf9' "$page"
-rg -Fq -- '--ink: #1c1c1c' "$page"
-rg -Fq -- '--rule-light: #e8e5e0' "$page"
-rg -Fq 'family=Inter' "$page"
-rg -Fq 'family=Space+Mono' "$page"
-rg -Fq 'box-shadow: none' "$page"
-if rg -q 'linear-gradient' "$page"; then
-  echo "Field-notes page contains a prohibited gradient" >&2
-  exit 1
-fi
 
 for label in \
   "Semantic foundations" \
@@ -36,6 +23,21 @@ for label in \
 do
   rg -Fq "lbl: '$label'" "$page"
 done
+
+# Field-notes visual system matches the stored-procedures explainer.
+rg -Fq 'class="field-notes"' "$page"
+rg -Fq -- '--paper: #fafaf9' "$page"
+rg -Fq -- '--ink: #1c1c1c' "$page"
+rg -Fq -- '--rule-light: #e8e5e0' "$page"
+rg -Fq 'family=Inter' "$page"
+rg -Fq 'family=Space+Mono' "$page"
+rg -Fq '.hdr{text-align:left' "$page"
+rg -Fq '.nav{border-radius:0' "$page"
+rg -Fq 'box-shadow: none' "$page"
+if rg -q 'linear-gradient' "$page"; then
+  echo "Field-notes page contains a prohibited gradient" >&2
+  exit 1
+fi
 
 # Recurring example and three compared products.
 rg -Fq 'net_revenue' "$page"
@@ -56,6 +58,7 @@ rg -Fq 'id="source-snowflake-semantic-views"' "$page"
 # English-first launch preserves, but does not expose, Japanese work.
 rg -Fq 'var AI_TR=' "$page"
 rg -Fq 'window.setLangAI' "$page"
+rg -Fq "window.setLangAI('en');" "$page"
 rg -Fq '日本語' "$page"
 rg -Eq 'class="lang-toggle"[^>]*hidden|hidden[^>]*class="lang-toggle"' "$page"
 
