@@ -61,6 +61,22 @@ if rg -qi "operational owner.*footnote\\(4" "$page"; then
   exit 1
 fi
 
+# Every factual capability cell in the decision matrix has the correct source link.
+while IFS='|' read -r number claim
+do
+  rg -Fq "footnote($number, '$claim')" "$page"
+done <<'EOF'
+1|claim-matrix-dbt-boundary
+4|claim-matrix-databricks-boundary
+5|claim-matrix-snowflake-boundary
+2|claim-matrix-dbt-relationship
+3|claim-matrix-databricks-relationship
+5|claim-matrix-snowflake-relationship
+8|claim-dbt-consumption
+3|claim-matrix-databricks-query
+5|claim-matrix-snowflake-query
+EOF
+
 # Permanent source list and bidirectional footnotes.
 rg -Fq 'id="sources"' "$page"
 rg -Fq 'Sources checked July 28, 2026' "$page"
@@ -69,6 +85,25 @@ rg -Fq 'class="source-backref"' "$page"
 rg -Fq 'id="source-dbt-semantic-models"' "$page"
 rg -Fq 'id="source-databricks-metric-views"' "$page"
 rg -Fq 'id="source-snowflake-semantic-views"' "$page"
+
+# All nine primary sources map to an exact claim and a generated return link.
+while IFS='|' read -r number source claim step
+do
+  source_block="$(sed -n "/number: $number,/,/^  },\\{0,1\\}$/p" "$page")"
+  printf '%s\n' "$source_block" | rg -Fq "id: '$source',"
+  printf '%s\n' "$source_block" | rg -Fq "{id: '$claim', step: $step}"
+  rg -Fq "footnote($number, '$claim')" "$page"
+done <<'EOF'
+1|source-dbt-semantic-models|claim-dbt-model|1
+2|source-dbt-metrics|claim-dbt-metric|1
+3|source-databricks-metric-views|claim-databricks-implementation|1
+4|source-databricks-manage|claim-databricks-permissions|1
+5|source-snowflake-semantic-views|claim-snowflake-object|1
+6|source-dbt-mcp-overview|claim-dbt-mcp-path|4
+7|source-dbt-mcp-tools|claim-dbt-mcp-tools|5
+8|source-dbt-consume-metrics|claim-dbt-consumption|2
+9|source-dbt-sl-architecture|claim-dbt-sl-architecture|4
+EOF
 
 # English-first launch preserves, but does not expose, Japanese work.
 rg -Fq 'var AI_TR=' "$page"
@@ -84,6 +119,21 @@ rg -Fq ':focus-visible' "$page"
 rg -Fq 'prefers-reduced-motion:reduce' "$page"
 rg -Fq 'onclick="nav(-1)"' "$page"
 rg -Fq 'onclick="nav(1)"' "$page"
+rg -Fq 'onclick="return goToSource(' "$page"
+rg -Fq 'tabindex="-1" value="' "$page"
+test "$(rg -c '<h2 class="card-title">' "$page")" -eq 7
+
+# The conclusion distinguishes the connector from the enforcement layers.
+rg -Fq 'MCP is a connection mechanism, not the governance layer.' "$page"
+rg -Fq 'authentication' "$page"
+rg -Fq 'object, row, and column' "$page"
+rg -Fq 'unrestricted SQL' "$page"
+
+# Metadata text uses AA-contrast tokens rather than the former #aaa.
+if rg -Fq -- '--faint-light: #aaa' "$page"; then
+  echo "Metadata still uses low-contrast #aaa" >&2
+  exit 1
+fi
 
 # Directory still points to the same URL and describes the expanded scope.
 rg -Fq 'href="./dbt-ai-llm/"' "$directory"

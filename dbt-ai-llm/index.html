@@ -12,8 +12,8 @@
   --paper: #fafaf9;
   --ink: #1c1c1c;
   --text: #2a2a2a;
-  --muted-light: #777;
-  --faint-light: #aaa;
+  --muted-light: #666;
+  --faint-light: #595959;
   --rule-light: #e8e5e0;
   --surface: #fff;
   --soft: #f9f8f6;
@@ -160,6 +160,7 @@ code{padding:1px 4px;background:var(--soft);color:var(--ink)}
 .source-group h3{margin:0 0 7px;font-size:12px}
 .source-list{margin:0;padding-left:20px;color:var(--muted);font-size:11px;line-height:1.6}
 .source-list a{color:var(--blue);text-underline-offset:2px}
+.source-list li:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 .source-backref{margin-left:5px;font-family:var(--mono);font-size:9px}
 .source-footer{text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid var(--rule-light)}
 .source-footer a{display:inline-flex;align-items:center;gap:7px;color:var(--muted-light);font-family:var(--code-font);font-size:10px;text-decoration:none}
@@ -224,7 +225,10 @@ var SOURCE_DATA = [
     title: 'Semantic models',
     publisher: 'dbt Developer Hub',
     url: 'https://docs.getdbt.com/docs/build/semantic-models',
-    claims: [{id: 'claim-dbt-model', step: 1}]
+    claims: [
+      {id: 'claim-dbt-model', step: 1},
+      {id: 'claim-matrix-dbt-boundary', step: 2}
+    ]
   },
   {
     number: 2,
@@ -233,7 +237,10 @@ var SOURCE_DATA = [
     title: 'Metrics overview',
     publisher: 'dbt Developer Hub',
     url: 'https://docs.getdbt.com/docs/build/metrics-overview',
-    claims: [{id: 'claim-dbt-metric', step: 1}]
+    claims: [
+      {id: 'claim-dbt-metric', step: 1},
+      {id: 'claim-matrix-dbt-relationship', step: 2}
+    ]
   },
   {
     number: 3,
@@ -242,7 +249,11 @@ var SOURCE_DATA = [
     title: 'Unity Catalog metric views',
     publisher: 'Databricks documentation',
     url: 'https://docs.databricks.com/aws/en/uc-semantics/metric-views',
-    claims: [{id: 'claim-databricks-implementation', step: 1}]
+    claims: [
+      {id: 'claim-databricks-implementation', step: 1},
+      {id: 'claim-matrix-databricks-relationship', step: 2},
+      {id: 'claim-matrix-databricks-query', step: 2}
+    ]
   },
   {
     number: 4,
@@ -251,7 +262,10 @@ var SOURCE_DATA = [
     title: 'Manage metric views',
     publisher: 'Databricks documentation',
     url: 'https://docs.databricks.com/aws/en/uc-semantics/metric-views/manage',
-    claims: [{id: 'claim-databricks-permissions', step: 1}]
+    claims: [
+      {id: 'claim-databricks-permissions', step: 1},
+      {id: 'claim-matrix-databricks-boundary', step: 2}
+    ]
   },
   {
     number: 5,
@@ -260,7 +274,12 @@ var SOURCE_DATA = [
     title: 'Overview of semantic views',
     publisher: 'Snowflake documentation',
     url: 'https://docs.snowflake.com/en/user-guide/views-semantic/overview',
-    claims: [{id: 'claim-snowflake-object', step: 1}]
+    claims: [
+      {id: 'claim-snowflake-object', step: 1},
+      {id: 'claim-matrix-snowflake-boundary', step: 2},
+      {id: 'claim-matrix-snowflake-relationship', step: 2},
+      {id: 'claim-matrix-snowflake-query', step: 2}
+    ]
   },
   {
     number: 6,
@@ -269,7 +288,11 @@ var SOURCE_DATA = [
     title: 'About the dbt MCP server',
     publisher: 'dbt Developer Hub',
     url: 'https://docs.getdbt.com/docs/dbt-ai/about-mcp',
-    claims: [{id: 'claim-dbt-mcp-path', step: 4}]
+    claims: [
+      {id: 'claim-dbt-mcp-path', step: 4},
+      {id: 'claim-mcp-mechanism', step: 4},
+      {id: 'claim-client-authentication', step: 6}
+    ]
   },
   {
     number: 7,
@@ -278,7 +301,11 @@ var SOURCE_DATA = [
     title: 'dbt MCP tools and capabilities',
     publisher: 'dbt Developer Hub',
     url: 'https://docs.getdbt.com/docs/dbt-ai/mcp-available-tools',
-    claims: [{id: 'claim-dbt-mcp-tools', step: 5}]
+    claims: [
+      {id: 'claim-dbt-mcp-tools', step: 5},
+      {id: 'claim-interface-authorization', step: 6},
+      {id: 'claim-semantic-not-sql', step: 6}
+    ]
   },
   {
     number: 8,
@@ -303,7 +330,17 @@ var SOURCE_DATA = [
 function footnote(number, claimId) {
   var source = SOURCE_DATA.find(function(item){ return item.number === number; });
   if (!source) throw new Error('Unknown source number: ' + number);
-  return '<sup><a class="fn-ref" id="' + claimId + '" href="#' + source.id + '" aria-label="Source ' + number + '">[' + number + ']</a></sup>';
+  return '<sup><a class="fn-ref" id="' + claimId + '" href="#' + source.id +
+    '" onclick="return goToSource(\'' + source.id + '\')" aria-label="Source ' + number + '">[' + number + ']</a></sup>';
+}
+
+function goToSource(sourceId) {
+  var source = document.getElementById(sourceId);
+  if (source) {
+    source.focus({preventScroll:false});
+    source.scrollIntoView({block:'center'});
+  }
+  return false;
 }
 
 function goToClaim(step, claimId) {
@@ -325,7 +362,7 @@ function renderSources() {
           return '<a class="source-backref" href="#' + claim.id + '" onclick="return goToClaim(' +
             claim.step + ', \'' + claim.id + '\')" aria-label="Back to claim">↩</a>';
         }).join('');
-        return '<li id="' + source.id + '" value="' + source.number + '"><a href="' + source.url + '">' +
+        return '<li id="' + source.id + '" tabindex="-1" value="' + source.number + '"><a href="' + source.url + '">' +
           source.title + '</a> — ' + source.publisher + backrefs + '</li>';
       }).join('') +
       '</ol></div>';
@@ -363,9 +400,18 @@ var SEMANTIC_PRODUCTS = [
 ];
 
 var DECISION_ROWS = [
-  ['Durable boundary', 'dbt project', 'Unity Catalog', 'Snowflake schema'],
-  ['Metric relationship', 'Defined on dbt semantic models', 'Defined in a metric view', 'Defined in a semantic view'],
-  ['Primary query path', 'dbt Semantic Layer interfaces ' + footnote(8, 'claim-dbt-consumption'), 'Databricks SQL', 'Snowflake SQL and supported interfaces'],
+  ['Durable boundary',
+    'dbt project ' + footnote(1, 'claim-matrix-dbt-boundary'),
+    'Unity Catalog ' + footnote(4, 'claim-matrix-databricks-boundary'),
+    'Snowflake schema ' + footnote(5, 'claim-matrix-snowflake-boundary')],
+  ['Metric relationship',
+    'Defined on dbt semantic models ' + footnote(2, 'claim-matrix-dbt-relationship'),
+    'Defined in a metric view ' + footnote(3, 'claim-matrix-databricks-relationship'),
+    'Defined in a semantic view ' + footnote(5, 'claim-matrix-snowflake-relationship')],
+  ['Primary query path',
+    'dbt Semantic Layer interfaces ' + footnote(8, 'claim-dbt-consumption'),
+    'Databricks SQL and documented consumption surfaces ' + footnote(3, 'claim-matrix-databricks-query'),
+    'Snowflake SELECT and supported interfaces ' + footnote(5, 'claim-matrix-snowflake-query')],
   ['Inference — operational owner', 'Team operating the dbt project and Semantic Layer', 'Team operating Unity Catalog and Databricks SQL', 'Team operating Snowflake schemas and privileges']
 ];
 
@@ -373,7 +419,7 @@ var DECISION_ROWS = [
 
 function renderStep0() {
   return `<div class="card">
-  <div class="card-title">What a semantic layer actually does</div>
+  <h2 class="card-title">What a semantic layer actually does</h2>
   <div class="card-sub">It gives business concepts a governed structure between modeled data and a query interface.</div>
   <div class="example-label">Illustrative example</div>
   <div class="semantic-flow" aria-label="Illustrative semantic layer flow">
@@ -424,7 +470,7 @@ function renderStep1() {
   }).join('');
 
   return `<div class="card">
-  <div class="card-title">One metric in three systems</div>
+  <h2 class="card-title">One metric in three systems</h2>
   <div class="card-sub">The same illustrative metric can live behind different definition, query, and governance boundaries.</div>
   <div class="product-grid">${panels}</div>
   <div class="excerpt-grid">
@@ -467,7 +513,7 @@ function renderStep2() {
   }).join('');
 
   return `<div class="card">
-  <div class="card-title">Choose the durable boundary</div>
+  <h2 class="card-title">Choose the durable boundary</h2>
   <div class="card-sub">Inference from the documented object and query boundaries: start with the system boundary your team expects to operate and govern over time.</div>
   <div class="decision-table-wrap">
     <table class="decision-table">
@@ -630,7 +676,8 @@ function renderStep4() {
   <div id="path-detail" class="path-detail-wrap" aria-live="polite">${renderAccessPathDetail(0)}</div>
 
   <div class="connection-note">
-    <div class="field-label">Documented path</div>
+    <div class="field-label">Connection is not governance</div>
+    <p>MCP is a connection mechanism, not the governance layer. The permissions and query interface behind each tool determine what the agent can request. ${footnote(6, 'claim-mcp-mechanism')}</p>
     <p>The dbt Semantic Layer finds the requested data and generates SQL, including joins. ${footnote(9, 'claim-dbt-sl-architecture')}</p>
   </div>
 </div>`;
@@ -671,26 +718,26 @@ function renderStep5() {
 
 function renderStep6() {
   return `<div class="card">
-  <h2 class="card-title">Review access at two boundaries</h2>
-  <div class="card-sub">Design inference: review the configured client interface separately from the warehouse execution identity.</div>
+  <h2 class="card-title">Review access from client to warehouse</h2>
+  <div class="card-sub">Authentication establishes who or what is connecting; authorization and warehouse permissions still determine what that connection can do.</div>
 
   <div class="gate-flow" aria-label="Two access review points">
     <section class="gate">
       <div class="gate-number">Review point 1</div>
-      <h3>configured interface</h3>
-      <p>Check which semantic, metadata, or SQL tools the client can request.</p>
+      <h3>dbt-facing interface</h3>
+      <p>Confirm the client's OAuth or token authentication for its setup. ${footnote(6, 'claim-client-authentication')} Then authorize only the semantic, metadata, or SQL tools it should request. ${footnote(7, 'claim-interface-authorization')}</p>
     </section>
     <div class="gate-arrow" aria-hidden="true">→</div>
     <section class="gate">
       <div class="gate-number">Review point 2</div>
-      <h3>warehouse identity</h3>
-      <p>Check the permissions attached to the identity used for warehouse execution.</p>
+      <h3>warehouse enforcement</h3>
+      <p>Treat the warehouse identity as the final enforcement point: verify its object, row, and column permissions for every execution path.</p>
     </section>
   </div>
 
   <aside class="takeaway">
     <div class="field-label">Takeaway</div>
-    <p>Design guidance: document the definition, access, and fallback boundaries before treating a conversational result as governed.</p>
+    <p>A semantic query asks for defined metrics with supported filters and groupings; unrestricted SQL can express a different calculation against any warehouse data its identity can reach. ${footnote(7, 'claim-semantic-not-sql')} Conversational access does not remove governance. It makes definition, authentication, authorization, and fallback boundaries more important because more questions can be asked through the interface.</p>
   </aside>
 </div>`;
 }
