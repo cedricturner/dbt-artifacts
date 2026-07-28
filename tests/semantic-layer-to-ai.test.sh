@@ -61,7 +61,7 @@ rg -Fq 'var AI_TR=' "$page"
 rg -Fq 'window.setLangAI' "$page"
 rg -Fq "window.setLangAI('en');" "$page"
 rg -Fq '日本語' "$page"
-rg -Eq 'class="lang-toggle"[^>]*hidden|hidden[^>]*class="lang-toggle"' "$page"
+rg -q 'class="lang-toggle"[^>]*hidden|hidden[^>]*class="lang-toggle"' "$page"
 
 # Navigation and accessibility hooks.
 rg -Fq 'aria-live="polite"' "$page"
@@ -72,7 +72,7 @@ rg -Fq 'onclick="nav(1)"' "$page"
 
 # Directory still points to the same URL and describes the expanded scope.
 rg -Fq 'href="./dbt-ai-llm/"' "$directory"
-rg -Fq 'semantic' "$directory"
+rg -Fiq 'semantic' "$directory"
 rg -Fq 'AI' "$directory"
 
 # Stale visible claims are prohibited outside the preserved translation dictionary.
