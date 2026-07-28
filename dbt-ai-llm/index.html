@@ -98,18 +98,74 @@ code{padding:1px 4px;background:var(--soft);color:var(--ink)}
 .decision-callout{padding:16px;border:1px solid var(--rule-light);border-top:2px solid var(--ink);background:var(--surface)}
 .decision-callout h3{margin-bottom:7px;font-size:12px;line-height:1.4}
 .decision-callout p{color:var(--muted-light);font-size:11px;line-height:1.55}
+.consumption-request{margin:6px 0 18px;padding:13px 14px;border:1px solid var(--rule-light);border-left:2px solid var(--accent);background:var(--soft);font-family:var(--code-font);font-size:12px}
+.interface-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.interface-panel{padding:18px;border:1px solid var(--rule-light);background:var(--surface)}
+.interface-kicker{margin-bottom:6px;color:var(--accent);font-family:var(--code-font);font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.interface-panel h3{min-height:42px;margin-bottom:14px;font-size:14px;line-height:1.45}
+.interface-panel>p{margin-top:13px;color:var(--muted-light);font-size:11px;line-height:1.55}
+.dashboard-frame{border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.dashboard-frame-head,.dashboard-row{display:grid;grid-template-columns:88px 1fr;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--rule-light)}
+.dashboard-frame-head{font-family:var(--code-font);font-size:8px;color:var(--faint-light);text-transform:uppercase}
+.dashboard-row:last-child{border-bottom:0}
+.dashboard-row>span:first-child{font-family:var(--code-font);font-size:9px;color:var(--muted-light)}
+.dashboard-mark{display:block;height:7px;background:var(--ink)}
+.mark-long{width:86%}.mark-mid{width:63%}.mark-short{width:42%}
+.conversation-flow{border-top:1px solid var(--ink)}
+.conversation-turn{display:grid;grid-template-columns:62px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule-light)}
+.conversation-turn>span{font-family:var(--code-font);font-size:8px;color:var(--faint-light);text-transform:uppercase}
+.conversation-turn p{font-size:11px;line-height:1.55}
+.neutral-note{padding:16px 18px;border-left:2px solid var(--ink);background:var(--soft);color:var(--muted-light);font-size:12px;line-height:1.65}
+.path-selector{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:12px;border-top:1px solid var(--ink);border-left:1px solid var(--rule-light)}
+.path-option{display:grid;grid-template-columns:28px 1fr;gap:8px;padding:14px 12px;border:0;border-right:1px solid var(--rule-light);border-bottom:1px solid var(--rule-light);background:var(--surface);color:var(--ink);font-family:var(--body-font);text-align:left;cursor:pointer}
+.path-option:hover{background:var(--soft)}
+.path-option.is-active{border-top:2px solid var(--accent);background:var(--soft)}
+.path-option-num{font-family:var(--code-font);font-size:9px;color:var(--accent)}
+.path-option strong{display:block;margin-bottom:4px;font-size:11px;line-height:1.4}
+.path-option small{display:block;color:var(--muted-light);font-size:9px;line-height:1.5}
+.path-detail-wrap{margin-bottom:12px}
+.path-detail{padding:18px;border:1px solid var(--ink);background:var(--surface)}
+.path-detail h3{margin:4px 0 12px;font-size:16px}
+.path-route{padding:12px 0;border-top:1px solid var(--rule-light);border-bottom:1px solid var(--rule-light);font-family:var(--code-font);font-size:10px;line-height:1.7}
+.path-fields{display:grid;grid-template-columns:1fr 1fr}
+.path-fields>div{padding:14px 14px 0 0}
+.path-fields>div+div{padding-left:14px;border-left:1px solid var(--rule-light)}
+.path-fields dt{margin-bottom:5px;font-family:var(--code-font);font-size:8px;color:var(--faint-light);letter-spacing:.06em;text-transform:uppercase}
+.path-fields dd{margin:0;color:var(--muted-light);font-size:10px;line-height:1.55}
+.connection-note{padding:16px 18px;border-left:2px solid var(--warning-light);background:#fffbeb}
+.connection-note p{margin-top:5px;color:var(--warning-light);font-size:11px;line-height:1.6}
+.use-case-grid{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--ink);border-left:1px solid var(--rule-light)}
+.use-case{position:relative;min-height:230px;padding:18px;border-right:1px solid var(--rule-light);border-bottom:1px solid var(--rule-light);background:var(--surface)}
+.use-case-index{position:absolute;top:17px;right:17px;font-family:var(--code-font);font-size:9px;color:var(--faint-light)}
+.use-case h3{max-width:78%;margin:7px 0 12px;font-size:14px;line-height:1.45}
+.scenario-example{color:var(--ink);font-size:11px;line-height:1.6}
+.guardrail{position:absolute;right:18px;bottom:18px;left:18px;padding-top:11px;border-top:1px solid var(--rule-light)}
+.guardrail>span{font-family:var(--code-font);font-size:8px;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+.guardrail p{margin-top:4px;color:var(--muted-light);font-size:10px;line-height:1.5}
+.gate-flow{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:12px;margin:8px 0 18px}
+.gate{padding:20px;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule-light);background:var(--soft)}
+.gate-number{margin-bottom:8px;color:var(--accent);font-family:var(--code-font);font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.gate h3{margin-bottom:7px;font-size:15px}
+.gate p{color:var(--muted-light);font-size:11px;line-height:1.6}
+.gate-arrow{display:flex;align-items:center;color:var(--accent);font-family:var(--code-font)}
+.takeaway{padding:20px;border-left:2px solid var(--accent);background:var(--surface)}
+.takeaway p{margin-top:6px;font-size:13px;line-height:1.65}
 .source-footer{text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid var(--rule-light)}
 .source-footer a{display:inline-flex;align-items:center;gap:7px;color:var(--muted-light);font-family:var(--code-font);font-size:10px;text-decoration:none}
 .source-footer a:hover{color:var(--ink)}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+button:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 @media(max-width:760px){
   .app{padding-inline:14px}
   .product-grid,.excerpt-grid,.decision-callouts{grid-template-columns:1fr}
   .definition-grid{grid-template-columns:1fr}
   .definition:nth-child(even){padding-left:0;border-left:0}
+  .interface-grid,.path-selector,.use-case-grid,.path-fields,.gate-flow{grid-template-columns:1fr}
+  .interface-panel h3{min-height:0}
+  .path-fields>div+div{padding-left:0;border-left:0}
+  .gate-arrow{justify-content:center;transform:rotate(90deg)}
 }
 @media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important}
 }
 </style>
 </head>
@@ -127,7 +183,7 @@ code{padding:1px 4px;background:var(--soft);color:var(--ink)}
   </aside>
 </div>
 <div class="nav" id="snav"></div>
-<div id="scontent"></div>
+<div id="scontent" aria-live="polite"></div>
 <div class="ctrls">
   <button class="nbtn si" id="pb" onclick="nav(-1)">← Back</button>
   <span class="prog" id="pg"></span>
@@ -305,785 +361,217 @@ function renderStep2() {
   </div>
 </div>`;
 }
+var AI_ACCESS_PATHS = [
+  {
+    id: 'semantic',
+    label: 'Governed semantic query',
+    path: 'AI client → dbt MCP/API interface → Semantic Layer → warehouse',
+    receives: 'Named metrics and allowed dimensions',
+    boundary: 'Metric definition and Semantic Layer authorization, plus warehouse enforcement'
+  },
+  {
+    id: 'discovery',
+    label: 'Project discovery',
+    path: 'AI client → dbt metadata/discovery interface',
+    receives: 'Models, lineage, tests, and documentation exposed by the interface',
+    boundary: 'Metadata access; this path does not itself return metric results'
+  },
+  {
+    id: 'sql',
+    label: 'Direct SQL fallback',
+    path: 'AI client → authorized SQL execution path → warehouse',
+    receives: 'Rows returned by generated or supplied SQL',
+    boundary: 'SQL authorization and warehouse permissions; no metric definition is automatically enforced'
+  }
+];
+
+var SAFE_USE_CASES = [
+  {
+    id: 'metric',
+    title: 'Ask a governed metric question',
+    example: 'Show illustrative net_revenue by region for last month.',
+    guardrail: 'Uses the named metric and allowed dimensions.'
+  },
+  {
+    id: 'context',
+    title: 'Investigate context',
+    example: 'Which upstream model feeds net_revenue, and when did it last run?',
+    guardrail: 'Returns available project metadata; it does not prove the business result is correct.'
+  },
+  {
+    id: 'difference',
+    title: 'Explain a difference',
+    example: 'Why does this ad hoc SUM differ from net_revenue?',
+    guardrail: 'Compares the governed definition with the explicit SQL assumptions.'
+  },
+  {
+    id: 'fallback',
+    title: 'Fall back to SQL',
+    example: 'Explore a question for which no governed metric exists.',
+    guardrail: 'Label the result ad hoc; do not present it as the governed metric.'
+  }
+];
+
 function renderStep3() {
-  var tiers = [
-    {
-      num: 1,
-      label: 'Tier 1: Semantic Layer',
-      badge: 'MOST EFFICIENT',
-      badgeColor: 'var(--pl)',
-      color: 'var(--pl)',
-      border: 'rgba(167,139,250,.5)',
-      bg: 'rgba(124,58,237,.08)',
-      headline: 'Call a named metric directly',
-      when: 'Agent knows the answer is a defined metric. No SQL written, no schema guessing.',
-      tools: ['list_metrics', 'query_metrics', 'get_dimensions', 'get_entities', 'list_saved_queries'],
-      exampleQ: 'What was revenue last quarter by region?',
-      exampleSteps: [
-        { type: 'tool',   text: 'list_metrics()' },
-        { type: 'result', text: "finds 'revenue' in metric list" },
-        { type: 'tool',   text: 'query_metrics("revenue", group_by=["region", "metric_time__quarter"])' },
-        { type: 'result', text: '{North: $4.2M, West: $3.1M, South: $2.8M, East: $1.9M}' },
-        { type: 'ok',     text: 'No SQL generated. Fully governed.' },
-      ]
-    },
-    {
-      num: 2,
-      label: 'Tier 2: Discovery',
-      badge: 'EXPLORE FIRST',
-      badgeColor: 'var(--blue)',
-      color: 'var(--blue)',
-      border: 'rgba(88,166,255,.5)',
-      bg: 'rgba(88,166,255,.07)',
-      headline: 'Understand the project before acting',
-      when: 'Agent needs context: what models exist, what the lineage looks like, what tests are passing. Adds tokens but prevents wrong answers.',
-      tools: ['get_all_models', 'get_model_details', 'get_lineage', 'get_model_health', 'get_all_sources', 'get_model_parents', 'get_model_children', 'search'],
-      exampleQ: 'Something looks off with churn, can you investigate?',
-      exampleSteps: [
-        { type: 'tool',   text: 'get_lineage("churn_rate")' },
-        { type: 'result', text: 'traces to stg_subscriptions' },
-        { type: 'tool',   text: 'get_model_health("stg_subscriptions")' },
-        { type: 'result', text: 'last run: 31 hours ago' },
-        { type: 'ok',     text: 'Surfaces root cause without writing any SQL.' },
-      ]
-    },
-    {
-      num: 3,
-      label: 'Tier 3: Direct SQL',
-      badge: 'AD HOC',
-      badgeColor: 'var(--amber)',
-      color: 'var(--amber)',
-      border: 'rgba(210,153,34,.5)',
-      bg: 'rgba(210,153,34,.07)',
-      headline: 'Run SQL directly when no metric covers it',
-      when: 'The question does not map to a defined metric. Agent writes SQL against known models. More tokens, less governance.',
-      tools: ['execute_sql', 'show'],
-      exampleQ: 'How many accounts were created in the last 7 days by plan type?',
-      exampleSteps: [
-        { type: 'think',  text: 'No metric for this. Querying fct_accounts directly.' },
-        { type: 'tool',   text: 'execute_sql("SELECT plan_type, COUNT(*) FROM fct_accounts WHERE created_at >= CURRENT_DATE - 7 GROUP BY 1")' },
-        { type: 'result', text: '{free: 1842, pro: 214, enterprise: 31}' },
-        { type: 'warn',   text: 'Raw result. No tests, no metric definition enforced.' },
-      ]
-    },
-    {
-      num: 4,
-      label: 'Tier 4: Text-to-SQL',
-      badge: 'LAST RESORT',
-      badgeColor: 'var(--red)',
-      color: 'var(--red)',
-      border: 'rgba(248,81,73,.5)',
-      bg: 'rgba(248,81,73,.06)',
-      headline: 'Generate SQL from natural language',
-      when: 'No metric, no known model. Agent generates SQL from scratch. Most tokens, most error-prone, no governance. Avoid when possible.',
-      tools: ['text_to_sql'],
-      exampleQ: 'Average order value by country for enterprise accounts',
-      exampleSteps: [
-        { type: 'think',  text: 'No metric, no known model for this question' },
-        { type: 'tool',   text: 'text_to_sql("average order value by country for enterprise accounts")' },
-        { type: 'result', text: 'SQL generated from schema only' },
-        { type: 'warn',   text: 'No tests, no definitions. Result may differ from Tableau.' },
-      ]
-    },
-  ];
+  return `<div class="card">
+  <h2 class="card-title">A definition becomes useful when something consumes it</h2>
+  <div class="card-sub">The same illustrative request can support a designed view or a sequence of follow-up questions.</div>
 
-  window._tiers = tiers;
+  <div class="example-label">Illustrative request</div>
+  <div class="consumption-request"><code>net_revenue by region</code></div>
 
-  function buildTierDetail(i) {
-    var t = tiers[i];
-    var html = '';
+  <div class="interface-grid">
+    <section class="interface-panel" aria-labelledby="fixed-view-title">
+      <div class="interface-kicker">Fixed dashboard view</div>
+      <h3 id="fixed-view-title">Designed view and controls</h3>
+      <div class="dashboard-frame" aria-label="Illustrative fixed dashboard view">
+        <div class="dashboard-frame-head">
+          <span>net_revenue</span>
+          <span>region</span>
+        </div>
+        <div class="dashboard-row"><span>North</span><span class="dashboard-mark mark-long"></span></div>
+        <div class="dashboard-row"><span>West</span><span class="dashboard-mark mark-mid"></span></div>
+        <div class="dashboard-row"><span>South</span><span class="dashboard-mark mark-short"></span></div>
+      </div>
+      <p>Designed views expose selected dimensions, filters, and comparisons.</p>
+    </section>
 
-    // header
-    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
-    html += '<div style="font-size:14px;font-weight:600;color:' + t.color + '">' + t.label + '</div>';
-    html += '<span style="font-family:var(--mono);font-size:8px;font-weight:600;padding:3px 8px;border-radius:99px;background:' + t.bg + ';border:1px solid ' + t.border + ';color:' + t.color + '">' + t.badge + '</span>';
-    html += '</div>';
+    <section class="interface-panel" aria-labelledby="conversation-title">
+      <div class="interface-kicker">Conversational follow-up flow</div>
+      <h3 id="conversation-title">A question can lead to another question</h3>
+      <div class="conversation-flow" aria-label="Illustrative conversational follow-up flow">
+        <div class="conversation-turn">
+          <span>Request</span>
+          <p>Show <code>net_revenue by region</code>.</p>
+        </div>
+        <div class="conversation-turn">
+          <span>Follow-up</span>
+          <p>Now compare the same metric with the prior period.</p>
+        </div>
+        <div class="conversation-turn">
+          <span>Boundary</span>
+          <p>Keep the named metric and allowed dimensions fixed.</p>
+        </div>
+      </div>
+    </section>
+  </div>
 
-    // headline
-    html += '<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:6px">' + t.headline + '</div>';
-
-    // when to use
-    html += '<div style="margin-bottom:12px;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:7px">';
-    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">WHEN TO USE</div>';
-    html += '<div style="font-size:11px;color:var(--text);line-height:1.6">' + t.when + '</div>';
-    html += '</div>';
-
-    // tools
-    html += '<div style="margin-bottom:12px">';
-    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:6px">TOOLS</div>';
-    html += '<div style="display:flex;flex-wrap:wrap;gap:5px">';
-    for (var j = 0; j < t.tools.length; j++) {
-      html += '<span style="font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:5px;background:' + t.bg + ';border:1px solid ' + t.border + ';color:' + t.color + '">' + t.tools[j] + '</span>';
-    }
-    html += '</div></div>';
-
-    // example interaction
-    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:6px">EXAMPLE INTERACTION</div>';
-    html += '<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:hidden">';
-    html += '<div style="padding:8px 12px;background:rgba(124,58,237,.08);border-bottom:1px solid rgba(124,58,237,.2)">';
-    html += '<div style="font-size:11px;color:#c4b5fd">' + t.exampleQ + '</div></div>';
-    html += '<div style="padding:10px 12px;display:flex;flex-direction:column;gap:5px">';
-    for (var k = 0; k < t.exampleSteps.length; k++) {
-      var s = t.exampleSteps[k];
-      var bg, color, prefix;
-      if      (s.type === 'tool')   { bg = 'rgba(124,58,237,.08)'; color = 'var(--pl)';    prefix = '→ '; }
-      else if (s.type === 'result') { bg = 'rgba(63,185,80,.06)';  color = 'var(--green)'; prefix = '← '; }
-      else if (s.type === 'ok')     { bg = 'rgba(63,185,80,.06)';  color = 'var(--green)'; prefix = '✓ '; }
-      else if (s.type === 'warn')   { bg = 'rgba(210,153,34,.07)'; color = 'var(--amber)'; prefix = '⚠ '; }
-      else                           { bg = 'rgba(255,255,255,.03)';color = 'var(--muted)'; prefix = '… '; }
-      html += '<div style="font-family:var(--mono);font-size:10px;color:' + color + ';background:' + bg + ';border-radius:4px;padding:4px 8px;white-space:pre-wrap;line-height:1.5">' + prefix + s.text + '</div>';
-    }
-    html += '</div></div>';
-
-    return html;
-  }
-
-  window._buildTierDetail = buildTierDetail;
-
-  // left tier pills
-  var pillsHtml = '<div style="display:flex;flex-direction:column;gap:6px" id="tierpills">';
-  for (var i = 0; i < tiers.length; i++) {
-    var t = tiers[i];
-    var active = i === 0;
-    pillsHtml += '<div onclick="setTier(' + i + ')" id="tierpill' + i + '" style="padding:11px 14px;background:' + (active ? t.bg : 'var(--raised)') + ';border:1px solid ' + (active ? t.border : 'var(--border)') + ';border-radius:9px;cursor:pointer;transition:all .2s">';
-    pillsHtml += '<div style="display:flex;align-items:center;gap:8px">';
-    pillsHtml += '<span style="font-family:var(--mono);font-size:11px;font-weight:600;color:' + (active ? t.color : 'var(--muted)') + '">T' + t.num + '</span>';
-    pillsHtml += '<div>';
-    pillsHtml += '<div style="font-size:12px;font-weight:600;color:var(--text)">' + t.label + '</div>';
-    pillsHtml += '<div style="font-size:10px;color:var(--muted);margin-top:1px">' + t.badge + '</div>';
-    pillsHtml += '</div></div></div>';
-  }
-  pillsHtml += '<div style="margin-top:8px;padding:8px 10px;background:var(--bg);border:1px solid var(--border);border-radius:7px">';
-  pillsHtml += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">EFFICIENCY SPECTRUM</div>';
-  pillsHtml += '<div style="display:flex;align-items:center;gap:6px">';
-  pillsHtml += '<span style="font-size:9px;color:var(--pl)">T1</span>';
-  pillsHtml += '<div style="flex:1;height:4px;border-radius:2px;background:linear-gradient(90deg,#7c3aed,#58a6ff,#d29922,#f85149)"></div>';
-  pillsHtml += '<span style="font-size:9px;color:var(--red)">T4</span>';
-  pillsHtml += '</div>';
-  pillsHtml += '<div style="display:flex;justify-content:space-between;margin-top:3px">';
-  pillsHtml += '<span style="font-size:8px;color:var(--muted)">fewest tokens · most governed</span>';
-  pillsHtml += '<span style="font-size:8px;color:var(--muted)">most tokens · least governed</span>';
-  pillsHtml += '</div></div>';
-  pillsHtml += '</div>';
-
-  var detailHtml = '<div style="background:var(--raised);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column">';
-  detailHtml += '<div style="padding:9px 13px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px" id="tier-hdr">TIER 1: SEMANTIC LAYER</div>';
-  detailHtml += '<div style="padding:16px;flex:1" id="tier-body">' + buildTierDetail(0) + '</div>';
-  detailHtml += '</div>';
-
-  return '<div class="card"><div class="card-title">Agent Reasoning</div><div class="card-sub">How the agent decides which tools to use, from most efficient to last resort.</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px">' +
-    pillsHtml + detailHtml +
-    '</div></div>';
+  <p class="neutral-note">The governed metric can stay the same while the interaction changes. A dashboard exposes designed views and controls. A conversational interface can accept follow-up questions. Which interface is better depends on the task and the guardrails behind it.</p>
+</div>`;
 }
 
-window.setTier = function(i) {
-  var tiers = window._tiers;
-  if (!tiers) return;
-  for (var j = 0; j < tiers.length; j++) {
-    var pill = document.getElementById('tierpill' + j);
-    if (pill) {
-      var t = tiers[j];
-      pill.style.background  = j === i ? t.bg     : 'var(--raised)';
-      pill.style.borderColor = j === i ? t.border : 'var(--border)';
-      pill.querySelector('span').style.color = j === i ? t.color : 'var(--muted)';
-    }
-  }
-  var hdr  = document.getElementById('tier-hdr');
-  var body = document.getElementById('tier-body');
-  if (hdr)  hdr.textContent = 'TIER ' + tiers[i].num + ': ' + tiers[i].label.split(':')[1].trim().toUpperCase();
-  if (body) body.innerHTML  = window._buildTierDetail(i);
-};
+function renderAccessPathDetail(index) {
+  var item = AI_ACCESS_PATHS[index];
+  return `<section class="path-detail" aria-labelledby="path-detail-title">
+    <div class="field-label">Selected path</div>
+    <h3 id="path-detail-title">${item.label}</h3>
+    <div class="path-route">${item.path}</div>
+    <dl class="path-fields">
+      <div>
+        <dt>What the client receives</dt>
+        <dd>${item.receives}</dd>
+      </div>
+      <div>
+        <dt>Governing boundary</dt>
+        <dd>${item.boundary}</dd>
+      </div>
+    </dl>
+  </section>`;
+}
 
 function renderStep4() {
-  var cases = [
-    {
-      title: 'Semantic Layer',
-      sub: 'Governed metric queries, no raw SQL',
-      color: '#a78bfa',
-      border: 'rgba(124,58,237,.4)',
-      bg: 'rgba(124,58,237,.08)',
-      tools: ['list_metrics', 'query_metrics', 'get_dimensions', 'list_saved_queries', 'get_metrics_compiled_sql'],
-      desc: 'The highest-value tool group. Agents query pre-defined, tested metrics by name, the same definitions powering your BI dashboards. No SQL generation, no guessing column names.',
-      usecases: [
-        { icon: '📊', title: 'Natural language querying', detail: 'Stakeholders ask "What was churn last quarter?" and get accurate, governed answers. No analyst needed, no SQL written.' },
-        { icon: '🖥', title: 'BI tools & consistent answers', detail: 'BI tools like Tableau, Sigma, or Excel hit the same Semantic Layer. One definition, consistent numbers everywhere.' },
-        { icon: '📅', title: 'Scheduled reporting', detail: 'Agents pull metrics on a schedule, write a narrative summary, and post to Slack or email, automatically and accurately.' },
-        { icon: '🔍', title: 'Metric exploration', detail: 'Agents can discover what metrics exist, what dimensions are available, and what saved queries are already defined before answering.' },
-      ],
-      steps: [
-        { type: 'think',  text: 'Q: "What\'s our churn rate by plan type this quarter?"' },
-        { type: 'tool',   text: 'list_metrics()' },
-        { type: 'result', text: '[churn_rate, revenue, cac, ndr...]' },
-        { type: 'tool',   text: 'query_metrics("churn_rate", group_by=["plan_type", "metric_time__quarter"])' },
-        { type: 'result', text: '{free: 3.4%, pro: 0.9%, enterprise: 0.2%}' },
-        { type: 'ok',     text: 'Free tier churn rose to 3.4%. Pro and Enterprise held steady.' },
-      ]
-    },
-    {
-      title: 'Discovery API',
-      sub: 'Understand your project before acting',
-      color: '#58a6ff',
-      border: 'rgba(88,166,255,.4)',
-      bg: 'rgba(88,166,255,.08)',
-      tools: ['get_all_models', 'get_model_details', 'get_lineage', 'get_model_health', 'get_model_parents', 'get_model_children', 'get_all_sources', 'get_exposures'],
-      desc: 'Discovery tools give agents a map of your project: models, lineage, health, and documentation. Essential context before modifying anything or debugging an issue.',
-      usecases: [
-        { icon: '🕵️', title: 'Lineage exploration', detail: 'Trace where a metric comes from, what models feed into it, and which downstream reports depend on it. Useful for debugging data quality issues and impact analysis.' },
-        { icon: '🔗', title: 'External lineage ingestion', detail: 'Pull lineage metadata into other tools like data catalogs, observability platforms, or custom dashboards, for a unified view of your project.' },
-        { icon: '🩺', title: 'Debugging broken metrics', detail: 'If a Semantic Layer query returns unexpected results, discovery tools trace the path upstream to find stale models, failed tests, or schema changes.' },
-        { icon: '📖', title: 'Project onboarding', detail: 'New engineers or agents can explore the full project structure: what models exist, what they do, and how they connect, without opening the codebase.' },
-      ],
-      steps: [
-        { type: 'think',  text: 'Q: "Revenue dropped 18%. What happened?"' },
-        { type: 'tool',   text: 'get_lineage("fct_revenue")' },
-        { type: 'result', text: 'traces to fct_orders → stg_payments' },
-        { type: 'tool',   text: 'get_model_health("stg_payments")' },
-        { type: 'result', text: 'last successful run: 31 hours ago' },
-        { type: 'ok',     text: 'stg_payments is stale. This is a pipeline lag, not a real revenue drop.' },
-      ]
-    },
-    {
-      title: 'Admin API',
-      sub: 'Jobs, runs, and performance monitoring',
-      color: '#d29922',
-      border: 'rgba(210,153,34,.4)',
-      bg: 'rgba(210,153,34,.08)',
-      tools: ['list_jobs', 'trigger_job_run', 'list_jobs_runs', 'get_job_run_details', 'get_job_run_error', 'cancel_job_run', 'retry_job_run', 'get_model_performance'],
-      desc: 'Admin tools let agents manage the full job lifecycle: trigger runs, monitor status, surface failures, and debug performance. No one needs to log into dbt Cloud.',
-      usecases: [
-        { icon: '🚨', title: 'Job failure triage', detail: 'When a job fails, an agent can immediately pull the error logs, identify which model broke, trace upstream, and surface actionable context to the on-call engineer.' },
-        { icon: '⏱', title: 'Performance debugging', detail: 'Agents can identify which models are slow, how run times have changed over time, and suggest where to add incremental logic or partitioning.' },
-        { icon: '🔄', title: 'Automated run management', detail: 'Trigger jobs in response to upstream events (a source table landing), monitor completion, retry failures, or cancel stuck runs. No manual intervention.' },
-        { icon: '📈', title: 'Observability & alerting', detail: 'Proactively monitor job health, surface degrading run times before they become outages, and feed status into ops dashboards or Slack alerts.' },
-      ],
-      steps: [
-        { type: 'think',  text: 'Alert: revenue metric stale. Investigating.' },
-        { type: 'tool',   text: 'list_jobs_runs(status="failed", limit=5)' },
-        { type: 'result', text: 'stg_payments job failed 32h ago' },
-        { type: 'tool',   text: 'get_job_run_error(run_id=...)' },
-        { type: 'warn',   text: 'Column "amount_usd" not found in source table' },
-        { type: 'ok',     text: 'Schema change upstream. Surfaced to engineer with full context.' },
-      ]
-    },
-    {
-      title: 'dbt CLI',
-      sub: 'Build, test, and query in a live session',
-      color: '#ff6b35',
-      border: 'rgba(255,107,53,.4)',
-      bg: 'rgba(255,107,53,.08)',
-      tools: ['run', 'build', 'test', 'compile', 'execute_sql', 'text_to_sql'],
-      desc: 'CLI tools close the loop between writing and validating. An agent can build a model, run tests, and immediately query the output, all in one session. Best for active development workflows.',
-      usecases: [
-        { icon: '🛠', title: 'Active model development', detail: 'Write a model, compile to validate SQL, run it, test it, and query the output, without ever leaving the agent conversation.' },
-        { icon: '✅', title: 'Pre-PR validation', detail: 'Agents can run affected models and their tests before code is merged, catching failures early and surfacing results as PR comments.' },
-        { icon: '🔬', title: 'Ad-hoc SQL exploration', detail: 'execute_sql gives agents a direct query path when a metric doesn\'t exist yet. Useful for one-off analysis or exploratory data work.' },
-        { icon: '⚠️', title: 'text_to_sql (last resort)', detail: 'When no metric or model matches the question, agents can generate raw SQL. Least reliable. Results may differ from governed metrics. Use as a fallback only.' },
-      ],
-      steps: [
-        { type: 'think',  text: '"Build a model joining orders and customer segments"' },
-        { type: 'tool',   text: 'compile("fct_orders_segmented")' },
-        { type: 'result', text: 'SQL valid. No syntax errors.' },
-        { type: 'tool',   text: 'build("fct_orders_segmented")' },
-        { type: 'tool',   text: 'test("fct_orders_segmented")' },
-        { type: 'ok',     text: 'All tests passed. Model ready.' },
-      ]
-    },
-    {
-      title: 'Codegen',
-      sub: 'Generate dbt boilerplate from your schema',
-      color: '#3fb950',
-      border: 'rgba(63,185,80,.4)',
-      bg: 'rgba(63,185,80,.08)',
-      tools: ['generate_source', 'generate_staging_model', 'generate_model_yaml'],
-      desc: 'Codegen tools let agents introspect a database schema and generate source definitions, staging models, and YAML documentation, turning hours of setup into minutes.',
-      usecases: [
-        { icon: '🗄', title: 'New source onboarding', detail: 'A new data source lands in the warehouse. An agent generates sources.yml, staging models, and column-level YAML documentation in minutes, not hours.' },
-        { icon: '📝', title: 'Documentation generation', detail: 'Agents can generate model YAML with column names and types pre-populated, giving engineers a head start on writing descriptions.' },
-        { icon: '🏗', title: 'Scaffold new projects', detail: 'Spin up a new dbt project area with consistent staging patterns, naming conventions, and file structure. No copy-paste from old models.' },
-      ],
-      steps: [
-        { type: 'think',  text: 'New source arrives: raw_stripe schema' },
-        { type: 'tool',   text: 'generate_source(schema="raw_stripe")' },
-        { type: 'result', text: 'sources.yml created: 12 tables' },
-        { type: 'tool',   text: 'generate_staging_model("raw_stripe", "charges")' },
-        { type: 'result', text: 'stg_stripe__charges.sql created' },
-        { type: 'tool',   text: 'generate_model_yaml("stg_stripe__charges")' },
-        { type: 'ok',     text: 'YAML with all 24 columns. Hours of setup in minutes.' },
-      ]
-    },
-    {
-      title: 'Fusion / LSP',
-      sub: 'Column-level lineage and IDE context',
-      color: '#2dd4bf',
-      border: 'rgba(45,212,191,.4)',
-      bg: 'rgba(45,212,191,.08)',
-      tools: ['fusion.get_column_lineage', 'fusion.get_ref_completions', 'fusion.get_source_completions'],
-      desc: 'Fusion tools provide column-level lineage and IDE-style intelligence. Best for developer workflows, specifically understanding where a column comes from and how it flows through the project.',
-      usecases: [
-        { icon: '🔬', title: 'Column-level lineage', detail: 'Trace exactly where a column\'s value comes from, through joins, CTEs, and across models, to understand data transformations and debug unexpected values.' },
-        { icon: '🐛', title: 'Debugging data quality', detail: 'When a number looks wrong in a dashboard, column lineage traces back to the raw source to find where the value was transformed or filtered incorrectly.' },
-        { icon: '💡', title: 'Developer intelligence', detail: 'ref() and source() completions help agents write accurate dbt SQL, knowing which models and sources exist without guessing or hallucinating names.' },
-      ],
-      steps: [
-        { type: 'think',  text: '"Why is revenue different in two models?"' },
-        { type: 'tool',   text: 'fusion.get_column_lineage("fct_revenue.revenue")' },
-        { type: 'result', text: 'traces: stg_stripe.amount → intermediate.orders_with_fx → fct_revenue' },
-        { type: 'tool',   text: 'fusion.get_column_lineage("fct_orders.revenue")' },
-        { type: 'result', text: 'traces: stg_braintree.amount_usd → fct_orders' },
-        { type: 'ok',     text: 'Different payment sources. Not the same metric. Surfaced to analyst.' },
-      ]
-    },
-  ];
+  var controls = AI_ACCESS_PATHS.map(function(item, index) {
+    return `<button type="button" class="path-option${index === 0 ? ' is-active' : ''}" id="path-option-${item.id}" aria-pressed="${index === 0 ? 'true' : 'false'}" onclick="setAccessPath(${index})">
+      <span class="path-option-num">0${index + 1}</span>
+      <span>
+        <strong>${item.label}</strong>
+        <small>${item.receives}</small>
+      </span>
+    </button>`;
+  }).join('');
 
-  window._ucCases = cases;
+  return `<div class="card">
+  <h2 class="card-title">Choose the agent path before evaluating the answer</h2>
+  <div class="card-sub">Three access paths expose different information and preserve different boundaries.</div>
 
-  function buildUCDetail(i) {
-    var c = cases[i];
-    var html = '';
+  <div class="path-selector" aria-label="AI agent access paths">${controls}</div>
+  <div id="path-detail" class="path-detail-wrap" aria-live="polite">${renderAccessPathDetail(0)}</div>
 
-    // header + description
-    html += '<div style="border-left:3px solid ' + c.color + ';padding-left:10px;margin-bottom:12px">';
-    html += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:1px;margin-bottom:4px;color:' + c.color + '">' + c.title.toUpperCase() + '</div>';
-    html += '<div style="font-size:12px;color:var(--text);line-height:1.6">' + c.desc + '</div>';
-    html += '</div>';
-
-    // tools
-    html += '<div style="margin-bottom:12px">';
-    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:6px">AVAILABLE TOOLS</div>';
-    html += '<div style="display:flex;flex-wrap:wrap;gap:5px">';
-    for (var j = 0; j < c.tools.length; j++) {
-      html += '<span style="font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:5px;background:' + c.bg + ';border:1px solid ' + c.border + ';color:' + c.color + '">' + c.tools[j] + '</span>';
-    }
-    html += '</div></div>';
-
-    // use cases
-    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:8px">USE CASES</div>';
-    html += '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">';
-    for (var u = 0; u < c.usecases.length; u++) {
-      var uc = c.usecases[u];
-      html += '<div style="padding:8px 10px;background:var(--bg);border:1px solid var(--border);border-left:2px solid ' + c.color + ';border-radius:6px">';
-      html += '<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px">' + uc.icon + '  ' + uc.title + '</div>';
-      html += '<div style="font-size:11px;color:var(--muted);line-height:1.5">' + uc.detail + '</div>';
-      html += '</div>';
-    }
-    html += '</div>';
-
-    // example trace
-    html += '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:6px">EXAMPLE TRACE</div>';
-    html += '<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px">';
-    html += '<div style="padding:10px 12px;display:flex;flex-direction:column;gap:5px">';
-    for (var k = 0; k < c.steps.length; k++) {
-      var s = c.steps[k];
-      var sbg, scolor, prefix;
-      if      (s.type === 'tool')   { sbg = 'rgba(124,58,237,.08)'; scolor = 'var(--pl)';    prefix = '→ '; }
-      else if (s.type === 'result') { sbg = 'rgba(63,185,80,.06)';  scolor = 'var(--green)'; prefix = '← '; }
-      else if (s.type === 'ok')     { sbg = 'rgba(63,185,80,.06)';  scolor = 'var(--green)'; prefix = '✓ '; }
-      else if (s.type === 'warn')   { sbg = 'rgba(210,153,34,.07)'; scolor = 'var(--amber)'; prefix = '⚠ '; }
-      else                           { sbg = 'rgba(255,255,255,.03)';scolor = 'var(--muted)'; prefix = '… '; }
-      html += '<div style="font-family:var(--mono);font-size:10px;color:' + scolor + ';background:' + sbg + ';border-radius:4px;padding:4px 8px;white-space:pre-wrap;line-height:1.5">' + prefix + s.text + '</div>';
-    }
-    html += '</div></div>';
-
-    return html;
-  }
-
-  window._buildUCDetail = buildUCDetail;
-
-  var pillsHtml = '<div style="display:flex;flex-direction:column;gap:6px" id="ucpills">';
-  for (var i = 0; i < cases.length; i++) {
-    var active = i === 0;
-    var c = cases[i];
-    pillsHtml += '<div onclick="setUC(' + i + ')" id="ucpill' + i + '" style="padding:10px 14px;background:' + (active ? c.bg : 'var(--raised)') + ';border:1px solid ' + (active ? c.border : 'var(--border)') + ';border-radius:9px;cursor:pointer;transition:all .2s">';
-    pillsHtml += '<div style="font-size:13px;font-weight:600;color:' + (active ? c.color : 'var(--text)') + '">' + c.title + '</div>';
-    pillsHtml += '<div style="font-size:11px;color:var(--muted);margin-top:2px">' + c.sub + '</div>';
-    pillsHtml += '</div>';
-  }
-  pillsHtml += '</div>';
-
-  var visHtml = '<div style="background:var(--raised);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column">' +
-    '<div style="padding:14px;flex:1;overflow-y:auto" id="uc-body">' + buildUCDetail(0) + '</div>' +
-    '</div>';
-
-  return '<div class="card"><div class="card-title">Use Cases by Tool Group</div><div class="card-sub">Each tool group unlocks different agent capabilities. Click a group to see what it enables and how it works in practice.</div>' +
-    '<div style="display:grid;grid-template-columns:200px 1fr;gap:14px;align-items:start">' +
-    pillsHtml + visHtml +
-    '</div></div>';
+  <div class="connection-note">
+    <div class="field-label">Connection is not governance</div>
+    <p>MCP is a connection mechanism, not the governance layer. The permissions and query interface behind each tool determine what the agent can request.</p>
+  </div>
+</div>`;
 }
 
-window.setUC = function(i) {
-  var cases = window._ucCases;
-  if (!cases) return;
-  for (var j = 0; j < cases.length; j++) {
-    var pill = document.getElementById('ucpill' + j);
-    if (pill) {
-      pill.style.background  = j === i ? cases[j].bg    : 'var(--raised)';
-      pill.style.borderColor = j === i ? cases[j].border : 'var(--border)';
-      var titleEl = pill.querySelector('div');
-      if (titleEl) titleEl.style.color = j === i ? cases[j].color : 'var(--text)';
-    }
+window.setAccessPath = function(index) {
+  if (index < 0 || index >= AI_ACCESS_PATHS.length) return;
+  var options = document.querySelectorAll('.path-option');
+  for (var i = 0; i < options.length; i++) {
+    var selected = i === index;
+    options[i].classList.toggle('is-active', selected);
+    options[i].setAttribute('aria-pressed', selected ? 'true' : 'false');
   }
-  var body = document.getElementById('uc-body');
-  if (body) body.innerHTML = window._buildUCDetail(i);
+  var detail = document.getElementById('path-detail');
+  if (detail) detail.innerHTML = renderAccessPathDetail(index);
 };
 
-/* ─── STEPS ARRAY ─────────────────────────────────────── */
 function renderStep5() {
-  var configs = [
-    {
-      num: '01',
-      title: 'Cursor / Claude',
-      sub: 'No dbt context',
-      color: 'var(--amber)',
-      border: 'rgba(210,153,34,.45)',
-      bg: 'rgba(210,153,34,.07)',
-      stack: ['AI coding agent', 'Your codebase (files only)'],
-      stackColors: ['var(--amber)', 'var(--muted)'],
-      caps: [
-        { label: 'Write SQL queries',           have: true,  note: 'generates raw SQL from scratch' },
-        { label: 'Understand your schema',       have: 'partial', note: 'only if you paste it in' },
-        { label: 'Know your metric definitions', have: false, note: 'guesses from table/column names' },
-        { label: 'Validated, tested output',     have: false, note: 'no tests, no contracts' },
-        { label: 'Lineage awareness',            have: false, note: 'no DAG, no upstream context' },
-        { label: 'Consistent answers',           have: false, note: '"revenue" means whatever the model guesses' },
-      ],
-      scenario: {
-        q: 'What was revenue last month by region?',
-        steps: [
-          { type: 'think', text: 'I\'ll look for a table that sounds like orders or revenue...' },
-          { type: 'sql',   text: 'SELECT region, SUM(amount)\nFROM orders\nWHERE date >= \'2025-11-01\'\nGROUP BY region' },
-          { type: 'warn',  text: 'Guessed "amount" column · no filter for completed orders · no tests · may be wrong' },
-        ]
-      }
-    },
-    {
-      num: '02',
-      title: 'Cursor / Claude + dbt MCP',
-      sub: 'Semantic Layer connected',
-      color: 'var(--green)',
-      border: 'rgba(63,185,80,.4)',
-      bg: 'rgba(63,185,80,.05)',
-      stack: ['AI coding agent', 'dbt MCP Server', 'Semantic Layer → MetricFlow'],
-      stackColors: ['var(--amber)', 'var(--green)', 'var(--pl)'],
-      caps: [
-        { label: 'Write SQL queries',           have: true,  note: 'still can, but no longer needs to' },
-        { label: 'Understand your schema',       have: true,  note: 'via get_model_details, get_all_models' },
-        { label: 'Know your metric definitions', have: true,  note: 'list_metrics · get_dimensions' },
-        { label: 'Validated, tested output',     have: true,  note: 'queries go through MetricFlow' },
-        { label: 'Lineage awareness',            have: true,  note: 'get_lineage available as a tool' },
-        { label: 'Consistent answers',           have: true,  note: 'revenue = revenue, always' },
-      ],
-      scenario: {
-        q: 'What was revenue last month by region?',
-        steps: [
-          { type: 'tool',   text: 'list_metrics()  →  [revenue, churn_rate, cac...]' },
-          { type: 'tool',   text: 'get_dimensions("revenue")  →  [region, channel, metric_time__month]' },
-          { type: 'tool',   text: 'query_metrics("revenue", group_by=["region"], where=["Nov 2025"])' },
-          { type: 'result', text: '{North: $4.2M, West: $3.1M, South: $2.8M, East: $1.9M}' },
-          { type: 'ok',     text: 'Governed · tested · consistent. No SQL written by the model.' },
-        ]
-      }
-    },
-    {
-      num: '03',
-      title: '+ dbt Extension & Fusion',
-      sub: 'IDE-aware, live project context',
-      color: 'var(--blue)',
-      border: 'rgba(88,166,255,.4)',
-      bg: 'rgba(88,166,255,.05)',
-      stack: ['AI coding agent', 'dbt Extension (VS Code / Cursor)', 'Fusion engine (live project graph)', 'dbt MCP Server'],
-      stackColors: ['var(--amber)', 'var(--blue)', 'var(--orange)', 'var(--green)'],
-      caps: [
-        { label: 'Write SQL queries',           have: true,  note: 'with full project context' },
-        { label: 'Understand your schema',       have: true,  note: 'live, no compile step required' },
-        { label: 'Know your metric definitions', have: true,  note: 'via MCP + extension context' },
-        { label: 'Validated, tested output',     have: true,  note: 'via MetricFlow + Fusion validation' },
-        { label: 'Lineage awareness',            have: true,  note: 'real-time DAG in editor + MCP' },
-        { label: 'Autocomplete & ref() linking', have: true,  note: 'Fusion keeps graph live, refs resolve instantly' },
-      ],
-      scenario: {
-        q: 'Build a new model that joins orders with customer segments',
-        steps: [
-          { type: 'think',  text: 'Extension sees full project: fct_orders, dim_customers already in context' },
-          { type: 'sql',    text: 'SELECT o.*, c.segment\nFROM {{ ref(\'fct_orders\') }} o\nJOIN {{ ref(\'dim_customers\') }} c\n  ON o.customer_id = c.customer_id' },
-          { type: 'ok',     text: 'ref() autocompleted · Fusion validates upstream exists · lineage auto-updated' },
-        ]
-      }
-    },
-    {
-      num: '04',
-      title: '+ Everything Together',
-      sub: 'Full dbt stack, most powerful',
-      color: 'var(--pl)',
-      border: 'rgba(167,139,250,.5)',
-      bg: 'rgba(124,58,237,.07)',
-      stack: ['AI coding agent', 'dbt Extension + Fusion (live context)', 'dbt MCP Server (query + catalog)', 'Semantic Layer (governed metrics)', 'Tested, documented mart models'],
-      stackColors: ['var(--amber)', 'var(--blue)', 'var(--green)', 'var(--pl)', 'var(--orange)'],
-      caps: [
-        { label: 'Write & validate models',       have: true,  note: 'extension + Fusion, live' },
-        { label: 'Query governed metrics',         have: true,  note: 'MCP + Semantic Layer' },
-        { label: 'Trace lineage end-to-end',       have: true,  note: 'from source to metric' },
-        { label: 'Consistent, tested answers',     have: true,  note: 'MetricFlow enforces definitions' },
-        { label: 'Trigger & monitor jobs',         have: true,  note: 'list_jobs, trigger_job via MCP' },
-        { label: 'Build + query in same session',  have: true,  note: 'model in editor, query via MCP, closed loop' },
-      ],
-      scenario: {
-        q: 'Something looks off with churn. Investigate and fix it.',
-        steps: [
-          { type: 'tool',   text: 'query_metrics("churn_rate", group_by=["plan_type"])  →  free tier spike' },
-          { type: 'tool',   text: 'get_lineage("churn_rate")  →  traces to stg_subscriptions' },
-          { type: 'think',  text: 'Extension opens stg_subscriptions, spots a bad filter on cancelled_at' },
-          { type: 'sql',    text: '-- fix: stg_subscriptions.sql\nWHERE cancelled_at IS NOT NULL\n  AND cancellation_reason != \'payment_retry\'' },
-          { type: 'tool',   text: 'trigger_job("stg_subscriptions")  →  job queued' },
-          { type: 'ok',     text: 'Investigated, diagnosed, fixed, and re-run, all in one session' },
-        ]
-      }
-    },
-  ];
+  var scenarios = SAFE_USE_CASES.map(function(item, index) {
+    return `<section class="use-case">
+      <div class="use-case-index">0${index + 1}</div>
+      <div class="example-label">Illustrative scenario</div>
+      <h3>${item.title}</h3>
+      <p class="scenario-example">${item.example}</p>
+      <div class="guardrail">
+        <span>Guardrail</span>
+        <p>${item.guardrail}</p>
+      </div>
+    </section>`;
+  }).join('');
 
-  window._cfgCases = configs;
-
-  function buildConfig(i) {
-    var c = configs[i];
-    var html = '';
-
-    // stack pills
-    html += '<div style="margin-bottom:14px">';
-    html += '<div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px">STACK</div>';
-    html += '<div style="display:flex;flex-direction:column;gap:4px">';
-    for (var s = c.stack.length - 1; s >= 0; s--) {
-      html += '<div style="padding:6px 10px;border-radius:6px;font-family:var(--mono);font-size:10px;font-weight:600;color:' + c.stackColors[s] + ';background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);text-align:center">' + c.stack[s] + '</div>';
-      if (s > 0) html += '<div style="text-align:center;color:#374151;font-size:12px;line-height:1">↑</div>';
-    }
-    html += '</div></div>';
-
-    // capabilities
-    html += '<div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px">CAPABILITIES</div>';
-    html += '<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px">';
-    for (var ci = 0; ci < c.caps.length; ci++) {
-      var cap = c.caps[ci];
-      var icon, iconColor;
-      if (cap.have === true)        { icon = '✓'; iconColor = 'var(--green)'; }
-      else if (cap.have === 'partial') { icon = '~'; iconColor = 'var(--amber)'; }
-      else                           { icon = '✗'; iconColor = 'var(--red)'; }
-      html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:var(--raised);border:1px solid var(--border);border-radius:6px">';
-      html += '<span style="font-family:var(--mono);font-size:11px;font-weight:600;color:' + iconColor + ';flex-shrink:0;width:14px">' + icon + '</span>';
-      html += '<div style="flex:1"><div style="font-size:11px;font-weight:500;color:var(--text)">' + cap.label + '</div>';
-      html += '<div style="font-size:10px;color:var(--muted);margin-top:1px">' + cap.note + '</div></div>';
-      html += '</div>';
-    }
-    html += '</div>';
-
-    // scenario
-    html += '<div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px">EXAMPLE INTERACTION</div>';
-    html += '<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:hidden">';
-    html += '<div style="padding:8px 12px;background:rgba(124,58,237,.08);border-bottom:1px solid rgba(124,58,237,.2)">';
-    html += '<div style="font-size:11px;color:#c4b5fd">' + c.scenario.q + '</div></div>';
-    html += '<div style="padding:10px 12px;display:flex;flex-direction:column;gap:5px">';
-    for (var si = 0; si < c.scenario.steps.length; si++) {
-      var step = c.scenario.steps[si];
-      var bg, color, prefix;
-      if      (step.type === 'tool')   { bg = 'rgba(124,58,237,.08)'; color = 'var(--pl)';    prefix = '→ '; }
-      else if (step.type === 'result') { bg = 'rgba(63,185,80,.06)';  color = 'var(--green)'; prefix = '← '; }
-      else if (step.type === 'ok')     { bg = 'rgba(63,185,80,.06)';  color = 'var(--green)'; prefix = '✓ '; }
-      else if (step.type === 'warn')   { bg = 'rgba(210,153,34,.07)'; color = 'var(--amber)'; prefix = '⚠ '; }
-      else if (step.type === 'think')  { bg = 'rgba(255,255,255,.03)';color = 'var(--muted)'; prefix = '… '; }
-      else                             { bg = 'rgba(88,166,255,.06)';  color = 'var(--blue)';  prefix = '';   }
-      html += '<div style="font-family:var(--mono);font-size:10px;color:' + color + ';background:' + bg + ';border-radius:4px;padding:4px 8px;white-space:pre-wrap;line-height:1.5">' + prefix + step.text + '</div>';
-    }
-    html += '</div></div>';
-    return html;
-  }
-
-  window._buildConfig = buildConfig;
-
-  // left pills
-  var pillsHtml = '<div style="display:flex;flex-direction:column;gap:6px" id="cfgpills">';
-  for (var i = 0; i < configs.length; i++) {
-    var c = configs[i];
-    var active = i === 0;
-    pillsHtml += '<div onclick="setCfg(' + i + ')" id="cfgpill' + i + '" style="padding:11px 14px;background:' + (active ? c.bg : 'var(--raised)') + ';border:1px solid ' + (active ? c.border : 'var(--border)') + ';border-radius:9px;cursor:pointer;transition:all .2s">';
-    pillsHtml += '<div style="display:flex;align-items:center;gap:8px">';
-    pillsHtml += '<span style="font-family:var(--mono);font-size:11px;font-weight:600;color:' + (active ? c.color : 'var(--muted)') + '">' + c.num + '</span>';
-    pillsHtml += '<div><div style="font-size:12px;font-weight:600;color:var(--text)">' + c.title + '</div>';
-    pillsHtml += '<div style="font-size:10px;color:var(--muted);margin-top:1px">' + c.sub + '</div></div>';
-    pillsHtml += '</div></div>';
-  }
-  pillsHtml += '</div>';
-
-  var visHtml = '<div style="background:var(--raised);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column">';
-  visHtml += '<div style="padding:9px 13px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px" id="cfg-hdr">' + configs[0].title.toUpperCase() + '</div>';
-  visHtml += '<div style="padding:16px;flex:1;overflow-y:auto;max-height:600px" id="cfg-body">' + buildConfig(0) + '</div>';
-  visHtml += '</div>';
-
-  return '<div class="card"><div class="card-title">Cursor / Claude: 4 configurations</div>' +
-    '<div class="card-sub">Each layer of dbt adds something the AI agent couldn\'t do before. Click to compare.</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px">' +
-    pillsHtml + visHtml +
-    '</div>' +
-    '<div class="cap">Configuration 4 is the full picture, but configurations 2 and 3 are already meaningful standalone improvements. The question isn\'t "do you need all of it" but rather "how much of your data workflow do you want the AI to understand?"</div>' +
-    '</div>';
+  return `<div class="card">
+  <h2 class="card-title">Match the question to a safe use tier</h2>
+  <div class="card-sub">Start with the governed object when one exists. Make metadata and ad hoc fallbacks explicit.</div>
+  <div class="use-case-grid">${scenarios}</div>
+</div>`;
 }
-
-window.setCfg = function(i) {
-  var configs = window._cfgCases;
-  if (!configs) return;
-  for (var j = 0; j < configs.length; j++) {
-    var pill = document.getElementById('cfgpill' + j);
-    if (pill) {
-      var c = configs[j];
-      pill.style.background   = j === i ? c.bg     : 'var(--raised)';
-      pill.style.borderColor  = j === i ? c.border : 'var(--border)';
-      pill.querySelector('span').style.color = j === i ? c.color : 'var(--muted)';
-    }
-  }
-  var hdr  = document.getElementById('cfg-hdr');
-  var body = document.getElementById('cfg-body');
-  if (hdr)  hdr.textContent  = configs[i].title.toUpperCase();
-  if (body) body.innerHTML   = window._buildConfig(i);
-};
 
 function renderStep6() {
+  return `<div class="card">
+  <h2 class="card-title">Access still passes through two gates</h2>
+  <div class="card-sub">The client-facing interface and the warehouse enforce different parts of the request.</div>
 
-  // ── helpers ────────────────────────────────────────────────────────────────
-  function pill(txt, color) {
-    return '<span style="display:inline-block;padding:2px 8px;border-radius:99px;font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:.5px;background:' + color + '22;color:' + color + ';border:1px solid ' + color + '44">' + txt + '</span>';
-  }
-  function check(txt) {
-    return '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:5px"><span style="color:#3fb950;font-size:11px;flex-shrink:0">✓</span><span style="color:var(--muted);font-size:10.5px;line-height:1.5">' + txt + '</span></div>';
-  }
-  function cross(txt) {
-    return '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:5px"><span style="color:#444c56;font-size:11px;flex-shrink:0">✗</span><span style="color:#444c56;font-size:10.5px;line-height:1.5">' + txt + '</span></div>';
-  }
+  <div class="gate-flow" aria-label="Two access gates">
+    <section class="gate">
+      <div class="gate-number">Gate 1</div>
+      <h3>dbt-facing interface</h3>
+      <p>Controls which semantic, metadata, or SQL tools the client can request.</p>
+    </section>
+    <div class="gate-arrow" aria-hidden="true">→</div>
+    <section class="gate">
+      <div class="gate-number">Gate 2</div>
+      <h3>warehouse</h3>
+      <p>Enforces the warehouse identity's object, row, and column permissions.</p>
+    </section>
+  </div>
 
-  // ── Column: Developer Seat ─────────────────────────────────────────────────
-  var devCol =
-    '<div style="border:1.5px solid rgba(124,58,237,.5);border-radius:10px;overflow:hidden">' +
-      '<div style="background:rgba(124,58,237,.12);padding:14px 15px;border-bottom:1px solid rgba(124,58,237,.2)">' +
-        '<div style="color:#a78bfa;font-size:13px;font-weight:600;margin-bottom:2px">Developer Seat</div>' +
-        '<div style="color:var(--muted);font-size:10px">Build, deploy &amp; maintain</div>' +
-      '</div>' +
-      '<div style="padding:13px 15px;border-bottom:1px solid var(--border)">' +
-        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:7px">HOW THEY LOG IN</div>' +
-        pill('INTERNAL', '#a78bfa') +
-        '<div style="color:var(--muted);font-size:10px;margin-top:6px">dbt username &amp; password</div>' +
-      '</div>' +
-      '<div style="padding:13px 15px">' +
-        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:8px">WHAT THEY CAN DO</div>' +
-        check('IDE, CLI &amp; Jobs') +
-        check('All models &amp; metrics') +
-        check('Write &amp; deploy') +
-        check('Catalog, Docs &amp; Lineage') +
-        check('Full audit log') +
-      '</div>' +
-    '</div>';
-
-  // ── Column: Read-Only Seat ─────────────────────────────────────────────────
-  var roCol =
-    '<div style="border:1.5px solid rgba(63,185,80,.5);border-radius:10px;overflow:hidden">' +
-      '<div style="background:rgba(63,185,80,.1);padding:14px 15px;border-bottom:1px solid rgba(63,185,80,.2)">' +
-        '<div style="color:#3fb950;font-size:13px;font-weight:600;margin-bottom:2px">Read-Only Seat</div>' +
-        '<div style="color:var(--muted);font-size:10px">Consume, explore &amp; analyze</div>' +
-      '</div>' +
-      '<div style="padding:13px 15px;border-bottom:1px solid var(--border)">' +
-        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:7px">HOW THEY LOG IN</div>' +
-        pill('INTERNAL', '#3fb950') +
-        '<div style="color:var(--muted);font-size:10px;margin-top:6px;margin-bottom:5px"><strong style="color:var(--text)">Today:</strong> Personal Access Token (PAT)</div>' +
-        '<div style="color:#3fb950;font-size:10px"><strong>Coming soon:</strong> OAuth "login with dbt", short-lived and SSO-compatible</div>' +
-      '</div>' +
-      '<div style="padding:13px 15px">' +
-        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:8px">WHAT THEY CAN DO</div>' +
-        check('Catalog, Docs &amp; Lineage') +
-        check('Source Freshness &amp; job alerts') +
-        check('API access') +
-        check('Semantic Layer &amp; MCP <span style="color:#3fb950;font-size:9px">(H1 2026)</span>') +
-        check('dbt Insights <span style="color:#3fb950;font-size:9px">(H2 2026)</span>') +
-        cross('IDE, CLI, Jobs or deploy') +
-      '</div>' +
-    '</div>';
-
-  // ── Column: LLMs & AI Agents ──────────────────────────────────────────────
-  var aiCol =
-    '<div style="border:1.5px solid rgba(210,153,34,.5);border-radius:10px;overflow:hidden">' +
-      '<div style="background:rgba(210,153,34,.1);padding:14px 15px;border-bottom:1px solid rgba(210,153,34,.2)">' +
-        '<div style="color:#d29922;font-size:13px;font-weight:600;margin-bottom:2px">LLMs &amp; AI Agents</div>' +
-        '<div style="color:var(--muted);font-size:10px">Claude, MCP connections, shared BI tools</div>' +
-      '</div>' +
-      '<div style="padding:13px 15px;border-bottom:1px solid var(--border)">' +
-        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:7px">HOW THEY CONNECT</div>' +
-        pill('PROGRAMMATIC / MACHINE', '#d29922') +
-        '<div style="color:var(--muted);font-size:10px;margin-top:6px"><strong style="color:var(--text)">Service Token</strong>: one per use case or team, scoped to a domain. Not tied to a person. Revoke without affecting anyone else.</div>' +
-      '</div>' +
-      '<div style="padding:13px 15px">' +
-        '<div style="color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-bottom:8px">WHAT THEY CAN DO</div>' +
-        check('Semantic Layer, governed metrics only') +
-        check('MetricFlow queries via MCP') +
-        check('Scoped to assigned domain') +
-        check('Audit logged per token') +
-        check('Same path for shared BI tools (Tableau Server, Power BI)') +
-        cross('Raw SQL or direct model access') +
-      '</div>' +
-    '</div>';
-
-  // ── Internal vs External callout ───────────────────────────────────────────
-  var authNote =
-    '<div style="display:flex;gap:10px;margin-top:10px">' +
-      '<div style="flex:1;background:rgba(63,185,80,.05);border:1px solid rgba(63,185,80,.2);border-radius:7px;padding:10px 13px;display:flex;align-items:center;gap:10px">' +
-        '<div style="font-size:18px">👤</div>' +
-        '<div><div style="color:#3fb950;font-size:10.5px;font-weight:600;margin-bottom:2px">Personal login (PAT or OAuth)</div>' +
-        '<div style="color:var(--muted);font-size:10px">Developer &amp; Read-Only seats. Tied to a real person, audited by user. Also covers personal BI connections (your own Excel, Tableau Desktop).</div></div>' +
-      '</div>' +
-      '<div style="flex:1;background:rgba(210,153,34,.06);border:1px solid rgba(210,153,34,.2);border-radius:7px;padding:10px 13px;display:flex;align-items:center;gap:10px">' +
-        '<div style="font-size:18px">🔑</div>' +
-        '<div><div style="color:#d29922;font-size:10.5px;font-weight:600;margin-bottom:2px">Service Token (machine credentials)</div>' +
-        '<div style="color:var(--muted);font-size:10px">AI agents, Claude, MCP connections, and shared BI tools (Tableau Server, Power BI workspace). Not tied to a person. Scoped and revocable per use case.</div></div>' +
-      '</div>' +
-    '</div>';
-
-  // ── Two gates ──────────────────────────────────────────────────────────────
-  var gates =
-    '<div style="display:flex;gap:10px;margin-top:10px">' +
-      '<div style="flex:1;background:rgba(255,107,53,.06);border:1.5px solid #ff6b35;border-radius:8px;padding:13px 15px">' +
-        '<div style="color:#ff6b35;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.5px;margin-bottom:5px">GATE 1: dbt</div>' +
-        '<div style="color:var(--text);font-size:11px;font-weight:600;margin-bottom:4px">Controls what you can ask for</div>' +
-        '<div style="color:var(--muted);font-size:10px;line-height:1.6">Your role in dbt determines which models and metrics you\'re even allowed to request, regardless of what the warehouse would technically allow.</div>' +
-      '</div>' +
-      '<div style="flex:1;background:rgba(88,166,255,.06);border:1.5px solid #58a6ff;border-radius:8px;padding:13px 15px">' +
-        '<div style="color:#58a6ff;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.5px;margin-bottom:5px">GATE 2: Warehouse</div>' +
-        '<div style="color:var(--text);font-size:11px;font-weight:600;margin-bottom:4px">Controls which rows come back</div>' +
-        '<div style="color:var(--muted);font-size:10px;line-height:1.6">Row-level security is enforced at query time by the warehouse itself. This is the final backstop. dbt and MCP cannot bypass it.</div>' +
-      '</div>' +
-    '</div>';
-
-  return '<div class="card">' +
-    '<div class="card-title">Security &amp; Governance</div>' +
-    '<div class="card-sub">Same warehouse. Three types of access. Every query passes two gates.</div>' +
-
-    // Three identity columns
-    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:4px">' +
-      devCol + roCol + aiCol +
-    '</div>' +
-
-    // Internal vs external note
-    authNote +
-
-    // Section divider
-    '<div style="border-top:1px solid var(--border);margin:14px 0 10px;display:flex;align-items:center;gap:10px">' +
-      '<span style="color:#ff6b35;font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:1.5px;white-space:nowrap;background:var(--surface);padding-right:10px">THE TWO GATES</span>' +
-    '</div>' +
-
-    gates +
-  '</div>';
+  <aside class="takeaway">
+    <div class="field-label">Takeaway</div>
+    <p>Conversational access does not remove governance. It makes the definition, authorization, and fallback boundaries more important because more questions can be asked through the interface.</p>
+  </aside>
+</div>`;
 }
+
 
 var STEPS = [
   { lbl: 'Semantic foundations', render: renderStep0 },
   { lbl: 'Three systems',        render: renderStep1 },
   { lbl: 'Choose a boundary',    render: renderStep2 },
-  { lbl: 'Agent Reasoning', render: renderStep3 },
-  { lbl: 'Use Cases',      render: renderStep4 },
-  { lbl: 'Configurations', render: renderStep5 },
-  { lbl: 'Security',       render: renderStep6 },
+  { lbl: 'The shift to AI', render: renderStep3 },
+  { lbl: 'Agent path', render: renderStep4 },
+  { lbl: 'Safe use', render: renderStep5 },
+  { lbl: 'Access & takeaway', render: renderStep6 },
 ];
 
 /* ─── NAV ─────────────────────────────────────────────── */
@@ -1107,7 +595,22 @@ function renderContent() {
   nb.textContent = cur === STEPS.length - 1 ? 'Done' : 'Next →';
 }
 
-function goTo(i) { cur = i; renderNav(); renderContent(); window.scrollTo({top:0,behavior:'smooth'}); }
+function goTo(i) {
+  cur = i;
+  renderNav();
+  renderContent();
+  var heading = document.querySelector('#scontent .card-title');
+  if (heading) {
+    heading.setAttribute('tabindex', '-1');
+    heading.focus({preventScroll:true});
+  }
+  window.scrollTo({top:0, behavior: prefersReducedMotion() ? 'auto' : 'smooth'});
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function nav(d) { if (cur+d >= 0 && cur+d < STEPS.length) goTo(cur+d); }
 
 renderNav();
