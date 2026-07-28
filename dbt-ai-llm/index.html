@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>dbt + AI</title>
+<title>From Data to Conversation</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -41,7 +41,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body-font);font-
 .short-answer-label{margin-bottom:7px;font-family:var(--code-font);font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent)}
 .short-answer h2{margin:0 0 8px;font-size:18px;line-height:1.25}
 .short-answer p{margin:0;max-width:760px;color:var(--muted-light);font-size:13px;line-height:1.65}
-.nav{display:grid;grid-template-columns:1fr;gap:0;margin-bottom:40px;padding:0;background:transparent;border:0;border-top:1px solid var(--ink);border-radius:0}
+.nav{border-radius:0;display:grid;grid-template-columns:1fr;gap:0;margin-bottom:40px;padding:0;background:transparent;border:0;border-top:1px solid var(--ink)}
 .ns{min-width:0;display:grid;grid-template-columns:52px 1fr;align-items:center;justify-items:start;gap:0;padding:11px 12px;cursor:pointer;color:var(--muted-light);background:transparent;border:0;border-bottom:1px solid var(--rule-light);border-radius:0;font-family:var(--body-font);text-align:left}
 .ns:hover{background:var(--surface);color:var(--ink)}
 .ns.on{background:var(--ink);color:#fff}
@@ -98,6 +98,9 @@ code{padding:1px 4px;background:var(--soft);color:var(--ink)}
 .decision-callout{padding:16px;border:1px solid var(--rule-light);border-top:2px solid var(--ink);background:var(--surface)}
 .decision-callout h3{margin-bottom:7px;font-size:12px;line-height:1.4}
 .decision-callout p{color:var(--muted-light);font-size:11px;line-height:1.55}
+.source-footer{text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid var(--rule-light)}
+.source-footer a{display:inline-flex;align-items:center;gap:7px;color:var(--muted-light);font-family:var(--code-font);font-size:10px;text-decoration:none}
+.source-footer a:hover{color:var(--ink)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 @media(max-width:760px){
   .app{padding-inline:14px}
@@ -130,7 +133,7 @@ code{padding:1px 4px;background:var(--soft);color:var(--ink)}
   <span class="prog" id="pg"></span>
   <button class="nbtn pri" id="nb" onclick="nav(1)">Next →</button>
 </div>
-<div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #21262d"><a href="https://github.com/cedricturner/dbt-artifacts" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'"><svg height="13" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="si">view source on github</span></a></div>
+<div class="source-footer"><a href="https://github.com/cedricturner/dbt-artifacts" target="_blank" rel="noopener noreferrer"><svg height="13" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="si">view source on github</span></a></div>
 </div>
 
 <script>
