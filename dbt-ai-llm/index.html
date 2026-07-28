@@ -240,7 +240,7 @@ var SOURCE_DATA = [
     title: 'Unity Catalog metric views',
     publisher: 'Databricks documentation',
     url: 'https://docs.databricks.com/aws/en/uc-semantics/metric-views',
-    claims: [{id: 'claim-databricks-object', step: 1}]
+    claims: [{id: 'claim-databricks-implementation', step: 1}]
   },
   {
     number: 4,
@@ -249,7 +249,7 @@ var SOURCE_DATA = [
     title: 'Manage metric views',
     publisher: 'Databricks documentation',
     url: 'https://docs.databricks.com/aws/en/uc-semantics/metric-views/manage',
-    claims: [{id: 'claim-databricks-permissions', step: 2}]
+    claims: [{id: 'claim-databricks-permissions', step: 1}]
   },
   {
     number: 5,
@@ -334,35 +334,29 @@ var SEMANTIC_PRODUCTS = [
   {
     id: 'dbt',
     name: 'dbt Semantic Layer',
-    object: 'Semantic models and metrics live with the dbt project.',
-    define: 'YAML semantic model + metric',
+    object: 'Semantic models are the foundation for data definition in MetricFlow. ' + footnote(1, 'claim-dbt-model'),
+    define: 'Metrics are added to the dbt project after semantic models. ' + footnote(2, 'claim-dbt-metric'),
     query: 'Semantic Layer query interface',
     boundary: 'The governed dbt project and its supported consumption interfaces',
-    bestWhen: 'Metric definitions need to stay connected to transformation models and serve supported tools beyond one warehouse-native interface.',
-    sources: [
-      {number: 1, claimId: 'claim-dbt-model'},
-      {number: 2, claimId: 'claim-dbt-metric'}
-    ]
+    bestWhen: 'Metric definitions need to stay connected to transformation models and serve supported tools beyond one warehouse-native interface.'
   },
   {
     id: 'databricks',
     name: 'Databricks Unity Catalog metric views',
-    object: 'A metric view is a securable Unity Catalog object.',
-    define: 'SQL DDL, Catalog Explorer, and YAML-backed definition',
+    object: 'A metric view is a securable Unity Catalog object that follows its hierarchical permissions model. ' + footnote(4, 'claim-databricks-permissions'),
+    define: 'Metric views are the core implementation of Unity Catalog semantics; define them with SQL DDL or Catalog Explorer and query them at runtime. ' + footnote(3, 'claim-databricks-implementation'),
     query: 'Databricks SQL against the metric view',
     boundary: 'Unity Catalog',
-    bestWhen: 'Unity Catalog and Databricks consumption surfaces are the durable operating boundary.',
-    sources: [{number: 3, claimId: 'claim-databricks-object'}]
+    bestWhen: 'Unity Catalog and Databricks consumption surfaces are the durable operating boundary.'
   },
   {
     id: 'snowflake',
     name: 'Snowflake semantic views',
-    object: 'A semantic view is a Snowflake schema-level object.',
+    object: 'A semantic view is a Snowflake schema-level object. ' + footnote(5, 'claim-snowflake-object'),
     define: 'SQL DDL, Snowsight, or YAML',
     query: 'SELECT queries and supported Snowflake interfaces',
     boundary: 'The Snowflake schema and its privileges',
-    bestWhen: 'Snowflake is the durable definition and consumption boundary.',
-    sources: [{number: 5, claimId: 'claim-snowflake-object'}]
+    bestWhen: 'Snowflake is the durable definition and consumption boundary.'
   }
 ];
 
@@ -370,7 +364,7 @@ var DECISION_ROWS = [
   ['Durable boundary', 'dbt project', 'Unity Catalog', 'Snowflake schema'],
   ['Metric relationship', 'Defined on dbt semantic models', 'Defined in a metric view', 'Defined in a semantic view'],
   ['Primary query path', 'dbt Semantic Layer interfaces ' + footnote(8, 'claim-dbt-consumption'), 'Databricks SQL', 'Snowflake SQL and supported interfaces'],
-  ['Operational owner', 'Team operating the dbt project and Semantic Layer', 'Team operating Unity Catalog and Databricks SQL ' + footnote(4, 'claim-databricks-permissions'), 'Team operating Snowflake schemas and privileges']
+  ['Inference — operational owner', 'Team operating the dbt project and Semantic Layer', 'Team operating Unity Catalog and Databricks SQL', 'Team operating Snowflake schemas and privileges']
 ];
 
 /* ─── STEP RENDERERS ─────────────────────────────────────── */
@@ -414,18 +408,15 @@ function renderStep0() {
 }
 
 function renderStep1() {
-  var panels = SEMANTIC_PRODUCTS.map(function(product, i) {
-    var sourceLinks = product.sources.map(function(source) {
-      return footnote(source.number, source.claimId);
-    }).join(' ');
+  var panels = SEMANTIC_PRODUCTS.map(function(product) {
     return '<section class="product-panel">' +
-      '<h3>' + product.name + ' ' + sourceLinks + '</h3>' +
+      '<h3>' + product.name + '</h3>' +
       '<dl class="product-fields">' +
         '<div class="product-field"><dt>Where it lives</dt><dd>' + product.object + '</dd></div>' +
         '<div class="product-field"><dt>How it is defined</dt><dd>' + product.define + '</dd></div>' +
         '<div class="product-field"><dt>How it is queried</dt><dd>' + product.query + '</dd></div>' +
         '<div class="product-field"><dt>Governance boundary</dt><dd>' + product.boundary + '</dd></div>' +
-        '<div class="product-field"><dt>Strong fit</dt><dd>' + product.bestWhen + '</dd></div>' +
+        '<div class="product-field"><dt>Inference — strong fit</dt><dd>' + product.bestWhen + '</dd></div>' +
       '</dl>' +
     '</section>';
   }).join('');

@@ -47,6 +47,18 @@ rg -Fq 'dbt Semantic Layer' "$page"
 rg -Fq 'Databricks Unity Catalog metric views' "$page"
 rg -Fq 'Snowflake semantic views' "$page"
 
+# Product citations sit beside the exact supported field, not a generic heading.
+rg -Fq "object: 'Semantic models are the foundation for data definition in MetricFlow. ' + footnote(1, 'claim-dbt-model')" "$page"
+rg -Fq "define: 'Metrics are added to the dbt project after semantic models. ' + footnote(2, 'claim-dbt-metric')" "$page"
+rg -Fq "define: 'Metric views are the core implementation of Unity Catalog semantics; define them with SQL DDL or Catalog Explorer and query them at runtime. ' + footnote(3, 'claim-databricks-implementation')" "$page"
+rg -Fq "object: 'A metric view is a securable Unity Catalog object that follows its hierarchical permissions model. ' + footnote(4, 'claim-databricks-permissions')" "$page"
+rg -Fq "object: 'A semantic view is a Snowflake schema-level object. ' + footnote(5, 'claim-snowflake-object')" "$page"
+rg -Fq '<dt>Inference — strong fit</dt>' "$page"
+if rg -qi "operational owner.*footnote\\(4" "$page"; then
+  echo "Databricks permissions source is attached to an operational-owner inference" >&2
+  exit 1
+fi
+
 # Permanent source list and bidirectional footnotes.
 rg -Fq 'id="sources"' "$page"
 rg -Fq 'Sources checked July 28, 2026' "$page"
