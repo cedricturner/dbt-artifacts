@@ -149,7 +149,11 @@ Avoid roadmap statements, future dates, pricing, seat entitlements, or security 
 - Keep seven top-level steps so the page does not grow into an unbounded scroll.
 - The opening recommendation must be visible before the first step interaction requires effort.
 - Use a strong visual transition between section 3 and section 4 to mark the shift from semantic architecture to AI consumption.
-- Reuse the existing page's visual language unless a component prevents the revised hierarchy from reading clearly.
+- Replace the existing dark card styling with the light **field-notes** visual system used by the published `dbt-vs-stored-procs/` explainer.
+- Match that page's off-white paper (`#fafaf9`), black ink (`#1c1c1c`), white surfaces, warm gray rules (`#e8e5e0`), Inter body type, Space Mono technical type, square ruled navigation, left-aligned editorial header, and restrained orange/green/red semantic accents.
+- Use thin rules, spacing, and typography for hierarchy. Remove shadows, gradients, pill-shaped section chrome, and decorative rounded-card stacking.
+- Keep code and YAML examples in a light editor treatment with a pale gutter, visible line structure, and Space Mono.
+- Preserve the existing explainer's diagrams and interactions only after restyling them into the field-notes system.
 - Make comparison tables horizontally scrollable or responsively stacked on narrow screens.
 - Preserve previous/next navigation, direct step selection, visible keyboard focus, and reduced-motion behavior.
 - Do not create a second semantic-layer explainer directory.
@@ -234,6 +238,7 @@ Manual review must cover:
 - footnote focus movement and return links;
 - the semantic-to-AI transition;
 - readability of the comparison without opening every technical detail;
+- visual consistency with the published `dbt-vs-stored-procs/` field-notes page;
 - accuracy against the dated primary sources; and
 - preservation of unrelated working-tree changes.
 

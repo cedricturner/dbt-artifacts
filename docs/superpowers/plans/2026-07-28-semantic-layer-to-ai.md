@@ -13,6 +13,7 @@
 - Keep the canonical URL `dbt-ai-llm/`; do not create a standalone semantic-layer directory.
 - Keep exactly seven top-level steps.
 - Keep the page title **From Data to Conversation**.
+- Match the published `dbt-vs-stored-procs/` field-notes CSS: `#fafaf9` paper, `#1c1c1c` ink, `#e8e5e0` rules, Inter body type, Space Mono technical type, left-aligned editorial header, square ruled navigation, and no gradients or shadows.
 - Use `net_revenue` by `region` as the one recurring metric example.
 - Launch the redesigned page in English first.
 - Preserve the existing uncommitted Japanese dictionary and localization functions; do not expose the Japanese control in the English-first build.
@@ -64,6 +65,19 @@ test -f "$directory"
 rg -Fq '<title>dbt + AI</title>' "$page"
 rg -Fq 'From Data to Conversation' "$page"
 test "$(rg -c "render: renderStep[0-6]" "$page")" -eq 7
+
+# Field-notes visual system matches the stored-procedures explainer.
+rg -Fq 'class="field-notes"' "$page"
+rg -Fq -- '--paper: #fafaf9' "$page"
+rg -Fq -- '--ink: #1c1c1c' "$page"
+rg -Fq -- '--rule-light: #e8e5e0' "$page"
+rg -Fq 'family=Inter' "$page"
+rg -Fq 'family=Space+Mono' "$page"
+rg -Fq 'box-shadow: none' "$page"
+if rg -q 'linear-gradient' "$page"; then
+  echo "Field-notes page contains a prohibited gradient" >&2
+  exit 1
+fi
 
 for label in \
   "Semantic foundations" \
@@ -170,6 +184,55 @@ git commit -m "test: define semantic layer to AI explainer contract"
 
 - [ ] **Step 1: Add the decision-first opening to the static header**
 
+First, replace the dark visual system with a dedicated field-notes CSS layer matching `dbt-vs-stored-procs/index.html`:
+
+```html
+<html lang="en" class="field-notes">
+```
+
+Load the same two type roles:
+
+```html
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+```
+
+Define and use these exact shared tokens:
+
+```css
+:root{
+  --paper:#fafaf9;
+  --ink:#1c1c1c;
+  --text:#2a2a2a;
+  --muted-light:#777;
+  --faint-light:#aaa;
+  --rule-light:#e8e5e0;
+  --surface:#fff;
+  --soft:#f9f8f6;
+  --danger-light:#991b1b;
+  --success-light:#166534;
+  --warning-light:#92400e;
+  --accent:#c2410c;
+  --code-font:"Space Mono","SFMono-Regular",Consolas,monospace;
+  --body-font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+*{box-shadow:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--body-font);font-size:15px;line-height:1.7}
+.app{max-width:980px;margin:0 auto;padding:32px 24px 100px}
+```
+
+Restyle the shell to match the reference:
+
+- left-align `.hdr`, with a thin bottom rule and no centered badge treatment;
+- render `.hdr-tag` as unboxed Space Mono metadata;
+- make `.nav` a zero-radius ruled index rather than a rounded card;
+- invert the active navigation item to black with white text;
+- render `.card` as a white editorial section with square corners and thin rules;
+- render code/YAML examples as light editor surfaces with Space Mono;
+- use orange only for dbt/transition emphasis, green for confirmed safe paths, and red/amber for warnings;
+- remove every `linear-gradient`, visible shadow, and decorative pill treatment from the English-visible page.
+
+Then add the decision-first opening under the existing subtitle:
+
 Under the existing subtitle, add:
 
 ```html
@@ -183,10 +246,10 @@ Under the existing subtitle, add:
 Add restrained CSS using the current design tokens:
 
 ```css
-.short-answer{margin:0 0 24px;padding:18px 20px;border:1px solid var(--border);border-left:3px solid var(--pl);background:var(--surface)}
-.short-answer-label{margin-bottom:7px;font-family:var(--mono);font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:var(--pl)}
+.short-answer{margin:0 0 40px;padding:20px 0 20px 22px;border:0;border-left:2px solid var(--accent);background:transparent}
+.short-answer-label{margin-bottom:7px;font-family:var(--code-font);font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent)}
 .short-answer h2{margin:0 0 8px;font-size:18px;line-height:1.25}
-.short-answer p{margin:0;max-width:760px;color:var(--muted);font-size:12px;line-height:1.65}
+.short-answer p{margin:0;max-width:760px;color:var(--muted-light);font-size:13px;line-height:1.65}
 ```
 
 - [ ] **Step 2: Define the three-product comparison data**
@@ -886,6 +949,8 @@ http://localhost:8000/dbt-ai-llm/
 
 At a desktop viewport, confirm:
 
+- the page visually matches the published `dbt-vs-stored-procs/` field-notes system: paper background, left-aligned header, ruled navigation, flat editorial sections, Inter, and Space Mono;
+- no dark card remnants, gradients, shadows, or decorative pill chrome remain visible;
 - the short answer is visible before the step navigation;
 - all seven direct-step buttons work;
 - previous/next controls update content and progress;
