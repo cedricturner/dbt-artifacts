@@ -23,6 +23,7 @@ do
 done
 
 rg -Fq '<title>From Data to Conversation</title>' "$page"
+rg -Fq '<link rel="icon" href="data:,">' "$page"
 rg -q '<h1[^>]*>From Data to Conversation</h1>' "$page"
 
 # Field-notes visual system matches the stored-procedures explainer.
@@ -35,6 +36,7 @@ rg -Fq 'family=Space+Mono' "$page"
 rg -Fq '.hdr{text-align:left' "$page"
 rg -Fq '.nav{border-radius:0' "$page"
 rg -Fq 'box-shadow: none' "$page"
+rg -Fq 'grid-template-columns:repeat(4,minmax(120px,1fr) 7px) minmax(120px,1fr)' "$page"
 if rg -q 'linear-gradient' "$page"; then
   echo "Field-notes page contains a prohibited gradient" >&2
   exit 1
@@ -74,6 +76,7 @@ rg -Fq 'window.setLangAI' "$page"
 rg -Fq "window.setLangAI('en');" "$page"
 rg -Fq '日本語' "$page"
 rg -q 'class="lang-toggle"[^>]*hidden|hidden[^>]*class="lang-toggle"' "$page"
+rg -Fq '.lang-toggle[hidden]{display:none}' "$page"
 
 # Navigation and accessibility hooks.
 rg -Fq 'aria-live="polite"' "$page"

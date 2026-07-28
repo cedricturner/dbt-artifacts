@@ -37,6 +37,8 @@ rg -Fq 'color: var(--paper)' "$preview"
 rg -q 'AI' "$preview"
 rg -q 'LLMs' "$preview"
 rg -q 'SQL' "$preview"
+rg -Fq 'how semantic layers define trusted metrics' "$preview"
+rg -Fq 'what those definitions let AI agents safely ask' "$preview"
 
 if rg -q '>Topic<|>What it explains<|>Time<' "$preview"; then
   echo "Preview contains title-cased interface labels" >&2

@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>From Data to Conversation</title>
+<link rel="icon" href="data:,">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -58,6 +59,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body-font);font-
 .prog{font-family:var(--code-font);font-size:11px;color:var(--faint-light)}
 .cap{font-size:12px;color:var(--muted-light);line-height:1.6;margin-top:18px;padding:14px 0 0;background:transparent;border:0;border-top:1px solid var(--rule-light);border-radius:0}
 .lang-toggle{display:inline-flex;padding:0;gap:0;flex-shrink:0;background:transparent;border:1px solid var(--ink);border-radius:0}
+.lang-toggle[hidden]{display:none}
 .lang-btn{padding:7px 11px;cursor:pointer;color:var(--muted-light);background:transparent;border:0;border-radius:0;font-family:var(--code-font);font-size:10px;font-weight:600;line-height:1}
 .lang-btn+.lang-btn{border-left:1px solid var(--ink)}
 .lang-btn:hover{color:var(--ink)}
@@ -65,8 +67,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body-font);font-
 code,pre{font-family:var(--code-font)}
 code{padding:1px 4px;background:var(--soft);color:var(--ink)}
 .example-label,.field-label{font-family:var(--code-font);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint-light)}
-.semantic-flow{display:grid;grid-template-columns:repeat(9,minmax(0,auto));align-items:center;gap:8px;margin:12px 0 26px;padding:18px;background:var(--soft);border:1px solid var(--rule-light);overflow-x:auto}
-.flow-node{min-width:112px;font-family:var(--code-font);font-size:10px;color:var(--ink)}
+.semantic-flow{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr) 7px) minmax(120px,1fr);align-items:center;gap:8px;margin:12px 0 26px;padding:18px;background:var(--soft);border:1px solid var(--rule-light);overflow-x:auto}
+.flow-node{min-width:120px;font-family:var(--code-font);font-size:10px;color:var(--ink)}
 .flow-arrow{color:var(--accent);font-family:var(--code-font);font-size:12px}
 .definition-grid{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--ink);margin-bottom:22px}
 .definition{padding:16px 16px 16px 0;border-bottom:1px solid var(--rule-light)}
