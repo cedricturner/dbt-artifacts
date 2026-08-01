@@ -205,6 +205,54 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offse
 @media(max-width:700px){.app{padding:38px 20px 80px}.topbar{margin-bottom:54px}.hdr{margin-bottom:60px}.hdr h1{font-size:clamp(40px,13vw,62px)}.jump{justify-content:flex-start;margin-bottom:70px}.tip-head{grid-template-columns:1fr}.viz-grid{grid-template-columns:1fr}.viz-panel+.viz-panel{border-left:0;border-top:1px solid var(--rule)}.viz-cap{flex-direction:column}.viz-cap>div:first-child{border-right:0;border-bottom:1px solid var(--rule)}.language-current{min-width:132px}.language-menu{width:205px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 </style>
+<style id="endless-scroll-theme">
+.mobile-section-picker{display:none}
+.scroll-layout{display:grid;grid-template-columns:170px minmax(0,1fr);gap:44px;align-items:start}
+.section-rail{position:sticky;top:0;display:flex;height:100vh;flex-direction:column;justify-content:center;gap:0;padding:48px 0;margin:0;border:0}
+.section-rail::before{position:absolute;top:calc(50% - 116px);bottom:calc(50% - 116px);left:18px;width:1px;background:#bbb9b0;content:''}
+.section-rail .nav-step{--shape-color:var(--blue);position:relative;display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;align-items:center;width:100%;padding:13px 0;color:#686862;background:transparent;border:0;cursor:pointer;font:400 10px/1.4 var(--mono);text-align:left}
+.section-rail .nav-step:hover{color:var(--ink)}
+.section-rail .step-num{position:relative;z-index:1;display:flex;width:32px;height:32px;align-items:center;justify-content:center;color:#696963;background:var(--paper);border:1.5px solid #696963;border-radius:50%;font:700 9px var(--mono);transform:rotate(-3deg)}
+.section-rail .nav-step:nth-child(even) .step-num{transform:rotate(3deg)}
+.section-rail .nav-step.active{color:var(--ink);font-weight:700}
+.section-rail .nav-step.active .step-num{color:#fff;background:var(--shape-color);border-color:var(--shape-color);transform:none}
+.section-rail .nav-step[data-shape="circle"]{--shape-color:#1f5b8f}
+.section-rail .nav-step[data-shape="square"]{--shape-color:#357447}
+.section-rail .nav-step[data-shape="square"].active .step-num{border-radius:2px;transform:rotate(-2deg)}
+.section-rail .nav-step[data-shape="diamond"]{--shape-color:#a64431}
+.section-rail .nav-step[data-shape="diamond"].active .step-num{border-radius:2px;transform:rotate(45deg)}
+.section-rail .nav-step[data-shape="diamond"].active .step-num span{transform:rotate(-45deg)}
+.section-rail .nav-step[data-shape="triangle"]{--shape-color:#805477}
+.section-rail .nav-step[data-shape="triangle"].active .step-num{width:36px;height:34px;background:var(--shape-color);border:0;border-radius:0;clip-path:polygon(50% 0,100% 100%,0 100%);padding-top:8px}
+.section-rail .nav-step:not(.active) .step-num{width:32px;height:32px;background:var(--paper);border:1.5px solid #696963;border-radius:50%;clip-path:none;color:#696963;padding:0}
+.section-rail .nav-step:focus-visible{outline:2px solid var(--blue);outline-offset:4px}
+.scroll-article{min-width:0}
+.scroll-section{scroll-margin-top:28px}
+.scroll-section+.scroll-section{margin-top:104px;padding-top:76px;border-top:1px solid var(--rule)}
+.section-heading{display:grid;grid-template-columns:54px minmax(0,1fr);column-gap:18px;align-items:end;margin-bottom:42px}
+.section-heading-number{grid-row:1 / span 2;color:#aaa9a2;font:400 46px/1 var(--mono);letter-spacing:-.1em;transform:rotate(-2deg)}
+.section-heading-kicker{color:#696963;font:600 9px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.section-heading-title{margin:5px 0 0;color:var(--ink);font-size:clamp(30px,4.4vw,48px);font-weight:500;line-height:1;letter-spacing:-.045em}
+.scroll-section .section{margin:0}
+.scroll-section .section>.sec-h,.scroll-section .section>.sec-intro{display:none}
+.scroll-section .thesis{margin-bottom:0}
+.scroll-section .core-v2-note{color:#4f4f4a}
+.scroll-section code,.scroll-section pre{color:#20201e}
+@media(max-width:800px){
+  .app{padding-left:20px;padding-right:20px}
+  .mobile-section-picker{position:sticky;top:0;z-index:19;display:block;margin:0 -8px 38px;padding:9px 8px 10px;background:rgba(255,255,255,.96);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);backdrop-filter:blur(10px)}
+  .mobile-section-picker label{display:block;margin-bottom:2px;color:#55554f;font:600 8px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+  #mobile-section-nav{width:100%;padding:3px 26px 3px 0;color:var(--ink);background:transparent;border:0;border-radius:0;font:600 13px var(--sans)}
+  #mobile-section-nav:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+  .scroll-layout{display:block}
+  .section-rail{display:none}
+  .scroll-section{scroll-margin-top:74px}
+  .scroll-section+.scroll-section{margin-top:72px;padding-top:54px}
+  .section-heading{grid-template-columns:44px minmax(0,1fr);column-gap:12px;margin-bottom:30px}
+  .section-heading-number{font-size:38px}
+  .section-heading-title{font-size:30px}
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -229,18 +277,36 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offse
   <p data-i18n-html="hdr_sub">A practitioner's guide to when dbt Core stops being enough, and what the dbt platform adds.</p>
 </div>
 
-<div class="jump">
-  <a href="#right-call" data-i18n="jump1">where core is still right</a>
-  <a href="#tipping-points" data-i18n="jump2">the tipping points</a>
-  <a href="#gutcheck" data-i18n="jump3">gut-check</a>
+<div class="mobile-section-picker">
+  <label for="mobile-section-nav">section</label>
+  <select id="mobile-section-nav" aria-label="Current section">
+    <option value="short-version" data-i18n="thesis_lbl">the short version</option>
+    <option value="right-call" data-i18n="jump1">where core is still right</option>
+    <option value="tipping-points" data-i18n="jump2">the tipping points</option>
+    <option value="gutcheck" data-i18n="jump3">gut-check</option>
+  </select>
 </div>
 
+<div class="scroll-layout">
+<nav class="section-rail" aria-label="Article sections">
+  <button class="nav-step active" type="button" data-shape="circle" data-section-target="short-version"><span class="step-num"><span>1</span></span><span data-i18n="thesis_lbl">the short version</span></button>
+  <button class="nav-step" type="button" data-shape="square" data-section-target="right-call"><span class="step-num"><span>2</span></span><span data-i18n="jump1">where core is still right</span></button>
+  <button class="nav-step" type="button" data-shape="diamond" data-section-target="tipping-points"><span class="step-num"><span>3</span></span><span data-i18n="jump2">the tipping points</span></button>
+  <button class="nav-step" type="button" data-shape="triangle" data-section-target="gutcheck"><span class="step-num"><span>4</span></span><span data-i18n="jump3">gut-check</span></button>
+</nav>
+<main class="scroll-article">
+
+<section class="scroll-section" id="short-version" data-section-id="short-version">
+<header class="section-heading"><span class="section-heading-number">01</span><span class="section-heading-kicker">01 / 04</span><h2 class="section-heading-title" data-i18n="thesis_lbl">the short version</h2></header>
 <div class="thesis">
   <div class="tl" data-i18n="thesis_lbl">the short version</div>
-  <p data-i18n-html="thesis_p">dbt Core is the real transformation engine, not a limited trial: models, tests, docs, <code>ref()</code>, <code>source()</code>, free and open source (Apache 2.0) forever, maintained by <b>Fivetran + dbt Labs</b>. The platform doesn't add more dbt. It adds the operational layer around it: scheduling, access control, discoverability, cross-project sharing. For a solo analyst or a small all-engineer team, Core alone can be enough. Below: the specific moments where that stops being true.</p>
+  <p data-i18n-html="thesis_p">dbt Core is the real transformation engine, not a limited trial: models, tests, docs, <code>ref()</code>, <code>source()</code>, free and open source (Apache 2.0) forever, maintained by <b>Fivetran + dbt Labs</b>. The platform adds the operational layer around dbt: scheduling, access control, discoverability, and cross-project sharing. For a solo analyst or a small all-engineer team, Core alone can be enough. Below are the specific moments when that stops being true.</p>
 </div>
+</section>
 
-<section class="section" id="right-call">
+<section class="scroll-section" id="right-call" data-section-id="right-call">
+  <header class="section-heading"><span class="section-heading-number">02</span><span class="section-heading-kicker">02 / 04</span><h2 class="section-heading-title" data-i18n="rc_h">Where dbt Core alone is still the right call</h2></header>
+<div class="section">
   <h2 class="sec-h" data-i18n="rc_h">Where dbt Core alone is still the right call</h2>
   <p class="sec-intro" data-i18n="rc_intro">Start with the teams that do not need the platform.</p>
   <div class="rightcard">
@@ -259,9 +325,12 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offse
       <p data-i18n="alt_p2">Other warehouses may offer similar native paths too, so don't assume the platform is the only door out.</p>
     </div>
   </div>
+</div>
 </section>
 
-<section class="section" id="tipping-points">
+<section class="scroll-section" id="tipping-points" data-section-id="tipping-points">
+  <header class="section-heading"><span class="section-heading-number">03</span><span class="section-heading-kicker">03 / 04</span><h2 class="section-heading-title" data-i18n="tp_h">Where the line starts moving</h2></header>
+<div class="section">
   <h2 class="sec-h" data-i18n="tp_h">Where the line starts moving</h2>
   <p class="sec-intro" data-i18n="tp_intro">The line moves when ordinary operating problems begin to stack up.</p>
 
@@ -584,17 +653,20 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
       </svg>
       <div class="viz-cap">
         <div><span class="viz-tag core" data-i18n="vtag_core">core-only</span><span data-i18n="c8">MetricFlow definitions work in the CLI, but nothing outside it can query them</span></div>
-        <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f8">the Semantic Layer serves one metric definition to every consuming tool</span></div>
+        <div><span class="viz-tag plat" data-i18n="vtag_plat">platform</span><span data-i18n="f8">the Semantic Layer makes one metric definition available to every consuming tool</span></div>
       </div>
     </div>
   </div>
-</section>
 
 <p class="core-v2-note" data-i18n="corev2">dbt Core v2 shipped its first alpha in June 2026. The Rust-based rewrite remains Apache 2.0 licensed. It is not the default stable release yet, so this comparison describes the dbt Core (v1.x) most teams install today.</p>
 
 <p class="core-v2-note" data-i18n="fusion_p">dbt Core v2 and the proprietary dbt Fusion engine now share that same Rust runtime: Core v2 is the open-source foundation, and Fusion is a separately licensed distribution built on top of it, adding SQL comprehension, column-level lineage, and richer local development. Fusion is free to use locally (via its VS Code extension) and also selectable inside the dbt platform.</p>
+</div>
+</section>
 
-<section class="section" id="gutcheck">
+<section class="scroll-section" id="gutcheck" data-section-id="gutcheck">
+  <header class="section-heading"><span class="section-heading-number">04</span><span class="section-heading-kicker">04 / 04</span><h2 class="section-heading-title" data-i18n="gc_h">A quick gut-check</h2></header>
+<div class="section">
   <h2 class="sec-h" data-i18n="gc_h">A quick gut-check</h2>
   <p class="sec-intro" data-i18n="gc_intro">Seven yes/no questions. Answering "no" to all of them is a perfectly good outcome.</p>
 
@@ -635,6 +707,7 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
     <div class="gut-verdict" id="gutVerdict">Core is the default here. Nothing has pushed you off it yet.</div>
     <div class="gut-caps" id="gutCaps"></div>
   </div>
+</div>
 </section>
 
 <div class="closing">
@@ -643,6 +716,8 @@ from {{ ref('finance_project', 'fct_orders') }}</pre>
 
 <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #21262d"><a href="https://github.com/cedricturner/dbt-artifacts" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'"><svg height="13" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span data-i18n-html="gh_src">view source on github</span></a></div>
 
+</main>
+</div>
 </div>
 <script>
 /* ---- mesh example toggle ---- */
@@ -754,6 +829,68 @@ CvPCacheEn();
   var saved=null;try{saved=localStorage.getItem('lang');}catch(e){}
   var initial=saved||(((navigator.language||navigator.userLanguage||'').toLowerCase().indexOf('ja')===0)?'ja':'en');
   CvPSetLang(initial);
+})();
+</script>
+<script id="endless-scroll-navigation">
+(function(){
+  var sections=Array.prototype.slice.call(document.querySelectorAll('[data-section-id]'));
+  var navItems=Array.prototype.slice.call(document.querySelectorAll('[data-section-target]'));
+  var mobileNav=document.getElementById('mobile-section-nav');
+  var reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  var activeId=sections[0]?sections[0].getAttribute('data-section-id'):'';
+  var scrollFrame=0;
+
+  function hasSection(sectionId){
+    return sections.some(function(section){return section.getAttribute('data-section-id')===sectionId;});
+  }
+  function setActive(sectionId,updateHash){
+    if(!hasSection(sectionId))return;
+    activeId=sectionId;
+    navItems.forEach(function(item){
+      var active=item.getAttribute('data-section-target')===sectionId;
+      item.classList.toggle('active',active);
+      if(active)item.setAttribute('aria-current','location');
+      else item.removeAttribute('aria-current');
+    });
+    if(mobileNav)mobileNav.value=sectionId;
+    if(updateHash&&window.location.hash!=='#'+sectionId)history.replaceState(null,'','#'+sectionId);
+  }
+  function navigate(sectionId){
+    var section=document.querySelector('[data-section-id="'+sectionId+'"]');
+    if(!section)return;
+    section.scrollIntoView({behavior:reduceMotion.matches?'auto':'smooth',block:'start'});
+    setActive(sectionId,true);
+  }
+  function findActive(){
+    if(window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-2){
+      return sections.length?sections[sections.length-1].getAttribute('data-section-id'):'';
+    }
+    var readingLine=window.matchMedia('(max-width: 800px)').matches?96:120;
+    var selected=sections[0];
+    sections.forEach(function(section){if(section.getBoundingClientRect().top<=readingLine)selected=section;});
+    return selected?selected.getAttribute('data-section-id'):'';
+  }
+  function sync(){var next=findActive();if(next&&next!==activeId)setActive(next,true);}
+  function onScroll(){
+    if(scrollFrame)return;
+    scrollFrame=requestAnimationFrame(function(){scrollFrame=0;sync();});
+  }
+  navItems.forEach(function(item){item.addEventListener('click',function(){navigate(item.getAttribute('data-section-target'));});});
+  if(mobileNav)mobileNav.addEventListener('change',function(){navigate(mobileNav.value);});
+
+  var initialHash=window.location.hash.slice(1);
+  var hasInitial=hasSection(initialHash);
+  setActive(hasInitial?initialHash:activeId,false);
+  if(hasInitial)document.querySelector('[data-section-id="'+initialHash+'"]').scrollIntoView({behavior:'auto',block:'start'});
+  if('IntersectionObserver' in window){
+    var observer=new IntersectionObserver(sync,{rootMargin:'-96px 0px -70% 0px',threshold:[0,.01]});
+    sections.forEach(function(section){observer.observe(section);});
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('hashchange',function(){var next=window.location.hash.slice(1);if(hasSection(next))navigate(next);});
+
+  var translatedSetLang=CvPSetLang;
+  CvPSetLang=function(lang){translatedSetLang(lang);setActive(activeId,false);};
 })();
 </script>
 <script src="translations.js"></script>
