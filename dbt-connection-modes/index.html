@@ -14,7 +14,7 @@
     --green-50:#EAF3DE;--green-600:#3B6D11;--green-800:#27500A;
     --gray-50:#F1EFE8;--gray-600:#5F5E5A;--gray-800:#444441;
     --bg:#fff;--bg2:#f7f6f3;--border:rgba(0,0,0,0.1);
-    --text:#1a1a18;--muted:#5f5e5a;--subtle:#9c9a92;
+    --text:#1a1a18;--muted:#4f4e49;--subtle:#686760;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
   }
   @media(prefers-color-scheme:dark){
@@ -27,11 +27,13 @@
       --green-50:#173404;--green-600:#639922;--green-800:#97C459;
       --gray-50:#2C2C2A;--gray-600:#B4B2A9;--gray-800:#D3D1C7;
       --bg:#1c1c1a;--bg2:#242422;--border:rgba(255,255,255,0.1);
-      --text:#e8e6de;--muted:#b4b2a9;--subtle:#6e6d67;
+      --text:#e8e6de;--muted:#c8c5bc;--subtle:#aaa79f;
     }
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);line-height:1.6;max-width:960px;margin:0 auto;padding:28px 20px 64px}
+  body{background:var(--bg);color:var(--text);line-height:1.6;margin:0;padding:0 20px 64px}
+  .page-shell{max-width:1180px;margin:0 auto}
+  .article-header{max-width:960px;margin:0 auto;padding:28px 0 0}
   h1{font-size:19px;font-weight:500;margin-bottom:3px}
   .subtitle{font-size:13px;color:var(--muted);margin-bottom:20px}
 
@@ -41,11 +43,31 @@
   .aud-btn:hover{color:var(--text);border-color:var(--text)}
   .aud-btn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
 
-  .tabs{display:flex;gap:2px;border-bottom:0.5px solid var(--border);margin-bottom:22px;flex-wrap:wrap}
-  .tab{padding:7px 13px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-0.5px;transition:color .15s;white-space:nowrap}
-  .tab:hover{color:var(--text)}
-  .tab.active{color:var(--text);border-bottom-color:var(--text)}
-  .panel{display:none}.panel.active{display:block}
+  .scroll-layout{display:grid;grid-template-columns:172px minmax(0,1fr);gap:24px;align-items:start}
+  .section-rail{position:sticky;top:0;height:100vh;padding:32px 0;display:flex;flex-direction:column;justify-content:center;gap:6px}
+  .section-rail .tab{--shape-color:var(--blue-600);display:grid;grid-template-columns:30px 1fr;align-items:center;gap:10px;width:100%;padding:7px 4px;border:0;background:none;color:var(--muted);font:500 12px/1.35 inherit;text-align:left;cursor:pointer}
+  .section-rail .tab:hover,.section-rail .tab:focus-visible{color:var(--text)}
+  .section-rail .tab:focus-visible{outline:2px solid var(--text);outline-offset:3px;border-radius:5px}
+  .rail-marker{width:23px;height:23px;display:grid;place-items:center;border:1.5px solid var(--muted);border-radius:48% 52% 45% 55% / 52% 46% 54% 48%;color:transparent;font-size:10px;transform:rotate(-3deg);transition:background .16s,color .16s,border-color .16s,clip-path .16s,border-radius .16s}
+  .section-rail .tab.active{color:var(--text)}
+  .section-rail .tab.active .rail-marker{background:var(--shape-color);border-color:var(--shape-color);color:#fff}
+  .section-rail .tab[data-shape="circle"]{--shape-color:var(--blue-600)}
+  .section-rail .tab[data-shape="circle"].active .rail-marker{border-radius:50%;transform:none}
+  .section-rail .tab[data-shape="square"]{--shape-color:var(--teal-600)}
+  .section-rail .tab[data-shape="square"].active .rail-marker{border-radius:3px}
+  .section-rail .tab[data-shape="diamond"]{--shape-color:var(--amber-600)}
+  .section-rail .tab[data-shape="diamond"].active .rail-marker{border-radius:2px;transform:rotate(45deg)}
+  .section-rail .tab[data-shape="diamond"].active .rail-number{transform:rotate(-45deg)}
+  .section-rail .tab[data-shape="triangle"]{--shape-color:var(--purple-600)}
+  .section-rail .tab[data-shape="triangle"].active .rail-marker{clip-path:polygon(50% 2%,98% 94%,2% 94%);border:0;border-radius:0}
+  .section-rail .tab[data-shape="hexagon"]{--shape-color:var(--coral-600)}
+  .section-rail .tab[data-shape="hexagon"].active .rail-marker{clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%);border:0;border-radius:0}
+  .content-stream{min-width:0}
+  .panel{display:block;min-height:100vh;padding:44px 0 64px;scroll-margin-top:20px;border-bottom:.5px solid var(--border)}
+  .panel:last-child{border-bottom:0}
+  .section-heading{display:flex;align-items:baseline;gap:10px;margin-bottom:22px}
+  .section-kicker{font:600 10px/1 monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--subtle)}
+  .section-heading-title{font-size:20px;font-weight:550;line-height:1.2}
 
   .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:20px}
   .metric{background:var(--bg2);border-radius:6px;padding:10px 12px}
@@ -102,15 +124,31 @@
   body.aud-everyone .for-everyone{display:block}
   body.aud-security .for-security{display:block}
 
-  .lang-toggle{display:inline-flex;background:var(--bg2);border:0.5px solid var(--border);border-radius:20px;padding:3px;gap:2px;flex-shrink:0}
-  .lang-btn{font-size:11px;font-weight:500;color:var(--muted);background:none;border:none;border-radius:20px;padding:5px 12px;cursor:pointer;transition:all .15s;line-height:1}
-  .lang-btn:hover{color:var(--text)}
-  .lang-btn.active{background:var(--text);color:var(--bg)}
+  .language-picker{position:relative;z-index:30}
+  .language-current{--language-ink:var(--blue-600);min-width:112px;padding:7px 28px 7px 12px;border:1px solid currentColor;border-radius:6px;background:var(--bg);color:var(--language-ink);font:600 11px/1 inherit;text-align:left;cursor:pointer;position:relative;transform:rotate(.4deg)}
+  .language-current::after{content:"+";position:absolute;right:10px;top:50%;transform:translateY(-52%);font-size:14px}
+  .language-current[aria-expanded="true"]::after{content:"−"}
+  .language-menu{position:absolute;right:0;top:calc(100% + 7px);width:172px;padding:7px;background:var(--bg);border:1px solid var(--border);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+  .language-menu[hidden]{display:none}
+  .language-option{--option-ink:var(--blue-600);display:block;width:100%;padding:8px 9px;border:0;border-radius:5px;background:transparent;color:var(--option-ink);font:600 11px/1.2 inherit;text-align:left;cursor:pointer}
+  .language-option:hover,.language-option:focus-visible,.language-option[aria-selected="true"]{background:var(--bg2);outline:none}
+  .language-ja{--option-ink:var(--coral-600)}
+  .mobile-section-picker{display:none}
+  code{color:var(--text)}
+  @media(max-width:760px){
+    body{padding:0 14px 48px}.article-header{padding-top:18px}.scroll-layout{display:block}.section-rail{display:none}
+    .mobile-section-picker{display:flex;position:sticky;top:0;z-index:20;align-items:center;gap:8px;margin:0 -14px;padding:8px 14px;background:color-mix(in srgb,var(--bg) 94%,transparent);border-bottom:.5px solid var(--border);backdrop-filter:blur(10px)}
+    .mobile-section-picker label{font:600 10px/1 monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--subtle)}
+    #mobile-section-nav{min-width:0;flex:1;padding:7px 30px 7px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font:600 12px/1.2 inherit}
+    .panel{min-height:auto;padding:38px 0 48px;scroll-margin-top:54px}.section-heading-title{font-size:18px}
+  }
 </style>
 </head>
 <body class="aud-everyone">
+<div class="page-shell">
+<header class="article-header">
 
-<div style="padding:16px 20px 0;display:flex;justify-content:space-between;align-items:center;gap:12px"><a href="../" style="font-family:monospace;font-size:11px;color:#6b7280;text-decoration:none" onmouseover="this.style.color='#374151'" onmouseout="this.style.color='#6b7280'" data-i18n-html="back_all">← all explainers</a><div class="lang-toggle" role="group" aria-label="Language / 言語"><button type="button" class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button><button type="button" class="lang-btn" data-lang="ja" onclick="setLang('ja')">日本語</button></div></div>
+<div style="padding:16px 0 0;display:flex;justify-content:space-between;align-items:center;gap:12px"><a href="../" style="font-family:monospace;font-size:11px;color:var(--muted);text-decoration:none" data-i18n-html="back_all">← all explainers</a><div class="language-picker"><button type="button" class="language-current" id="language-current" aria-haspopup="listbox" aria-expanded="false" aria-controls="language-menu" onclick="toggleLanguageMenu()" onkeydown="handleLanguageKeydown(event)">English</button><div class="language-menu" id="language-menu" role="listbox" aria-label="Language" hidden><button type="button" class="language-option language-en" role="option" aria-selected="true" data-lang="en" onclick="selectLanguage('en')">English</button><button type="button" class="language-option language-ja" role="option" aria-selected="false" data-lang="ja" onclick="selectLanguage('ja')">日本語</button></div></div></div>
 
 <h1 data-i18n-html="h1">How dbt connects to your data platform</h1>
 <p class="subtitle" data-i18n-html="subtitle">A guide to every connection model, from dbt Core to single-tenant enterprise. Click any component to learn more.</p>
@@ -120,17 +158,22 @@
   <button class="aud-btn active" onclick="setAud('everyone',this)" data-i18n-html="aud_plain">Plain English</button>
   <button class="aud-btn" onclick="setAud('security',this)" data-i18n-html="aud_tech">Technical</button>
 </div>
+</header>
 
-<div class="tabs">
-  <button class="tab active" onclick="showTab('core',this)" data-i18n-html="tab_core">dbt Core</button>
-  <button class="tab" onclick="showTab('multi',this)" data-i18n-html="tab_multi">Platform: multi-tenant</button>
-  <button class="tab" onclick="showTab('single',this)" data-i18n-html="tab_single">Platform: single-tenant</button>
-  <button class="tab" onclick="showTab('pl',this)" data-i18n-html="tab_pl">Private connections</button>
-  <button class="tab" onclick="showTab('compare',this)" data-i18n-html="tab_compare">Compare all</button>
-</div>
+<div class="mobile-section-picker"><label for="mobile-section-nav">section</label><select id="mobile-section-nav" aria-label="Current section"><option value="section-core" data-i18n="tab_core">dbt Core</option><option value="section-multi" data-i18n="tab_multi">Platform: multi-tenant</option><option value="section-single" data-i18n="tab_single">Platform: single-tenant</option><option value="section-pl" data-i18n="tab_pl">Private connections</option><option value="section-compare" data-i18n="tab_compare">Compare all</option></select></div>
+<div class="scroll-layout">
+<nav class="section-rail" aria-label="Article sections">
+  <button class="tab active" type="button" data-shape="circle" data-section-target="section-core"><span class="rail-marker"><span class="rail-number">1</span></span><span data-i18n-html="tab_core">dbt Core</span></button>
+  <button class="tab" type="button" data-shape="square" data-section-target="section-multi"><span class="rail-marker"><span class="rail-number">2</span></span><span data-i18n-html="tab_multi">Platform: multi-tenant</span></button>
+  <button class="tab" type="button" data-shape="diamond" data-section-target="section-single"><span class="rail-marker"><span class="rail-number">3</span></span><span data-i18n-html="tab_single">Platform: single-tenant</span></button>
+  <button class="tab" type="button" data-shape="triangle" data-section-target="section-pl"><span class="rail-marker"><span class="rail-number">4</span></span><span data-i18n-html="tab_pl">Private connections</span></button>
+  <button class="tab" type="button" data-shape="hexagon" data-section-target="section-compare"><span class="rail-marker"><span class="rail-number">5</span></span><span data-i18n-html="tab_compare">Compare all</span></button>
+</nav>
+<main class="content-stream">
 
 <!-- ==================== dbt CORE ==================== -->
-<div id="tab-core" class="panel active">
+<section id="tab-core" class="panel active" data-section-id="section-core">
+  <div class="section-heading"><span class="section-kicker">01 / connection mode</span><h2 class="section-heading-title" data-i18n-html="tab_core">dbt Core</h2></div>
 
   <div class="for-everyone">
     <p style="font-size:13px;color:var(--muted);margin-bottom:14px" data-i18n-html="eo_intro1">dbt Core is free software your team installs and runs on your own computers or servers. dbt Labs writes the software, but once you download it, your team controls everything, including how it connects to your database.</p>
@@ -159,7 +202,7 @@
         <text x="340" y="140" text-anchor="middle" fill="var(--muted)" font-size="11" font-family="inherit" data-i18n="svg8">Your team controls everything, including how the connection is made.</text>
       </svg>
     </div>
-    <div class="callout" data-i18n-html="callout1"><strong>Simple version:</strong> dbt Core is like a recipe app you install on your own phone. The app developer does not control your Wi-Fi or what restaurant you order from. You own all of that.</div>
+    <div class="callout" data-i18n-html="callout1"><strong>An analogy:</strong> dbt Core is like a recipe app you install on your own phone. The app developer does not control your Wi-Fi or what restaurant you order from. You own all of that.</div>
     <div class="support-box">
       <div class="support-box-title" data-i18n-html="suptitle1"><span class="dot" style="background:var(--gray-600)"></span>Getting help</div>
       <div class="support-col-body" style="font-size:13px" data-i18n-html="supbody_eo1">No paid support from dbt Labs. Help comes from the dbt community through Slack, GitHub, and public documentation. Your team is responsible for keeping it running.</div>
@@ -200,12 +243,13 @@
         <div class="support-col"><div class="support-col-label" data-i18n-html="suplabel2">Support</div><div class="support-col-body" data-i18n-html="supbody_sec2">Community only. dbt Slack, GitHub Issues, docs.getdbt.com. No SLA. Your team owns the full stack.</div></div>
       </div>
     </div>
-    <div class="callout" data-i18n-html="callout2"><strong>Key point:</strong> dbt Labs manages nothing in the connection path. Run it in a private subnet and the connection stays private. Run it on a laptop and it goes over the internet. Full flexibility, full responsibility.</div>
+    <div class="callout" data-i18n-html="callout2"><strong>dbt Labs manages nothing in the connection path.</strong> Run dbt Core in a private subnet and the connection stays private. Run it on a laptop and it goes over the internet. Your team controls the setup and maintains it.</div>
   </div>
-</div>
+</section>
 
 <!-- ==================== MULTI-TENANT ==================== -->
-<div id="tab-multi" class="panel">
+<section id="tab-multi" class="panel" data-section-id="section-multi">
+  <div class="section-heading"><span class="section-kicker">02 / connection mode</span><h2 class="section-heading-title" data-i18n-html="tab_multi">Platform: multi-tenant</h2></div>
   <div class="for-everyone">
     <p style="font-size:13px;color:var(--muted);margin-bottom:14px" data-i18n-html="eo_intro2">The dbt Platform is a hosted service run by dbt Labs. Your team logs in, sets up your data work, and dbt Labs handles the servers. You share that infrastructure with other dbt customers, like sharing a building with other companies, each in their own locked office.</p>
     <div class="diagram-wrap">
@@ -229,7 +273,7 @@
         <text x="340" y="140" text-anchor="middle" fill="var(--coral-600)" font-size="11" font-weight="500" font-family="inherit" data-i18n="svg25">Data travels over the internet. Encrypted, but public. Your IT team must allow dbt's addresses through.</text>
       </svg>
     </div>
-    <div class="callout" data-i18n-html="callout3"><strong>Is this secure?</strong> Yes, for most companies. The connection is encrypted and your database still requires a login. Some industries (banking, healthcare) may require a fully private connection that never touches the internet. See the "Private connections" tab for that.</div>
+    <div class="callout" data-i18n-html="callout3"><strong>This setup meets the needs of most companies.</strong> The connection is encrypted and your database still requires a login. Some industries (banking, healthcare) may require a fully private connection that never touches the internet. See "Private connections" for that setup.</div>
     <div class="support-box">
       <div class="support-box-title" data-i18n-html="suptitle3"><span class="dot" style="background:var(--blue-600)"></span>Getting help</div>
       <div class="support-col-body" style="font-size:13px" data-i18n-html="supbody_eo2">dbt Labs support handles platform questions. Your IT team manages the firewall rules. If dbt changes their server addresses, they notify you and your team updates the firewall.</div>
@@ -272,10 +316,11 @@
     </div>
     <div class="callout" data-i18n-html="callout4"><strong>Multi-tenant is where most teams start.</strong> The tradeoff is shared compute (logically isolated) and a default connection over the public internet. Add PrivateLink to get private connectivity without changing your deployment tier.</div>
   </div>
-</div>
+</section>
 
 <!-- ==================== SINGLE-TENANT ==================== -->
-<div id="tab-single" class="panel">
+<section id="tab-single" class="panel" data-section-id="section-single">
+  <div class="section-heading"><span class="section-kicker">03 / connection mode</span><h2 class="section-heading-title" data-i18n-html="tab_single">Platform: single-tenant</h2></div>
   <div class="for-everyone">
     <p style="font-size:13px;color:var(--muted);margin-bottom:14px" data-i18n-html="eo_intro3">Same dbt Platform, but your company gets its own private copy. Only your company's work runs on it. This is common in banking, insurance, and healthcare, where rules may require that systems are not shared with other organizations.</p>
     <div class="diagram-wrap">
@@ -303,7 +348,7 @@
         <text x="340" y="148" text-anchor="middle" fill="var(--muted)" font-size="11" font-family="inherit" data-i18n="svg47">Because this is your own instance, setting up the private tunnel is simpler and more predictable.</text>
       </svg>
     </div>
-    <div class="callout" data-i18n-html="callout5"><strong>Do I need this?</strong> Not always. Most companies do fine with the shared service. Single-tenant is typically chosen when a compliance or legal team specifically requires it, or when your security team wants a simpler story for an audit or leadership review.</div>
+    <div class="callout" data-i18n-html="callout5"><strong>Most companies use the shared service.</strong> Teams typically choose single-tenant when compliance or legal requires it, or when security needs a simpler explanation for an audit or leadership review.</div>
     <div class="support-box">
       <div class="support-box-title" data-i18n-html="suptitle5"><span class="dot" style="background:var(--blue-600)"></span>Getting help</div>
       <div class="support-col-body" style="font-size:13px" data-i18n-html="supbody_eo3">dbt Labs provides a dedicated support tier and an account team. They are typically involved from the beginning of setup.</div>
@@ -354,10 +399,11 @@
     </div>
     <div class="callout" data-i18n-html="callout6"><strong>Single-tenant vs multi-tenant:</strong> The runtime lives in a dedicated AWS account with no shared compute. Compliance conversations are simpler and CIDR ranges are predictable.</div>
   </div>
-</div>
+</section>
 
 <!-- ==================== PRIVATE CONNECTIONS ==================== -->
-<div id="tab-pl" class="panel">
+<section id="tab-pl" class="panel" data-section-id="section-pl">
+  <div class="section-heading"><span class="section-kicker">04 / connection mode</span><h2 class="section-heading-title" data-i18n-html="tab_pl">Private connections</h2></div>
 
   <div class="for-everyone">
     <p style="font-size:13px;color:var(--muted);margin-bottom:14px" data-i18n-html="eo_intro4">A private connection means data never travels over the public internet at all. Instead it goes through a locked private tunnel between dbt and your database. Select an option below to see how each one works.</p>
@@ -381,7 +427,7 @@
     <div class="diagram-wrap" id="eo-pl-diagram">
       <!-- Rendered by JS -->
     </div>
-    <div class="callout" data-i18n-html="callout7"><strong>Which one should we use?</strong> Start with your database's built-in option if it supports private connections. If you need more control over who can connect, or your database does not support it, ask your dbt account team which option fits your setup.</div>
+    <div class="callout" data-i18n-html="callout7"><strong>Start with your database's built-in option</strong> if it supports private connections. If you need more control over who can connect, or your database does not support it, ask your dbt account team which option fits your setup.</div>
     <div class="support-box">
       <div class="support-box-title" data-i18n-html="suptitle7"><span class="dot" style="background:var(--green-600)"></span>Getting help</div>
       <div class="support-col-body" style="font-size:13px" data-i18n-html="supbody_eo4">All three options keep data off the public internet. The difference is who builds each side of the tunnel. dbt's field engineering team can guide your setup for any of these options.</div>
@@ -427,17 +473,18 @@
     </div>
     <div class="callout" data-i18n-html="callout8"><strong>All three share the same guarantee:</strong> traffic stays on the AWS backbone and never touches the public internet. The difference is who builds which side of the connection and how much control your team retains.</div>
   </div>
-</div>
+</section>
 
 <!-- ==================== COMPARE ==================== -->
-<div id="tab-compare" class="panel">
+<section id="tab-compare" class="panel" data-section-id="section-compare">
+  <div class="section-heading"><span class="section-kicker">05 / decision guide</span><h2 class="section-heading-title" data-i18n-html="tab_compare">Compare all</h2></div>
   <div class="for-everyone">
-    <p style="font-size:14px;color:var(--muted);margin-bottom:18px" data-i18n-html="compare_intro1">Here is a simple way to pick the right option.</p>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:18px" data-i18n-html="compare_intro1">Use these constraints to pick a connection mode.</p>
     <div class="plain-steps">
-      <div class="plain-step"><div class="step-num">1</div><div class="step-body" data-i18n-html="stepbody1"><strong>Building it yourself or want full control?</strong> Use dbt Core. Free, open-source, your team manages everything.</div></div>
-      <div class="plain-step"><div class="step-num">2</div><div class="step-body" data-i18n-html="stepbody2"><strong>Want dbt Labs to manage the servers?</strong> Start with the shared dbt Platform. Works out of the box for most companies.</div></div>
-      <div class="plain-step"><div class="step-num">3</div><div class="step-body" data-i18n-html="stepbody3"><strong>In a regulated industry or need a dedicated instance?</strong> Ask about single-tenant. Same service, but yours alone.</div></div>
-      <div class="plain-step"><div class="step-num">4</div><div class="step-body" data-i18n-html="stepbody4"><strong>Security team says data cannot go over the internet?</strong> Add a private connection. See the private connections tab for the three setup options.</div></div>
+      <div class="plain-step"><div class="step-num">1</div><div class="step-body" data-i18n-html="stepbody1"><strong>For full control:</strong> use dbt Core. It is free and open-source, and your team manages everything.</div></div>
+      <div class="plain-step"><div class="step-num">2</div><div class="step-body" data-i18n-html="stepbody2"><strong>For managed servers:</strong> start with the shared dbt Platform. It works out of the box for most companies.</div></div>
+      <div class="plain-step"><div class="step-num">3</div><div class="step-body" data-i18n-html="stepbody3"><strong>For regulated industries or dedicated infrastructure:</strong> ask about single-tenant. The service is the same, but the instance is yours alone.</div></div>
+      <div class="plain-step"><div class="step-num">4</div><div class="step-body" data-i18n-html="stepbody4"><strong>When data cannot cross the public internet:</strong> add a private connection. See "Private connections" for the three setup options.</div></div>
     </div>
   </div>
   <div class="for-security">
@@ -470,6 +517,9 @@
     </div>
   </div>
 <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #21262d"><a href="https://github.com/cedricturner/dbt-artifacts" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'"><svg height="13" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span data-i18n-html="gh_src">view source on github</span></a></div>
+</section>
+</main>
+</div>
 </div>
 
 <script>
@@ -850,14 +900,6 @@ function selectPL(type, aud) {
   if(box) box.classList.remove('visible');
 }
 
-function showTab(id,btn){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  btn.classList.add('active');
-  document.querySelectorAll('.explain-box').forEach(b=>b.classList.remove('visible'));
-}
-
 function setAud(aud,btn){
   document.querySelectorAll('.aud-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -888,17 +930,52 @@ function setLang(lang){
     else if(dict[k]!==undefined){el.innerHTML=dict[k];}
   });
   document.documentElement.lang=lang;
-  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-lang')===lang);});
+  var meta={en:{label:'English',color:'var(--blue-600)'},ja:{label:'日本語',color:'var(--coral-600)'}};
+  var current=document.getElementById('language-current');
+  if(current){current.textContent=meta[lang].label;current.style.setProperty('--language-ink',meta[lang].color);}
+  document.querySelectorAll('.language-option').forEach(function(option){option.setAttribute('aria-selected',String(option.getAttribute('data-lang')===lang));});
   // refresh dynamically-rendered content (PL diagrams + any open explain box)
   selectPL(currentPL);
   if(lastExplain){explain(lastExplain.tab,lastExplain.key);}
   try{localStorage.setItem('lang',lang);}catch(e){}
 }
+function toggleLanguageMenu(){
+  var menu=document.getElementById('language-menu'),button=document.getElementById('language-current');
+  var opening=menu.hidden;menu.hidden=!opening;button.setAttribute('aria-expanded',String(opening));
+}
+function closeLanguageMenu(){var menu=document.getElementById('language-menu'),button=document.getElementById('language-current');menu.hidden=true;button.setAttribute('aria-expanded','false');}
+function selectLanguage(lang){setLang(lang);closeLanguageMenu();document.getElementById('language-current').focus();}
+function handleLanguageKeydown(event){if(event.key==='ArrowDown'){event.preventDefault();var menu=document.getElementById('language-menu');if(menu.hidden)toggleLanguageMenu();menu.querySelector('.language-option').focus();}else if(event.key==='Escape'){closeLanguageMenu();}}
+document.addEventListener('click',function(event){if(!event.target.closest('.language-picker'))closeLanguageMenu();});
 cacheEn();
 (function(){
   var saved=null;try{saved=localStorage.getItem('lang');}catch(e){}
   var initial=saved||(((navigator.language||navigator.userLanguage||'').toLowerCase().indexOf('ja')===0)?'ja':'en');
   setLang(initial);
+})();
+</script>
+<script id="endless-scroll-navigation">
+(function(){
+  var sections=Array.prototype.slice.call(document.querySelectorAll('[data-section-id]'));
+  var navItems=Array.prototype.slice.call(document.querySelectorAll('[data-section-target]'));
+  var mobileNav=document.getElementById('mobile-section-nav');
+  var activeId=sections[0] ? sections[0].getAttribute('data-section-id') : '';
+  function hasSection(id){return sections.some(function(section){return section.getAttribute('data-section-id')===id;});}
+  function setActive(id,updateHash){
+    if(!hasSection(id))return;activeId=id;
+    navItems.forEach(function(item){var active=item.getAttribute('data-section-target')===id;item.classList.toggle('active',active);if(active)item.setAttribute('aria-current','true');else item.removeAttribute('aria-current');});
+    if(mobileNav)mobileNav.value=id;
+    if(updateHash&&window.location.hash!=='#'+id)history.replaceState(null,'','#'+id);
+  }
+  function navigate(id){var section=document.querySelector('[data-section-id="'+id+'"]');if(!section)return;setActive(id,true);section.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}
+  function sectionAtReadingLine(){var line=Math.min(window.innerHeight*.34,280),selected=sections[0];sections.forEach(function(section){if(section.getBoundingClientRect().top<=line)selected=section;});return selected?selected.getAttribute('data-section-id'):'';}
+  function updateFromScroll(){var id=sectionAtReadingLine();if(id&&id!==activeId)setActive(id,true);}
+  navItems.forEach(function(item){item.addEventListener('click',function(){navigate(item.getAttribute('data-section-target'));});});
+  if(mobileNav)mobileNav.addEventListener('change',function(){navigate(mobileNav.value);});
+  var initialHash=window.location.hash.slice(1);if(hasSection(initialHash)){setActive(initialHash,false);requestAnimationFrame(function(){document.querySelector('[data-section-id="'+initialHash+'"]').scrollIntoView({behavior:'auto',block:'start'});});}else setActive(activeId,false);
+  if('IntersectionObserver' in window){var observer=new IntersectionObserver(updateFromScroll,{rootMargin:'-25% 0px -60% 0px',threshold:[0,.2,.5,1]});sections.forEach(function(section){observer.observe(section);});}
+  window.addEventListener('scroll',updateFromScroll,{passive:true});
+  window.addEventListener('hashchange',function(){var id=window.location.hash.slice(1);if(hasSection(id))navigate(id);});
 })();
 </script>
 </body>
