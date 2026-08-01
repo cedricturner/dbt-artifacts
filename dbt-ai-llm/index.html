@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>From Data to Conversation</title>
+<title>dbt + language</title>
 <link rel="icon" href="data:,">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -64,8 +64,56 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body-font);font-
 .lang-btn+.lang-btn{border-left:1px solid var(--ink)}
 .lang-btn:hover{color:var(--ink)}
 .lang-btn.active{background:var(--ink);color:var(--paper)}
+.language-picker{position:relative;z-index:30}
+.language-current{min-width:154px;padding:9px 14px;color:#1f5b8f;background:#fff;border:1.5px solid currentColor;border-radius:48% 4px 45% 3px / 10% 45% 8% 42%;cursor:pointer;font-family:var(--body-font);font-size:12px;font-weight:600;text-align:left}
+.language-current::after{float:right;content:"+";font-family:var(--code-font);font-weight:400}
+.language-current[aria-expanded="true"]::after{content:"−"}
+.language-menu{position:absolute;top:calc(100% + 8px);right:0;width:218px;padding:8px;background:#fff;border:1.5px solid var(--ink)}
+.language-menu[hidden]{display:none}
+.language-option{display:block;width:100%;margin:0 0 5px;padding:10px 13px;color:var(--option-ink);background:#fff;border:1.5px solid currentColor;cursor:pointer;font-size:14px;text-align:left;transform:rotate(var(--option-turn))}
+.language-option:last-child{margin-bottom:0}
+.language-option:hover,.language-option:focus-visible,.language-option[aria-selected="true"]{color:#fff;background:var(--option-ink);outline:0}
+.language-en{--option-ink:#1f5b8f;--option-turn:-.4deg}
+.language-ja{--option-ink:#a82f27;--option-turn:.7deg}
+.mobile-section-picker{display:none}
+.scroll-layout{display:grid;grid-template-columns:minmax(132px,148px) minmax(0,1fr);gap:clamp(24px,4vw,44px);align-items:start}
+.section-rail{--rail-progress:0%;position:sticky;top:24px;display:flex;flex-direction:column;justify-content:space-between;height:calc(100vh - 48px);min-height:620px;margin:0;padding:4px 0;border:0;isolation:isolate}
+.section-rail::before,.section-rail::after{content:"";position:absolute;z-index:-1;top:20px;left:16px;width:2px;border-radius:60% 40% 55% 45%;transform:rotate(-.25deg)}
+.section-rail::before{bottom:20px;background:#d6d3d1}
+.section-rail::after{height:calc((100% - 40px) * var(--rail-progress) / 100%);background:var(--ink);transition:height .35s ease}
+.section-rail .ns{width:100%;position:relative;display:grid;grid-template-columns:34px minmax(0,1fr);padding:5px 4px 5px 0;text-align:left;border:0;background:transparent}
+.section-rail .ns-n{display:flex;width:28px;height:28px;align-items:center;justify-content:center;color:#555;background:var(--paper);border:1.5px solid #777;border-radius:52% 48% 45% 55%;font-size:9px;transform:rotate(-2deg)}
+.section-rail .ns:nth-child(even) .ns-n{border-radius:46% 54% 52% 48%;transform:rotate(2deg)}
+.section-rail .ns.on{color:var(--ink);background:transparent}
+.section-rail .ns.on .ns-n{color:var(--shape-text,#fff);background:var(--shape-color);border-color:var(--shape-color);transform:rotate(-4deg) scale(1.08)}
+.section-rail .ns[data-shape="circle"]{--shape-color:#d95721}
+.section-rail .ns[data-shape="circle"].on .ns-n{border-radius:50%;transform:rotate(-2deg) scale(1.08)}
+.section-rail .ns[data-shape="square"]{--shape-color:#2f6fcc}
+.section-rail .ns[data-shape="square"].on .ns-n{border-radius:12% 7% 14% 5%;transform:rotate(3deg) scale(1.08)}
+.section-rail .ns[data-shape="diamond"]{--shape-color:#b7790b;--shape-text:#171717}
+.section-rail .ns[data-shape="diamond"].on .ns-n{border-radius:7%;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.section-rail .ns[data-shape="triangle"]{--shape-color:#7c3fa0}
+.section-rail .ns[data-shape="triangle"].on .ns-n{border:0;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.section-rail .ns[data-shape="hexagon"]{--shape-color:#27843f}
+.section-rail .ns[data-shape="hexagon"].on .ns-n{border:0;clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%)}
+.section-rail .ns[data-shape="squircle"]{--shape-color:#b52f35}
+.section-rail .ns[data-shape="squircle"].on .ns-n{border-radius:44% 56% 48% 52% / 52% 43% 57% 48%}
+.section-rail .ns[data-shape="burst"]{--shape-color:#147d7e}
+.section-rail .ns[data-shape="burst"].on .ns-n{border:0;clip-path:polygon(50% 0,62% 24%,85% 15%,76% 39%,100% 50%,76% 61%,85% 85%,62% 76%,50% 100%,38% 76%,15% 85%,24% 61%,0 50%,24% 39%,15% 15%,38% 24%)}
+.section-rail .ns:not(.on) .ns-n{color:#555;background:var(--paper);border:1.5px solid #777;border-radius:52% 48% 45% 55%;clip-path:none;transform:rotate(-2deg)}
+.section-rail .ns-l{padding:3px 5px;background:rgba(250,250,249,.92)}
+.scroll-article{min-width:0}
+.scroll-section{scroll-margin-top:32px}
+.scroll-section+.scroll-section{margin-top:104px;padding-top:80px;border-top:1px solid var(--rule-light)}
+.section-heading{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:18px;align-items:end;margin:0 0 32px;padding:0 0 14px;border-bottom:1.5px solid var(--ink)}
+.section-heading-number{grid-row:1 / span 2;color:transparent;font-family:var(--code-font);font-size:clamp(46px,7vw,72px);font-weight:700;letter-spacing:-.08em;line-height:.82;-webkit-text-stroke:1.5px var(--ink);transform:rotate(-2deg)}
+.scroll-section:nth-child(even) .section-heading-number{transform:rotate(2deg)}
+.section-heading-kicker{color:#555;font-family:var(--code-font);font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+.section-heading-title{color:var(--ink);font-size:clamp(24px,4vw,40px);font-weight:600;letter-spacing:-.04em;line-height:1.05}
+.card-sub,.definition p,.product-field dd,.decision-table tbody td,.decision-callout p,.interface-panel>p,.neutral-note,.path-option small,.path-fields dd,.guardrail p,.gate p,.sources p{color:#555}
 code,pre{font-family:var(--code-font)}
 code{padding:1px 4px;background:var(--soft);color:var(--ink)}
+code{color:#183f66;background:#f1f0ed;font-weight:500}
 .example-label,.field-label{font-family:var(--code-font);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint-light)}
 .semantic-flow{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr) 7px) minmax(120px,1fr);align-items:center;gap:8px;margin:12px 0 26px;padding:18px;background:var(--soft);border:1px solid var(--rule-light);overflow-x:auto}
 .flow-node{min-width:120px;font-family:var(--code-font);font-size:10px;color:var(--ink)}
@@ -175,6 +223,16 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offse
   .interface-panel h3{min-height:0}
   .path-fields>div+div{padding-left:0;border-left:0}
   .gate-arrow{justify-content:center;transform:rotate(90deg)}
+  .mobile-section-picker{position:sticky;top:0;z-index:20;display:block;margin:0 -14px 28px;padding:10px 14px;background:rgba(250,250,249,.96);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);backdrop-filter:blur(10px)}
+  .mobile-section-picker label{display:block;margin-bottom:4px;color:#555;font-family:var(--code-font);font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+  #mobile-section-nav{width:100%;padding:4px 28px 4px 0;color:var(--ink);background:transparent;border:0;border-radius:0;font-family:var(--body-font);font-size:14px;font-weight:600}
+  .scroll-layout{display:block}
+  .section-rail{display:none}
+  .scroll-section{scroll-margin-top:78px}
+  .scroll-section+.scroll-section{margin-top:72px;padding-top:56px}
+  .section-heading{grid-template-columns:46px minmax(0,1fr);column-gap:12px;margin-bottom:24px}
+  .section-heading-number{font-size:44px}
+  .section-heading-title{font-size:26px}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;transition:none!important}
@@ -183,10 +241,10 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offse
 </head>
 <body>
 <div class="app">
-<div style="margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:12px"><a href="../" class="si" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'">← all explainers</a><div class="lang-toggle" role="group" aria-label="Language / 言語" hidden><button type="button" class="lang-btn active" data-lang="en" onclick="setLangAI('en')">EN</button><button type="button" class="lang-btn" data-lang="ja" onclick="setLangAI('ja')">日本語</button></div></div>
+<div style="margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:12px"><a href="../" class="si" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#444c56;text-decoration:none" onmouseover="this.style.color='#8b949e'" onmouseout="this.style.color='#444c56'">← all explainers</a><div class="language-picker"><button type="button" class="language-current" id="language-current" aria-haspopup="listbox" aria-expanded="false" aria-controls="language-menu" onclick="toggleLanguageMenu()" onkeydown="handleLanguageKeydown(event)">English</button><div class="language-menu" id="language-menu" role="listbox" aria-label="language" hidden><button type="button" class="language-option language-en" role="option" aria-selected="true" data-lang="en" onclick="selectLanguage('en')">English</button><button type="button" class="language-option language-ja" role="option" aria-selected="false" data-lang="ja" onclick="selectLanguage('ja')">日本語</button></div></div></div>
 <div class="hdr">
   <div class="hdr-tag">dbt Labs · AI / LLM</div>
-  <h1 class="si">From Data to Conversation</h1>
+  <h1 class="si">dbt + language</h1>
   <p class="si">A field guide to semantic definitions, query interfaces, and AI access paths.</p>
   <aside class="short-answer" aria-labelledby="short-answer-title">
     <div class="short-answer-label">decision inference</div>
@@ -194,13 +252,8 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offse
     <p>Start native when one warehouse is the durable home for definitions and consumption. Consider dbt when metrics need to travel with a governed transformation project across supported tools. Either way, the semantic layer still depends on well-modeled data underneath.</p>
   </aside>
 </div>
-<div class="nav" id="snav"></div>
-<div id="scontent" aria-live="polite"></div>
-<div class="ctrls">
-  <button class="nbtn si" id="pb" onclick="nav(-1)">← Back</button>
-  <span class="prog" id="pg"></span>
-  <button class="nbtn pri" id="nb" onclick="nav(1)">Next →</button>
-</div>
+<div class="mobile-section-picker"><label for="mobile-section-nav">section</label><select id="mobile-section-nav" aria-label="Current section"></select></div>
+<div class="scroll-layout"><nav class="nav section-rail" id="snav" aria-label="Article sections"></nav><main class="scroll-article" id="scontent"></main></div>
 <section class="sources" id="sources" aria-labelledby="sources-title">
   <div class="sources-kicker">primary documentation</div>
   <h2 id="sources-title">Sources</h2>
@@ -363,7 +416,7 @@ function renderSources() {
             claim.step + ', \'' + claim.id + '\')" aria-label="Back to claim">↩</a>';
         }).join('');
         return '<li id="' + source.id + '" tabindex="-1" value="' + source.number + '"><a href="' + source.url + '">' +
-          source.title + '</a> — ' + source.publisher + backrefs + '</li>';
+          source.title + '</a>: ' + source.publisher + backrefs + '</li>';
       }).join('') +
       '</ol></div>';
   }).join('');
@@ -412,7 +465,7 @@ var DECISION_ROWS = [
     'dbt Semantic Layer interfaces ' + footnote(8, 'claim-dbt-consumption'),
     'Databricks SQL and documented consumption surfaces ' + footnote(3, 'claim-matrix-databricks-query'),
     'Snowflake SELECT and supported interfaces ' + footnote(5, 'claim-matrix-snowflake-query')],
-  ['Inference — operational owner', 'Team operating the dbt project and Semantic Layer', 'Team operating Unity Catalog and Databricks SQL', 'Team operating Snowflake schemas and privileges']
+  ['Inference: operational owner', 'Team operating the dbt project and Semantic Layer', 'Team operating Unity Catalog and Databricks SQL', 'Team operating Snowflake schemas and privileges']
 ];
 
 /* ─── STEP RENDERERS ─────────────────────────────────────── */
@@ -464,7 +517,7 @@ function renderStep1() {
         '<div class="product-field"><dt>How it is defined</dt><dd>' + product.define + '</dd></div>' +
         '<div class="product-field"><dt>How it is queried</dt><dd>' + product.query + '</dd></div>' +
         '<div class="product-field"><dt>Governance boundary</dt><dd>' + product.boundary + '</dd></div>' +
-        '<div class="product-field"><dt>Inference — strong fit</dt><dd>' + product.bestWhen + '</dd></div>' +
+        '<div class="product-field"><dt>Inference: strong fit</dt><dd>' + product.bestWhen + '</dd></div>' +
       '</dl>' +
     '</section>';
   }).join('');
@@ -477,7 +530,7 @@ function renderStep1() {
     <section class="code-example">
       <div class="code-example-head">
         <div class="code-example-title">dbt</div>
-        <div class="code-example-note">illustrative shape—not a copy/paste implementation</div>
+        <div class="code-example-note">illustrative shape; not a copy/paste implementation</div>
       </div>
       <pre># dbt — illustrative shape
 metrics:
@@ -487,7 +540,7 @@ metrics:
     <section class="code-example">
       <div class="code-example-head">
         <div class="code-example-title">Databricks</div>
-        <div class="code-example-note">illustrative shape—not a copy/paste implementation</div>
+        <div class="code-example-note">illustrative shape; not a copy/paste implementation</div>
       </div>
       <pre># Databricks — illustrative shape
 version: "1.1"
@@ -497,7 +550,7 @@ measures:
     <section class="code-example">
       <div class="code-example-head">
         <div class="code-example-title">Snowflake</div>
-        <div class="code-example-note">illustrative shape—not a copy/paste implementation</div>
+        <div class="code-example-note">illustrative shape; not a copy/paste implementation</div>
       </div>
       <pre>-- Snowflake — illustrative shape
 CREATE SEMANTIC VIEW revenue_semantics
@@ -744,46 +797,46 @@ function renderStep6() {
 
 
 var STEPS = [
-  { lbl: 'Semantic foundations', render: renderStep0 },
-  { lbl: 'Three systems',        render: renderStep1 },
-  { lbl: 'Choose a boundary',    render: renderStep2 },
-  { lbl: 'The shift to AI', render: renderStep3 },
-  { lbl: 'Agent path', render: renderStep4 },
-  { lbl: 'Safe use', render: renderStep5 },
-  { lbl: 'Access & takeaway', render: renderStep6 },
+  { id: 'semantic-foundations', shape: 'circle', lbl: 'Semantic foundations', render: renderStep0 },
+  { id: 'three-systems', shape: 'square', lbl: 'Three systems', render: renderStep1 },
+  { id: 'choose-a-boundary', shape: 'diamond', lbl: 'Choose a boundary', render: renderStep2 },
+  { id: 'shift-to-ai', shape: 'triangle', lbl: 'The shift to AI', render: renderStep3 },
+  { id: 'agent-path', shape: 'hexagon', lbl: 'Agent path', render: renderStep4 },
+  { id: 'safe-use', shape: 'squircle', lbl: 'Safe use', render: renderStep5 },
+  { id: 'access-and-takeaway', shape: 'burst', lbl: 'Access & takeaway', render: renderStep6 },
 ];
 
 /* ─── NAV ─────────────────────────────────────────────── */
 function renderNav() {
   var html = '';
+  var mobile = '';
   for (var i = 0; i < STEPS.length; i++) {
-    html += '<button class="ns ' + (i===cur?'on':'') + '" onclick="goTo(' + i + ')">';
+    var label = (typeof AI_TR !== 'undefined' && curLang === 'ja' && AI_TR[STEPS[i].lbl]) ? AI_TR[STEPS[i].lbl] : STEPS[i].lbl;
+    html += '<button type="button" class="ns ' + (i===cur?'on':'') + '" data-section-target="' + STEPS[i].id + '" data-shape="' + STEPS[i].shape + '" onclick="goTo(' + i + ')">';
     html += '<span class="ns-n">' + String(i+1).padStart(2,'0') + '</span>';
-    html += '<span class="ns-l">' + STEPS[i].lbl + '</span>';
+    html += '<span class="ns-l">' + label + '</span>';
     html += '</button>';
+    mobile += '<option value="' + STEPS[i].id + '">' + String(i+1).padStart(2,'0') + ' · ' + label + '</option>';
   }
   document.getElementById('snav').innerHTML = html;
+  document.getElementById('mobile-section-nav').innerHTML = mobile;
 }
 
 function renderContent() {
-  document.getElementById('scontent').innerHTML = STEPS[cur].render();
-  document.getElementById('pg').textContent = (cur+1) + ' / ' + STEPS.length;
-  document.getElementById('pb').disabled = cur === 0;
-  var nb = document.getElementById('nb');
-  nb.disabled = cur === STEPS.length - 1;
-  nb.textContent = cur === STEPS.length - 1 ? 'Done' : 'Next →';
+  document.getElementById('scontent').innerHTML = STEPS.map(function(step, index){
+    var number = String(index + 1).padStart(2, '0');
+    return '<section class="scroll-section" id="' + step.id + '" data-section-id="' + step.id + '">' +
+      '<header class="section-heading"><span class="section-heading-number">' + number + '</span>' +
+      '<span class="section-heading-kicker">' + number + ' / ' + String(STEPS.length).padStart(2, '0') + '</span>' +
+      '<h2 class="section-heading-title">' + step.lbl + '</h2></header>' + step.render() + '</section>';
+  }).join('');
 }
 
 function goTo(i) {
   cur = i;
-  renderNav();
-  renderContent();
-  var heading = document.querySelector('#scontent .card-title');
-  if (heading) {
-    heading.setAttribute('tabindex', '-1');
-    heading.focus({preventScroll:true});
-  }
-  window.scrollTo({top:0, behavior: prefersReducedMotion() ? 'auto' : 'smooth'});
+  var section = document.getElementById(STEPS[i].id);
+  if (section) section.scrollIntoView({block:'start', behavior:prefersReducedMotion() ? 'auto' : 'smooth'});
+  setActiveSection(STEPS[i].id, true);
 }
 
 function prefersReducedMotion() {
@@ -801,6 +854,8 @@ renderSources();
    Keep the toggle hidden until every redesigned string is translated. */
 var curLang='en';
 var AI_TR={"From Data to Conversation": "データから対話へ", "How dbt connects your warehouse to AI agents, with the same trust layer that powers your BI tools.": "dbt がウェアハウスを AI エージェントに接続。BI ツールを支えるのと同じ信頼レイヤーで。", "← all explainers": "← 解説一覧へ", "view source on github": "GitHub でソースを見る", "← Back": "← 戻る", "Next →": "次へ →", "Done": "完了", "The Shift": "変化", "The Stack": "スタック", "Semantic Layer": "セマンティックレイヤー", "Agent Reasoning": "エージェントの思考", "Use Cases": "ユースケース", "Configurations": "構成パターン", "Security": "セキュリティ", "Dashboard vs. Conversation": "ダッシュボード vs. 対話", "Same data, same metrics. Different interface.": "同じデータ、同じメトリクス。違うのはインターフェースだけ。", "BI DASHBOARD": "BI ダッシュボード", "Revenue": "売上", "Active Users": "アクティブユーザー", "Churn Rate": "チャーン率", "REVENUE BY REGION · Q4": "地域別売上 · Q4", "REVENUE TREND · 6 MONTHS": "売上推移 · 6ヶ月", "Pre-built views · fixed filters · need analyst to go deeper": "作り込み済みのビュー · 固定フィルター · 深掘りにはアナリストが必要", "AI AGENT": "AI エージェント", "What drove East region's growth last quarter?": "前四半期、East 地域の成長を牽引したのは何？", "East growth was almost entirely digital, up 34% QoQ. New customer acquisition, not expansion.": "East の成長はほぼすべてデジタル経由で、前四半期比 34% 増。既存拡大ではなく新規顧客の獲得によるものです。", "Is CAC holding up or are we buying that growth?": "CAC は維持できている？それとも成長をお金で買っている状態？", "CAC climbed 18% while revenue grew 34%. Efficient for now, but payback is stretching. Worth watching in Q1.": "売上が 34% 伸びる一方で CAC は 18% 上昇。今のところ効率的ですが、回収期間は伸びつつあります。Q1 は要注視です。", "The dashboard answers the question you thought to ask. The agent follows the one you're actually asking, and keeps going. Same underlying dbt metrics, same definitions. The interface is what changes.": "ダッシュボードは、あなたが思いついた質問に答えます。エージェントは、あなたが本当に聞きたいことを追いかけ、さらに掘り下げます。土台となる dbt メトリクスも定義も同じ。変わるのはインターフェースだけです。", "The Stack: source to AI": "スタック: ソースから AI まで", "dbt sits at the center: it transforms raw data, defines business metrics in the Semantic Layer, and exposes everything via APIs. The MCP Server bridges dbt's APIs to LLMs, giving AI tools governed, structured access to the same data your dashboards use.": "dbt が中心に位置します。生データを変換し、セマンティックレイヤーでビジネスメトリクスを定義し、すべてを API 経由で公開します。MCP サーバーが dbt の API を LLM に橋渡しし、AI ツールにダッシュボードと同じデータへの、ガバナンスの効いた構造化アクセスを提供します。", "The Semantic Layer and dbt APIs live inside the dbt Platform, defined once, reused by everyone. The MCP Server is the bridge: it wraps those APIs into structured tools that LLMs can reason with. Whether you're in Tableau or talking to Claude, you're getting the same governed data.": "セマンティックレイヤーと dbt の API は dbt Platform の中にあり、一度定義すれば全員が再利用できます。MCP サーバーはその橋渡し役で、これらの API を LLM が扱える構造化ツールにラップします。Tableau を使っていても Claude と話していても、得られるのは同じガバナンス済みデータです。", "How the Semantic Layer is built": "セマンティックレイヤーの構築方法", "Mart model → Semantic model (entities + dimensions) → Metrics": "マートモデル → セマンティックモデル（エンティティ + ディメンション）→ メトリクス", "mart model": "マートモデル", "semantic model": "セマンティックモデル", "built on": "構築元", "ENTITIES": "エンティティ", "DIMENSIONS": "ディメンション", "MEASURES": "メジャー", "defines": "定義する", "measure": "メジャー", "group by": "グループ化", "expr": "式", "inherits": "継承", "all dimensions from parent metrics": "親メトリクスの全ディメンション", "simple": "シンプル", "derived": "派生", "The semantic model registers entities (the grain), dimensions (how to slice), and measures (raw aggregations). Metrics sit on top. Simple ones reference a single measure, derived ones compose from other metrics. When an AI agent calls query_metrics(\"revenue\"), MetricFlow generates the SQL. Nothing extra is materialized.": "セマンティックモデルは、<strong>エンティティ</strong>（粒度）、<strong>ディメンション</strong>（切り口）、<strong>メジャー</strong>（生の集計）を登録します。メトリクスはその上に載ります。シンプルなメトリクスは単一のメジャーを参照し、派生メトリクスは他のメトリクスを組み合わせます。AI エージェントが <code style=\"color:var(--pl)\">query_metrics(\"revenue\")</code> を呼ぶと、MetricFlow が SQL を生成します。余計なマテリアライズは発生しません。", "How the agent decides which tools to use, from most efficient to last resort.": "エージェントがどのツールを使うかをどう判断するか。最も効率的なものから最終手段まで。", "Tier 1: Semantic Layer": "ティア 1: セマンティックレイヤー", "Tier 2: Discovery": "ティア 2: ディスカバリー", "Tier 3: Direct SQL": "ティア 3: 直接 SQL", "Tier 4: Text-to-SQL": "ティア 4: Text-to-SQL", "MOST EFFICIENT": "最も効率的", "EXPLORE FIRST": "まず探索", "AD HOC": "アドホック", "LAST RESORT": "最終手段", "Call a named metric directly": "定義済みメトリクスを名前で直接呼ぶ", "Understand the project before acting": "動く前にプロジェクトを理解する", "Run SQL directly when no metric covers it": "該当するメトリクスがなければ SQL を直接実行", "Generate SQL from natural language": "自然言語から SQL を生成する", "Agent knows the answer is a defined metric. No SQL written, no schema guessing.": "答えが定義済みメトリクスだとエージェントが分かっている場合。SQL を書かず、スキーマも推測しません。", "Agent needs context: what models exist, what the lineage looks like, what tests are passing. Adds tokens but prevents wrong answers.": "エージェントに文脈が必要な場合: どんなモデルがあるか、リネージュはどうなっているか、どのテストが通っているか。トークンは増えますが、誤答を防ぎます。", "The question does not map to a defined metric. Agent writes SQL against known models. More tokens, less governance.": "質問が定義済みメトリクスに対応しない場合。エージェントは既知のモデルに対して SQL を書きます。トークンは増え、ガバナンスは弱まります。", "No metric, no known model. Agent generates SQL from scratch. Most tokens, most error-prone, no governance. Avoid when possible.": "メトリクスも既知のモデルもない場合。エージェントがゼロから SQL を生成します。トークンは最大、誤りも最も多く、ガバナンスはなし。可能な限り避けます。", "What was revenue last quarter by region?": "前四半期の地域別売上は？", "Something looks off with churn, can you investigate?": "チャーンの数字がおかしい気がする、調べてくれる？", "How many accounts were created in the last 7 days by plan type?": "直近 7 日間で作成されたアカウント数をプラン種別ごとに教えて", "Average order value by country for enterprise accounts": "Enterprise アカウントの国別平均注文額", "finds 'revenue' in metric list": "メトリクス一覧から 'revenue' を発見", "No SQL generated. Fully governed.": "SQL は生成なし。完全にガバナンス下。", "traces to stg_subscriptions": "stg_subscriptions まで遡る", "last run: 31 hours ago": "最終実行: 31 時間前", "Surfaces root cause without writing any SQL.": "SQL を一切書かずに根本原因を提示。", "No metric for this. Querying fct_accounts directly.": "これに該当するメトリクスなし。fct_accounts を直接クエリ。", "Raw result. No tests, no metric definition enforced.": "生の結果。テストもメトリクス定義の担保もなし。", "No metric, no known model for this question": "この質問にはメトリクスも既知のモデルもなし", "SQL generated from schema only": "スキーマ情報だけから SQL を生成", "No tests, no definitions. Result may differ from Tableau.": "テストも定義もなし。結果が Tableau と食い違う可能性あり。", "EFFICIENCY SPECTRUM": "効率スペクトル", "fewest tokens · most governed": "トークン最小 · ガバナンス最大", "most tokens · least governed": "トークン最大 · ガバナンス最小", "WHEN TO USE": "使いどころ", "TOOLS": "ツール", "EXAMPLE INTERACTION": "対話例", "TIER 1: SEMANTIC LAYER": "ティア 1: セマンティックレイヤー", "TIER 2: DISCOVERY": "ティア 2: ディスカバリー", "TIER 3: DIRECT SQL": "ティア 3: 直接 SQL", "TIER 4: TEXT-TO-SQL": "ティア 4: TEXT-TO-SQL", "Use Cases by Tool Group": "ツールグループ別ユースケース", "Each tool group unlocks different agent capabilities. Click a group to see what it enables and how it works in practice.": "各ツールグループが異なるエージェント機能を解放します。グループをクリックすると、それが何を可能にし、実際にどう動くかが分かります。", "AVAILABLE TOOLS": "利用可能なツール", "USE CASES": "ユースケース", "EXAMPLE TRACE": "トレース例", "Governed metric queries, no raw SQL": "ガバナンス済みメトリクスのクエリ、生 SQL なし", "Understand your project before acting": "動く前にプロジェクトを理解する", "Jobs, runs, and performance monitoring": "ジョブ、実行、パフォーマンス監視", "Build, test, and query in a live session": "ライブセッションでビルド・テスト・クエリ", "Generate dbt boilerplate from your schema": "スキーマから dbt の定型コードを生成", "Column-level lineage and IDE context": "カラムレベルのリネージュと IDE コンテキスト", "The highest-value tool group. Agents query pre-defined, tested metrics by name, the same definitions powering your BI dashboards. No SQL generation, no guessing column names.": "最も価値の高いツール群。エージェントは事前定義・テスト済みのメトリクスを名前で呼びます。BI ダッシュボードを動かしているのと同じ定義です。SQL 生成もカラム名の推測も不要。", "Discovery tools give agents a map of your project: models, lineage, health, and documentation. Essential context before modifying anything or debugging an issue.": "ディスカバリーツールはプロジェクトの地図をエージェントに与えます: モデル、リネージュ、ヘルス、ドキュメント。何かを変更したり問題を調べたりする前に欠かせない文脈です。", "Admin tools let agents manage the full job lifecycle: trigger runs, monitor status, surface failures, and debug performance. No one needs to log into dbt Cloud.": "管理ツールを使うと、エージェントがジョブのライフサイクル全体を扱えます: 実行のトリガー、状態の監視、失敗の可視化、パフォーマンスのデバッグ。誰も dbt Cloud にログインする必要はありません。", "CLI tools close the loop between writing and validating. An agent can build a model, run tests, and immediately query the output, all in one session. Best for active development workflows.": "CLI ツールは、書くことと検証することのループを閉じます。エージェントはモデルをビルドし、テストを走らせ、その出力をすぐにクエリできます。すべて 1 つのセッション内で。活発な開発ワークフローに最適です。", "Codegen tools let agents introspect a database schema and generate source definitions, staging models, and YAML documentation, turning hours of setup into minutes.": "Codegen ツールを使うと、エージェントがデータベーススキーマを調べて、ソース定義、ステージングモデル、YAML ドキュメントを生成できます。何時間ものセットアップが数分に。", "Fusion tools provide column-level lineage and IDE-style intelligence. Best for developer workflows, specifically understanding where a column comes from and how it flows through the project.": "Fusion ツールはカラムレベルのリネージュと IDE 相当のインテリジェンスを提供します。開発ワークフロー、特にカラムがどこから来てプロジェクト内をどう流れるかを理解するのに最適です。", "Natural language querying": "自然言語での問い合わせ", "BI tools & consistent answers": "BI ツールと一貫した答え", "Scheduled reporting": "定期レポーティング", "Metric exploration": "メトリクス探索", "Lineage exploration": "リネージュ探索", "External lineage ingestion": "外部へのリネージュ取り込み", "Debugging broken metrics": "壊れたメトリクスのデバッグ", "Project onboarding": "プロジェクトのオンボーディング", "Job failure triage": "ジョブ失敗のトリアージ", "Performance debugging": "パフォーマンスのデバッグ", "Automated run management": "実行の自動管理", "Observability & alerting": "オブザーバビリティとアラート", "Active model development": "モデルの実開発", "Pre-PR validation": "PR 前の検証", "Ad-hoc SQL exploration": "アドホックな SQL 探索", "text_to_sql (last resort)": "text_to_sql（最終手段）", "New source onboarding": "新しいソースのオンボーディング", "Documentation generation": "ドキュメント生成", "Scaffold new projects": "新規プロジェクトの雛形作成", "Column-level lineage": "カラムレベルのリネージュ", "Debugging data quality": "データ品質のデバッグ", "Developer intelligence": "開発者インテリジェンス", "Stakeholders ask \"What was churn last quarter?\" and get accurate, governed answers. No analyst needed, no SQL written.": "関係者が「前四半期のチャーンは？」と尋ねるだけで、正確でガバナンスの効いた答えが返ります。アナリストも SQL も不要。", "BI tools like Tableau, Sigma, or Excel hit the same Semantic Layer. One definition, consistent numbers everywhere.": "Tableau、Sigma、Excel などの BI ツールが同じセマンティックレイヤーを参照します。定義は 1 つ、数字はどこでも一貫。", "Agents pull metrics on a schedule, write a narrative summary, and post to Slack or email, automatically and accurately.": "エージェントがスケジュールに沿ってメトリクスを取得し、文章のサマリーを書き、Slack やメールに投稿します。自動で、正確に。", "Agents can discover what metrics exist, what dimensions are available, and what saved queries are already defined before answering.": "エージェントは、回答する前に、どんなメトリクスがあるか、どのディメンションが使えるか、どの保存済みクエリが定義済みかを調べられます。", "Trace where a metric comes from, what models feed into it, and which downstream reports depend on it. Useful for debugging data quality issues and impact analysis.": "メトリクスがどこから来て、どのモデルが供給し、どの下流レポートが依存しているかを辿ります。データ品質問題のデバッグや影響分析に有効。", "Pull lineage metadata into other tools like data catalogs, observability platforms, or custom dashboards, for a unified view of your project.": "リネージュのメタデータをデータカタログ、オブザーバビリティ基盤、カスタムダッシュボードなどの他ツールに取り込み、プロジェクトを統一的に見渡せます。", "If a Semantic Layer query returns unexpected results, discovery tools trace the path upstream to find stale models, failed tests, or schema changes.": "セマンティックレイヤーのクエリが想定外の結果を返したら、ディスカバリーツールが上流を辿り、古くなったモデル、失敗したテスト、スキーマ変更を特定します。", "New engineers or agents can explore the full project structure: what models exist, what they do, and how they connect, without opening the codebase.": "新しいエンジニアやエージェントが、コードベースを開かずにプロジェクト全体の構造を把握できます: どんなモデルがあり、何をして、どうつながるか。", "When a job fails, an agent can immediately pull the error logs, identify which model broke, trace upstream, and surface actionable context to the on-call engineer.": "ジョブが失敗すると、エージェントが即座にエラーログを取得し、壊れたモデルを特定し、上流を辿って、オンコールのエンジニアに対応可能な文脈を提示します。", "Agents can identify which models are slow, how run times have changed over time, and suggest where to add incremental logic or partitioning.": "エージェントは、どのモデルが遅いか、実行時間が時間とともにどう変化したかを特定し、インクリメンタル化やパーティショニングを入れるべき箇所を提案できます。", "Trigger jobs in response to upstream events (a source table landing), monitor completion, retry failures, or cancel stuck runs. No manual intervention.": "上流イベント（ソーステーブルの到着など）に応じてジョブをトリガーし、完了を監視し、失敗をリトライし、詰まった実行をキャンセルします。手作業は不要。", "Proactively monitor job health, surface degrading run times before they become outages, and feed status into ops dashboards or Slack alerts.": "ジョブの健全性を先回りで監視し、実行時間の悪化が障害になる前に可視化し、状態を運用ダッシュボードや Slack アラートに流します。", "Write a model, compile to validate SQL, run it, test it, and query the output, without ever leaving the agent conversation.": "モデルを書き、コンパイルして SQL を検証し、実行し、テストし、出力をクエリする。すべてエージェントとの会話から離れずに。", "Agents can run affected models and their tests before code is merged, catching failures early and surfacing results as PR comments.": "コードがマージされる前に、エージェントが影響を受けるモデルとそのテストを実行し、失敗を早期に検知して結果を PR コメントとして提示します。", "execute_sql gives agents a direct query path when a metric doesn't exist yet. Useful for one-off analysis or exploratory data work.": "execute_sql は、まだメトリクスがない場合にエージェントへ直接のクエリ経路を与えます。単発の分析や探索的なデータ作業に便利。", "When no metric or model matches the question, agents can generate raw SQL. Least reliable. Results may differ from governed metrics. Use as a fallback only.": "質問に合うメトリクスもモデルもない場合、エージェントは生の SQL を生成できます。最も信頼性が低く、結果がガバナンス済みメトリクスと食い違うことも。フォールバックとしてのみ使用。", "A new data source lands in the warehouse. An agent generates sources.yml, staging models, and column-level YAML documentation in minutes, not hours.": "新しいデータソースがウェアハウスに到着。エージェントが sources.yml、ステージングモデル、カラムレベルの YAML ドキュメントを、数時間ではなく数分で生成します。", "Agents can generate model YAML with column names and types pre-populated, giving engineers a head start on writing descriptions.": "エージェントは、カラム名と型があらかじめ入ったモデル YAML を生成でき、説明を書くエンジニアの出発点になります。", "Spin up a new dbt project area with consistent staging patterns, naming conventions, and file structure. No copy-paste from old models.": "一貫したステージングパターン、命名規則、ファイル構成を備えた新しい dbt プロジェクト領域を立ち上げます。古いモデルからのコピペは不要。", "Trace exactly where a column's value comes from, through joins, CTEs, and across models, to understand data transformations and debug unexpected values.": "カラムの値がどこから来るのかを、JOIN や CTE、複数モデルをまたいで正確に辿り、データ変換を理解し、想定外の値をデバッグします。", "When a number looks wrong in a dashboard, column lineage traces back to the raw source to find where the value was transformed or filtered incorrectly.": "ダッシュボードの数字が怪しいとき、カラムリネージュが生ソースまで遡り、値がどこで誤って変換・フィルタされたかを突き止めます。", "ref() and source() completions help agents write accurate dbt SQL, knowing which models and sources exist without guessing or hallucinating names.": "ref() や source() の補完が、エージェントが正確な dbt SQL を書くのを助けます。名前を推測したりハルシネーションで作ったりせず、どのモデルやソースが存在するかを把握できます。", "Q: \"What's our churn rate by plan type this quarter?\"": "Q: 「今四半期のプラン種別ごとのチャーン率は？」", "Free tier churn rose to 3.4%. Pro and Enterprise held steady.": "フリー層のチャーンが 3.4% に上昇。Pro と Enterprise は横ばい。", "Q: \"Revenue dropped 18%. What happened?\"": "Q: 「売上が 18% 落ちた。何が起きた？」", "traces to fct_orders → stg_payments": "fct_orders → stg_payments まで遡る", "last successful run: 31 hours ago": "最後に成功した実行: 31 時間前", "stg_payments is stale. This is a pipeline lag, not a real revenue drop.": "stg_payments が古い。これは実際の売上減ではなくパイプラインの遅延です。", "Alert: revenue metric stale. Investigating.": "アラート: 売上メトリクスが古い。調査中。", "stg_payments job failed 32h ago": "stg_payments のジョブが 32 時間前に失敗", "Column \"amount_usd\" not found in source table": "ソーステーブルに列 \"amount_usd\" が見つかりません", "Schema change upstream. Surfaced to engineer with full context.": "上流でのスキーマ変更。完全な文脈とともにエンジニアへ提示。", "\"Build a model joining orders and customer segments\"": "「注文と顧客セグメントを結合するモデルを作って」", "SQL valid. No syntax errors.": "SQL は妥当。構文エラーなし。", "All tests passed. Model ready.": "全テスト通過。モデル準備完了。", "New source arrives: raw_stripe schema": "新しいソースが到着: raw_stripe スキーマ", "sources.yml created: 12 tables": "sources.yml を作成: 12 テーブル", "stg_stripe__charges.sql created": "stg_stripe__charges.sql を作成", "YAML with all 24 columns. Hours of setup in minutes.": "全 24 カラムの YAML。何時間ものセットアップが数分で。", "\"Why is revenue different in two models?\"": "「なぜ 2 つのモデルで売上が違うのか？」", "traces: stg_stripe.amount → intermediate.orders_with_fx → fct_revenue": "経路: stg_stripe.amount → intermediate.orders_with_fx → fct_revenue", "traces: stg_braintree.amount_usd → fct_orders": "経路: stg_braintree.amount_usd → fct_orders", "Different payment sources. Not the same metric. Surfaced to analyst.": "決済ソースが異なる。同じメトリクスではない。アナリストへ提示。", "Cursor / Claude: 4 configurations": "Cursor / Claude: 4 つの構成", "Each layer of dbt adds something the AI agent couldn't do before. Click to compare.": "dbt の各レイヤーが、AI エージェントにこれまでできなかったことを追加します。クリックして比較してください。", "+ Everything Together": "+ すべてを組み合わせる", "+ EVERYTHING TOGETHER": "+ すべてを組み合わせる", "No dbt context": "dbt のコンテキストなし", "Semantic Layer connected": "セマンティックレイヤー接続済み", "IDE-aware, live project context": "IDE 対応、ライブなプロジェクトコンテキスト", "Full dbt stack, most powerful": "dbt スタック全部、最強", "STACK": "スタック", "CAPABILITIES": "できること", "AI coding agent": "AI コーディングエージェント", "Your codebase (files only)": "あなたのコードベース（ファイルのみ）", "dbt Extension (VS Code / Cursor)": "dbt 拡張機能（VS Code / Cursor）", "Fusion engine (live project graph)": "Fusion エンジン（ライブプロジェクトグラフ）", "dbt Extension + Fusion (live context)": "dbt 拡張機能 + Fusion（ライブコンテキスト）", "dbt MCP Server (query + catalog)": "dbt MCP サーバー（クエリ + カタログ）", "Semantic Layer (governed metrics)": "セマンティックレイヤー（ガバナンス済みメトリクス）", "Tested, documented mart models": "テスト済み・ドキュメント化されたマートモデル", "Write SQL queries": "SQL クエリを書く", "Understand your schema": "スキーマを理解する", "Know your metric definitions": "メトリクス定義を把握する", "Validated, tested output": "検証済み・テスト済みの出力", "Lineage awareness": "リネージュの認識", "Consistent answers": "一貫した答え", "Autocomplete & ref() linking": "オートコンプリートと ref() リンク", "Write & validate models": "モデルを書いて検証する", "Query governed metrics": "ガバナンス済みメトリクスをクエリ", "Trace lineage end-to-end": "リネージュを端から端まで辿る", "Consistent, tested answers": "一貫した・テスト済みの答え", "Trigger & monitor jobs": "ジョブのトリガーと監視", "Build + query in same session": "同一セッションでビルド + クエリ", "generates raw SQL from scratch": "生の SQL をゼロから生成", "only if you paste it in": "貼り付けた場合のみ", "guesses from table/column names": "テーブル/カラム名から推測", "no tests, no contracts": "テストなし、コントラクトなし", "no DAG, no upstream context": "DAG なし、上流の文脈なし", "\"revenue\" means whatever the model guesses": "「revenue」はモデルが推測したものが何であれそれになる", "still can, but no longer needs to": "まだできるが、もう必要ない", "via get_model_details, get_all_models": "get_model_details, get_all_models 経由", "queries go through MetricFlow": "クエリは MetricFlow を通る", "get_lineage available as a tool": "get_lineage をツールとして利用可能", "revenue = revenue, always": "revenue は常に revenue", "with full project context": "プロジェクト全体の文脈つきで", "live, no compile step required": "ライブ、コンパイル不要", "via MCP + extension context": "MCP + 拡張機能のコンテキスト経由", "via MetricFlow + Fusion validation": "MetricFlow + Fusion の検証経由", "real-time DAG in editor + MCP": "エディタ内のリアルタイム DAG + MCP", "Fusion keeps graph live, refs resolve instantly": "Fusion がグラフをライブに保ち、ref が即座に解決", "extension + Fusion, live": "拡張機能 + Fusion、ライブ", "MCP + Semantic Layer": "MCP + セマンティックレイヤー", "from source to metric": "ソースからメトリクスまで", "MetricFlow enforces definitions": "MetricFlow が定義を強制", "model in editor, query via MCP, closed loop": "エディタでモデル、MCP でクエリ、ループが閉じる", "What was revenue last month by region?": "先月の地域別売上は？", "Build a new model that joins orders with customer segments": "注文と顧客セグメントを結合する新しいモデルを作る", "Something looks off with churn. Investigate and fix it.": "チャーンの様子がおかしい。調査して直して。", "I'll look for a table that sounds like orders or revenue...": "orders や revenue っぽい名前のテーブルを探してみます…", "Guessed \"amount\" column · no filter for completed orders · no tests · may be wrong": "「amount」列を推測 · 完了注文のフィルターなし · テストなし · 間違っているかも", "Governed · tested · consistent. No SQL written by the model.": "ガバナンス済み · テスト済み · 一貫。モデルは SQL を一切書いていません。", "Extension sees full project: fct_orders, dim_customers already in context": "拡張機能がプロジェクト全体を把握: fct_orders, dim_customers はすでにコンテキスト内", "ref() autocompleted · Fusion validates upstream exists · lineage auto-updated": "ref() を自動補完 · Fusion が上流の存在を検証 · リネージュを自動更新", "Extension opens stg_subscriptions, spots a bad filter on cancelled_at": "拡張機能が stg_subscriptions を開き、cancelled_at の不正なフィルターを発見", "Investigated, diagnosed, fixed, and re-run, all in one session": "調査し、診断し、修正し、再実行。すべて 1 つのセッションで。", "Security & Governance": "セキュリティとガバナンス", "Same warehouse. Three types of access. Every query passes two gates.": "同じウェアハウス。3 種類のアクセス。すべてのクエリは 2 つのゲートを通ります。", "Developer Seat": "開発者シート", "Build, deploy & maintain": "構築・デプロイ・保守", "Read-Only Seat": "読み取り専用シート", "Consume, explore & analyze": "消費・探索・分析", "LLMs & AI Agents": "LLM と AI エージェント", "Claude, MCP connections, shared BI tools": "Claude、MCP 接続、共有 BI ツール", "HOW THEY LOG IN": "ログイン方法", "HOW THEY CONNECT": "接続方法", "WHAT THEY CAN DO": "できること", "INTERNAL": "内部", "PROGRAMMATIC / MACHINE": "プログラム / マシン", "dbt username & password": "dbt のユーザー名とパスワード", "IDE, CLI & Jobs": "IDE・CLI・ジョブ", "All models & metrics": "全モデルとメトリクス", "Write & deploy": "書き込みとデプロイ", "Catalog, Docs & Lineage": "カタログ・ドキュメント・リネージュ", "Full audit log": "完全な監査ログ", "Today: Personal Access Token (PAT)": "<strong style=\"color:var(--text)\">今日:</strong> パーソナルアクセストークン (PAT)", "Coming soon: OAuth \"login with dbt\", short-lived and SSO-compatible": "<strong>近日提供:</strong> OAuth「login with dbt」、短命で SSO 対応", "Source Freshness & job alerts": "ソース鮮度とジョブアラート", "API access": "API アクセス", "Semantic Layer & MCP (H1 2026)": "セマンティックレイヤー & MCP <span style=\"color:#3fb950;font-size:9px\">(H1 2026)</span>", "dbt Insights (H2 2026)": "dbt Insights <span style=\"color:#3fb950;font-size:9px\">(H2 2026)</span>", "IDE, CLI, Jobs or deploy": "IDE・CLI・ジョブ・デプロイ", "Service Token: one per use case or team, scoped to a domain. Not tied to a person. Revoke without affecting anyone else.": "<strong style=\"color:var(--text)\">サービストークン</strong>: ユースケースやチームごとに 1 つ、ドメインにスコープ。個人には紐づきません。他の誰にも影響を与えずに失効できます。", "Semantic Layer, governed metrics only": "セマンティックレイヤー、ガバナンス済みメトリクスのみ", "MetricFlow queries via MCP": "MCP 経由の MetricFlow クエリ", "Scoped to assigned domain": "割り当てられたドメインにスコープ", "Audit logged per token": "トークンごとに監査ログ", "Same path for shared BI tools (Tableau Server, Power BI)": "共有 BI ツール（Tableau Server, Power BI）も同じ経路", "Raw SQL or direct model access": "生 SQL やモデルへの直接アクセス", "Personal login (PAT or OAuth)": "個人ログイン（PAT または OAuth）", "Developer & Read-Only seats. Tied to a real person, audited by user. Also covers personal BI connections (your own Excel, Tableau Desktop).": "開発者シートと読み取り専用シート。実在の個人に紐づき、ユーザー単位で監査されます。個人の BI 接続（自分の Excel、Tableau Desktop）もこれに含まれます。", "Service Token (machine credentials)": "サービストークン（マシン資格情報）", "AI agents, Claude, MCP connections, and shared BI tools (Tableau Server, Power BI workspace). Not tied to a person. Scoped and revocable per use case.": "AI エージェント、Claude、MCP 接続、共有 BI ツール（Tableau Server, Power BI ワークスペース）。個人には紐づきません。ユースケースごとにスコープされ、失効可能です。", "THE TWO GATES": "2 つのゲート", "GATE 1: dbt": "ゲート 1: dbt", "Controls what you can ask for": "何をリクエストできるかを制御", "Your role in dbt determines which models and metrics you're even allowed to request, regardless of what the warehouse would technically allow.": "dbt でのあなたのロールが、そもそもどのモデルやメトリクスをリクエストできるかを決めます。ウェアハウスが技術的に何を許すかとは無関係です。", "GATE 2: Warehouse": "ゲート 2: ウェアハウス", "Controls which rows come back": "どの行が返るかを制御", "Row-level security is enforced at query time by the warehouse itself. This is the final backstop. dbt and MCP cannot bypass it.": "行レベルセキュリティはクエリ時にウェアハウス自身が強制します。これが最後の砦です。dbt も MCP もこれを回避できません。"};
+AI_TR['dbt + language']='dbt + 言語';
+delete AI_TR['From Data to Conversation'];
 var PFX=['\u2192 ','\u2190 ','\u2713 ','\u26a0 ','\u2026 '];
 function translateEl(root){
   if(!root) return;
@@ -871,18 +926,68 @@ function applyLangAI(){
 }
 window.setLangAI=function(lang){
   curLang=lang;
+  document.title=lang==='ja'?'dbt + 言語':'dbt + language';
   try{ localStorage.setItem('lang',lang); }catch(e){}
-  var bs=document.querySelectorAll('.lang-btn');
-  for(var i=0;i<bs.length;i++){ bs[i].classList.toggle('active', bs[i].getAttribute('data-lang')===lang); }
   renderNav(); renderContent(); applyLangAI();
+  document.querySelectorAll('.language-option').forEach(function(option){option.setAttribute('aria-selected',String(option.getAttribute('data-lang')===lang));});
+  var current=document.getElementById('language-current');
+  if(current){current.textContent=lang==='ja'?'日本語':'English';current.style.color=lang==='ja'?'#a82f27':'#1f5b8f';}
+  setActiveSection(STEPS[cur].id,false);
 };
-/* re-apply translation after any dynamic re-render */
-var _origGoTo=goTo;
-goTo=function(i){ _origGoTo(i); applyLangAI(); };
+function toggleLanguageMenu(){
+  var menu=document.getElementById('language-menu'),button=document.getElementById('language-current');
+  var opening=menu.hidden;
+  menu.hidden=!opening;
+  button.setAttribute('aria-expanded',String(opening));
+}
+function selectLanguage(lang){
+  setLangAI(lang);
+  document.getElementById('language-menu').hidden=true;
+  document.getElementById('language-current').setAttribute('aria-expanded','false');
+  document.getElementById('language-current').focus();
+}
+function handleLanguageKeydown(event){
+  if(event.key==='ArrowDown'||event.key==='Enter'||event.key===' '){event.preventDefault();toggleLanguageMenu();if(!document.getElementById('language-menu').hidden)document.querySelector('.language-option[aria-selected="true"]').focus();}
+  if(event.key==='Escape'){document.getElementById('language-menu').hidden=true;event.currentTarget.setAttribute('aria-expanded','false');}
+}
+document.addEventListener('click',function(event){
+  if(!event.target.closest('.language-picker')){var menu=document.getElementById('language-menu');if(menu){menu.hidden=true;document.getElementById('language-current').setAttribute('aria-expanded','false');}}
+});
+
+var sectionFrame=0;
+function setActiveSection(sectionId,updateHash){
+  var index=STEPS.findIndex(function(step){return step.id===sectionId;});
+  if(index<0)return;
+  cur=index;
+  document.querySelectorAll('[data-section-target]').forEach(function(item,itemIndex){
+    var active=item.getAttribute('data-section-target')===sectionId;
+    item.classList.toggle('on',active);
+    if(active)item.setAttribute('aria-current','location');else item.removeAttribute('aria-current');
+  });
+  var rail=document.querySelector('.section-rail');
+  if(rail)rail.style.setProperty('--rail-progress',(index/(STEPS.length-1))*100+'%');
+  var mobile=document.getElementById('mobile-section-nav');
+  if(mobile)mobile.value=sectionId;
+  if(updateHash&&window.location.hash!=='#'+sectionId)history.replaceState(null,'','#'+sectionId);
+}
+function syncSectionFromScroll(){
+  sectionFrame=0;
+  var index=0;
+  if(window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-2)index=STEPS.length-1;
+  else STEPS.forEach(function(step,stepIndex){var section=document.getElementById(step.id);if(section&&section.getBoundingClientRect().top<=120)index=stepIndex;});
+  if(index!==cur)setActiveSection(STEPS[index].id,true);
+}
+window.addEventListener('scroll',function(){if(!sectionFrame)sectionFrame=requestAnimationFrame(syncSectionFromScroll);},{passive:true});
+document.getElementById('mobile-section-nav').addEventListener('change',function(){goTo(STEPS.findIndex(function(step){return step.id===this.value;},this));});
+window.addEventListener('hashchange',function(){var id=window.location.hash.slice(1),index=STEPS.findIndex(function(step){return step.id===id;});if(index>=0)goTo(index);});
+
 if(window.setTier){ var _oST=window.setTier; window.setTier=function(i){ _oST(i); applyLangAI(); }; }
 if(window.setUC){ var _oSU=window.setUC; window.setUC=function(i){ _oSU(i); applyLangAI(); }; }
 if(window.setCfg){ var _oSC=window.setCfg; window.setCfg=function(i){ _oSC(i); applyLangAI(); }; }
-window.setLangAI('en');
+var initialSection=window.location.hash.slice(1);
+var initialIndex=STEPS.findIndex(function(step){return step.id===initialSection;});
+window.setLangAI((function(){try{return localStorage.getItem('lang')||'en';}catch(e){return'en';}})());
+if(initialIndex>=0){cur=initialIndex;setActiveSection(initialSection,false);window.setTimeout(function(){document.getElementById(initialSection).scrollIntoView({behavior:'auto',block:'start'});},0);}
 </script>
 </body>
 </html>
